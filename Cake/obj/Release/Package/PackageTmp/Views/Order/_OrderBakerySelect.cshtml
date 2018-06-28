@@ -1,0 +1,157 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul(asya)", "İstanbul(avr)", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+    String[] cityIds = new String[] { "81", "80", "79", "78", "14", "77", "76", "75", "7", "74", "73", "72", "8", "10", "13", "71", "70", "69", "68", "67", "66", "65", "64", "63", "62", "61", "1", "60", "59", "58", "57", "56", "55", "54", "53", "52", "51", "6", "50", "83", "48", "47", "36", "4", "12", "46", "45", "44", "3", "11", "43", "42", "41", "40", "39", "38", "37", "35", "49", "34", "33", "32", "31", "30", "2", "29", "28", "27", "19", "26", "25", "9", "24", "23", "22", "21", "20", "18", "17", "5", "16", "15", };
+    DataTable pastaneler = (DataTable)ViewData["pastaneler"];
+    DatabaseController dc = new DatabaseController();
+    BakeryController bc = new BakeryController();
+    bool locationDetected = (bool)ViewData["locationDetected"];
+    String[] selects = (String[])ViewData["fillSelects"];
+
+    DataTable network = new DataTable();
+    DataRow address = null; String province = ""; String district = ""; String neighborhood = "";
+
+    if (Session["orderAddress"].GetType().Name != "String")
+    {
+        address = (DataRow)Session["orderAddress"];
+        province = address["ProvinceName"].ToString();
+        district = address["DistrictName"].ToString();
+        neighborhood = address["NeighborhoodName"].ToString();
+
+        network = dc.DBQueryGetter("select * from BakeryNetwork where Province = '" + address["Province"] + "' and District = '" + address["District"] + "' and Town = '" + address["Neighborhood"] + "'");
+    }
+}
+
+<div class="container" style="padding:0px;">
+
+    <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12" style="padding:0px; margin-bottom:30px; float:left;">
+        <a style="color:black; text-decoration:none;" href="@Url.Action("BackToAddress","Order")">
+            <div class="gray-gradient" style="text-align:center; cursor:pointer; float:left; padding:5px 15px;">
+                <img src="~/Images/Site/left_white.png" style="width:6px; margin-right:7px; margin-bottom:3px; cursor:pointer;" />
+                <label style="cursor:pointer; font-size:14px;">Previous Step</label>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12" style="border:1px solid #e6e6e6; padding:0px; margin-bottom:50px;">
+        <label style="width:100%; float:left; padding:25px; padding-right:0px; border-bottom:1px solid #e6e6e6; text-align:center;">Pick a patisserie for your order</label>
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:15px 0px;">
+            @{
+                if (pastaneler.Rows.Count != 0)
+                {
+                    if (locationDetected)
+                    {
+                        <div style="float:left; width:100%; text-align:center;">
+                            <label style="float:left; font-weight:600; font-size:14px; width:100%;">@province, @district, @neighborhood </label>
+                            <label style="float:left; font-size:14px; width:100%; padding-top:5px; font-weight:400;"> Pastries serving in the region</label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="float:left; width:100%; text-align:center;">
+                            <label style="float:left; font-weight:600; font-size:16px; width:100%;">The location was not detected.</label>
+                            <label style="float:left; font-size:14px; width:100%; padding:5px 0px; font-weight:400;"> All existing bakeries are on display.</label>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div style="width:100%; float:left; text-align:center;">
+                        <img src="~/Images/Site/empty_cart_icon.png" style="width:75px; margin:20px 0px;" />
+                        <label style="padding:10px 0px; font-size:14px; width:100%;">No patisserie found in your area.</label>
+                        <a href="@Url.Action("BackToAddress","Order")" style="padding:10px 0px; font-size:14px; width:100%; color:black;">Click to select another address.</a>
+                    </div>
+                }
+            }
+        </div>
+
+        @{
+            if (Session["packetWarning"] != null)
+            {
+                if ((bool)Session["packetWarning"] == true)
+                {
+                    Session["orderBakery"] = null; Session["packetWarning"] = false;
+                    <div style="width:100%; float:left; margin-top:20px; margin-bottom:-20px;">
+                        <label style="width:100%; float:left; text-align:center; color:red;padding:20px 0px; font-size:14px; background: rgba(255, 0, 0, 0.04);">You are under the minimum package amount that your chosen pastanine has defined to your address. <br /> Add other products to your shopping cart or choose another pastry shop or address.</label>
+                    </div>
+                }
+            }
+        }
+
+        <div class="col-md-12 col-sm-12 col-xs-12 pastaneler-grid" style="padding:0px; float:left;" id="pastane-div-wrapper-grid">
+            <div class="row">
+                @{
+
+                    for (int i = 0; i < pastaneler.Rows.Count; i++)
+                    {
+                        DataRow bakery = pastaneler.Rows[i];
+                        if (bakery["BakeryID"].ToString().ToUpper() != "98E94E0A-C764-4F99-A2F1-F4915631A891" & bakery["BakeryID"].ToString().ToUpper() != "811C68DA-EDAD-4DE6-977E-B20F1CD1C833")
+                        {
+                            String img = "/Images/Bakery/" + bakery["Thumbnail"];
+                            String bakeryDelivery = "Var"; String bdStyle = "color:green;";
+                            String homeDelivery = "Var"; String hdStyle = "color:green;";
+                            String isOpen = "Açık"; String ioStyle = "color:green;";
+                            if (bakery["BakeryDelivery"].ToString() == "no") { bakeryDelivery = "Yok"; bdStyle = "color:red;"; }
+                            if (bakery["HomeDelivery"].ToString() == "no") { homeDelivery = "Yok"; hdStyle = "color:red;"; }
+                            if (bakery["isOpen"].ToString() == "0") { isOpen = "Kapalı"; ioStyle = "color:red;"; }
+
+                            <div class="col-md-12 col-sm-12 col-xs-12 bakerySelectDiv">
+                                <div class="col-md-2 col-sm-3 hidden-xs" style="float:left; padding-right:0px;">
+                                    <img src="@img" style="width:75px;" />
+                                </div>
+                                <div class="col-md-10 col-sm-9 col-xs-12" style="float:left; padding-right:0px;">
+                                    <div style="width:100%; float:left; text-align:center;">
+                                        <h2 style="float:left; text-align:center; color:black; font-weight:400; font-size:24px; margin:0px; line-height:40px;">@bakery["Name"] <span style="font-size:14px; color:#ccc; float:right; padding-left:5px;">(@dc.getNameFromId(bakery["Province"].ToString(), "Province"))</span></h2>
+                                        <img src="~/Images/Site/header_down_arrow.png" onclick="$(this).parent().parent().parent().find('.bakeryInfoDiv').slideToggle(300)" style="float:left; cursor:pointer; padding:12px; width:35px; margin-top:4px; margin-left:-5px;" />
+                                        @{
+                                            if (Session["orderAddress"].GetType().Name != "String")
+                                            {
+                                                DataRow nRow = null;
+                                                for (int i2 = 0; i2 < network.Rows.Count; i2++)
+                                                {
+                                                    if (network.Rows[i2]["BakeryID"].ToString().ToLower() == bakery["BakeryID"].ToString().ToLower()) { nRow = network.Rows[i2]; }
+                                                }
+                                                @*<label style="float:left; text-align:left; width:100%;">Adresinize min. paket tutarı : @nRow["MinPacket"] TL</label>*@
+                                            }
+                                        }
+
+                                        <a style="padding:7px 15px; float:right; margin-top:5px; color:white;" href="@Url.Action("SelectBakery","Order", new { id = bakery["BakeryID"] })" class="black-gradient pastane-link" data-populerite="@bakery["Ranking"].ToString().Replace(",",".")" data-lezzet="@bakery["Taste"].ToString().Replace(",",".")" data-uygulama="@bakery["Editor"].ToString().Replace(",",".")">
+                                            <img src="~/Images/Site/btn-right-arrow.png" style="float:right; width:10px; margin-left:10px; margin-top:5px;" />
+                                            <label style="float:right; " class="selectBakeryLink">Select</label>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                    <div class="bakeryInfoDiv" style="width:100%; float:left; padding:10px 0px; padding-bottom:0px; margin-top:10px; text-align:center; font-size:12px; border-top:1px solid #e6e6e6; display:none;">
+                                        <div style="float:left; width:110px;">
+                                            <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Status :</label>
+                                            <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Work Hours :</label>
+                                            <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Pay at Bakery :</label>
+                                            <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Pay at Door :</label>
+                                        </div>
+                                        <div style="float:left; width:170px;">
+                                            <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; @ioStyle">@isOpen</label>
+                                            <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px;">@bakery["WorkHours"]</label>
+                                            <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; @bdStyle">@bakeryDelivery</label>
+                                            <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; @hdStyle">@homeDelivery</label>
+                                        </div>
+                                        <div style="width:100%;">
+                                            <label style="float:left; width:100%; font-weight:500; color:#3f2518; text-align:left; padding:3px 0px;">Address :</label>
+                                            <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; font-size:16px;">@bakery["SpecificAddress"]</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                                }
+                                            }
+
+                }
+            </div>
+        </div>
+
+
+    </div>
+
+</div>

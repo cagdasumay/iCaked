@@ -1,0 +1,219 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+        DatabaseController dc = new DatabaseController();
+        AccountController ac = new AccountController();
+        DataTable objects = new DataTable();
+
+        DataRow userinfo = ((DataRow)Session["userinfo"]);
+        if (String.IsNullOrEmpty(userinfo["isLancer"].ToString()) == false)
+        {
+            if (userinfo["isLancer"].ToString() == "Yes")
+            {
+                objects = dc.DBQueryGetter("select * from Objects where AdderID = '" + userinfo["UserID"] + "'");
+            }
+            else
+            {
+                objects = dc.DBQueryGetter("select * from Objects");
+            }
+        }
+        else
+        {
+            objects = dc.DBQueryGetter("select * from Objects");
+        }
+}
+
+<div class="col-md-4 col-sm-12 col-xs-12" style="padding:0px; border-right: 1px solid #cccccc; margin-bottom:20px; float:left;">
+
+    @using (Html.BeginForm("AdminAddObj", "Object", FormMethod.Post, new { enctype = "multipart/form-data", id = "admin-object-form", onsubmit = "validateAdminObjUpload(event)" }))
+    {
+        <label style="font-size:16px; height:20px; line-height:20px; margin-bottom:10px !important; padding-left:135px; float:left; width:100%;" id="admin-object-name"></label>
+
+                    <div class="bakery-product-div">
+                        <label style="margin-right:51px;">Tip : </label>
+                        <select onchange="appendAdminObjectCategories(this)" style="width:150px;" id="admin-object-type" name="admin-object-type">
+                            <option>object</option>
+                            <option>cake</option>
+                            <option>side</option>
+                            <option>random</option>
+                            <option>object2D</option>
+                            <option>mixed</option>
+                        </select>
+                    </div>
+
+                    <div class="bakery-product-div" id="admin-category-append">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:16px;">Kategori : </label>
+                        <select id="admin-object-category" name="admin-object-category" style="width:150px; margin-bottom:0px;">
+                            <option value="Hobi">Hobi</option>
+                            <option value="Doğa">Doğa</option>
+                            <option value="Kutlama">Kutlama</option>
+                            <option value="Bebek">Bebek</option>
+                            <option value="Çocuk">Çocuk</option>
+                            <option value="Çizgi Film">Çizgi Film</option>
+                            <option value="Yiyecek">Yiyecek</option>
+                            <option value="Meslek">Meslek</option>
+                            <option value="insan">İnsan</option>
+                            <option value="Diğer">Diğer</option>
+                        </select>
+                        <img onclick="appendAdminCategory()" src="~/Images/Site/plus.png" style="width:20px; border:1px solid #cccccc; padding:2px; float:left; margin-left:15px; margin-top:5px; border-radius:20px; cursor:pointer;" />
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:40px;">Obje : </label>
+                        <input onchange="validateChange(this)" type="file" class="multiple" name="objectFile" id="objectFile" style="width:150px; margin-bottom:0px;" />
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:38px;">Renk : </label>
+                        <input onchange="validateChange(this)" readonly id="admin-object-color" name="admin-object-color" class="jscolor" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:13px;">Keyword : </label>
+                        <input onkeyup="validateKeyup(this)" placeholder="Örn. american football ball sports" id="admin-object-keywords" name="admin-object-keywords" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:30px;">Zorluk : </label>
+                        <select id="admin-object-difficulty" name="admin-object-difficulty" style="width:150px; margin-bottom:0px;">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>6</option>
+                            <option>8</option>
+                        </select>
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:17px;">Min Size : </label>
+                        <input onkeyup="validateKeyup(this)" type="text" placeholder="Örn. 0.6" id="admin-object-minsize" name="admin-object-minsize" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:14px;">Max Size : </label>
+                        <input onkeyup="validateKeyup(this)" type="text" placeholder="Örn. 1.6" id="admin-object-maxsize" name="admin-object-maxsize" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label>Step Size : </label>
+                        <input onkeyup="validateKeyup(this)" type="text" placeholder="Örn. 0.1" id="admin-object-stepsize" name="admin-object-stepsize" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-right:36px;">Onay : </label>
+                        <input type="checkbox" id="admin-object-approve" name="admin-object-approve" style="width:20px; height:20px; margin-top:7px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label>XML : </label>
+                        <textarea onkeyup="validateKeyup(this)" id="admin-object-properties" name="admin-object-properties" style="height:150px; resize:none; width:90%; margin-right:4%; font-size:12px; outline:none;" placeholder="XML gelecek"></textarea>
+                    </div>
+
+                    <div style="width:100%; float:left;">
+                        <div class="col-md-4 col-sm-4 col-xs-4" style="padding:5px 0px;" id="admin-obj-img-div">
+                            <label style="width:100%; float:left; padding-bottom:5px; font-weight:500; color:#3f2518;">Resim : </label>
+                            <img src="" id="object-image-display" style="width:90px; border-radius:3px; height:90px; margin-bottom:10px; border:1px solid #cccccc;  float:left; border-radius:3px;" />
+                            <input onchange="validateChange(this)" type="file" name="objectImage" id="objectImage" style="width:150px; margin-bottom:0px; display:none;" />
+                            <label id="objImageUploadLabel" for="objectImage" style="width:90px; text-align:center; float:left;" class="yukle_gradient">Yükle</label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-4" style="padding:5px 0px;" id="admin-obj-texture-div">
+                            <label style="width:100%; float:left; padding-bottom:5px; font-weight:500; color:#3f2518;">Texture : </label>
+                            <img src="" id="object-texture-display" style="width:90px; border-radius:3px; height:90px; float:left; margin-bottom:10px; border:1px solid #cccccc; border-radius:3px;" />
+                            <input onchange="validateChange(this)" type="file" name="objectTexture" id="objectTexture" style="width:150px; margin-bottom:0px; display:none;" />
+                            <label id="objTextureUploadLabel" for="objectTexture" style="width:90px; text-align:center; float:left;" class="yukle_gradient">Yükle</label>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-4" style="padding:5px 0px;" id="admin-obj-alpha-div">
+                            <label style="width:100%; float:left; padding-bottom:5px; font-weight:500; color:#3f2518;">Alpha : </label>
+                            <img src="" id="object-alpha-display" style="width:90px; border-radius:3px; height:90px; float:left; margin-bottom:10px; border:1px solid #cccccc; border-radius:3px;" />
+                            <input onchange="validateChange(this)" type="file" name="objectAlpha" id="objectAlpha" style="width:150px; margin-bottom:0px; display:none;" />
+                            <label id="objAlphaUploadLabel" for="objectAlpha" style="width:90px; text-align:center; float:left;" class="yukle_gradient">Yükle</label>
+                        </div>
+                    </div>
+
+                    <div class="bakery-product-div">
+                        <input style="margin-top:20px; width:100px; float:left; border:none;" id="admin-object-submit" class="go_gradient" type="submit" value="Yükle" />
+                        <input style="margin-top:20px; width:100px; float:left; display:none; border:none;" id="admin-object-edit-submit" class="go_gradient" type="submit" value="Düzenle" />
+                        <label style="margin-top:20px; width:100px; float:right; text-align:center; line-height:21px; display:none;" id="admin-object-close" onclick="adminObjClose()" class="yukle_gradient">Kapat</label>
+                    </div>
+    }
+</div>
+
+<div class="col-md-8 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left;">
+
+    <table style="float:left; width:100%; margin-top:20px; font-size:12px;" id="admin-objects-table">
+        <thead>
+            <tr>
+                <td style="font-weight:600;">İsim</td>
+                <td style="font-weight:600;">Kategori</td>
+                <td style="font-weight:600;">Dosya</td>
+                <td style="font-weight:600;">Eylem</td>
+                <td style="font-weight:600;">Onay</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                for (int i = 0; i < objects.Rows.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <label style="float:left; font-weight:400; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; width:120px;">@objects.Rows[i]["ObjectName"]</label>
+                            @{
+                                if (String.IsNullOrEmpty(objects.Rows[i]["Properties"].ToString()) == false)
+                                {
+                                    String bg = "";
+                                    try {
+                                        bg = "#" + objects.Rows[i]["Properties"].ToString().Substring(objects.Rows[i]["Properties"].ToString().IndexOf("<color>") + 7, 6);
+                                  }
+                                    catch (Exception e) { }
+
+                                    <div class="obj-color-thumbnail" style="cursor:pointer; width:16px; height:16px; background:@bg; float:right; border:1px solid #cccccc; border-radius:2px; margin-top:2px; margin-left:5px;"></div>
+                                    <div class="color-popup"><label style="background:@bg; border:1px solid #cccccc; width:100%; text-align:center; padding:5px;">@bg</label></div>
+                                }
+
+                                if (String.IsNullOrEmpty(objects.Rows[i]["TexturePath"].ToString()) == false)
+                                {
+                                    String texturePath = "/Objects/Textures/" + objects.Rows[i]["TexturePath"];
+                                    <img class="obj-texture-thumbnail" style="float:right; width:15px; margin-top:3px; margin-left:5px; cursor:pointer;" src="~/Images/Site/obj_texture_icon.png" />
+                                    <img src="@texturePath" class="texture-popup" />
+                                }
+
+                                if (String.IsNullOrEmpty(objects.Rows[i]["AlphaPath"].ToString()) == false)
+                                {
+                                    String alphaPath = "/Objects/Textures/" + objects.Rows[i]["AlphaPath"].ToString().Replace("_alpha","_texture_alpha");
+                                    <img class="obj-alpha-thumbnail" style="float:right; width:15px; margin-top:3px; margin-left:5px; cursor:pointer;" src="~/Images/Site/alpha_icon.png" />
+                                    <img src="@alphaPath" class="alpha-popup" />
+                                }
+
+                                if (String.IsNullOrEmpty(objects.Rows[i]["ImagePath"].ToString()) == false)
+                                {
+                                    String imgPath = "/Objects/Images/" + objects.Rows[i]["ImagePath"];
+                                    <img class="obj-img-thumbnail" style="float:right; width:20px; cursor:pointer;" src="~/Images/Site/image_icon.png" />
+                                    <img src="@imgPath" class="img-popup" />
+                                }
+                            }
+                        </td>
+                        <td>@objects.Rows[i]["Type"]</td>
+                        <td>@objects.Rows[i]["ObjectPath"]</td>
+                        <td>
+                            @{
+                                String color = "";
+                                try
+                                {
+                                    color = objects.Rows[i]["Properties"].ToString().Substring(objects.Rows[i]["Properties"].ToString().IndexOf("<color>") + 7, 6);
+                                }
+                                catch (Exception e) { }
+                            }
+                            <img class="yukle_gradient admin-obj-edit" onclick="adminObjEdit(this)" data-objkeywords="@objects.Rows[i]["Keywords"]" data-objapproved="@objects.Rows[i]["Approved"]" data-objcolor="@color" data-objname="@objects.Rows[i]["ObjectName"]" data-objpath="@objects.Rows[i]["ObjectPath"]" data-objtype="@objects.Rows[i]["Type"]" data-objid="@objects.Rows[i]["ObjectID"]" data-objprop="@objects.Rows[i]["Properties"]" data-objminsize="@objects.Rows[i]["MinSize"]" data-objmaxsize="@objects.Rows[i]["MaxSize"]" data-objstepsize="@objects.Rows[i]["StepSize"]" data-objdifficulty="@objects.Rows[i]["Difficulty"]" data-objcategories="@objects.Rows[i]["Category"]" style="margin-bottom:0px !important; padding:3px; width:20px;" src="~/Images/Site/edit_icon.png" />
+                            <img class="yukle_gradient admin-obj-delete" src="~/Images/Site/close_icon.png" data-objname="@objects.Rows[i]["ObjectName"]" data-objid="@objects.Rows[i]["ObjectID"]" onclick="adminObjDelete(this)" style="margin-bottom:0px !important; padding:5px; width:20px;" />
+                        </td>
+                        <td>@objects.Rows[i]["Approved"]</td>
+                    </tr>
+                                }
+            }
+        </tbody>
+    </table>
+</div>

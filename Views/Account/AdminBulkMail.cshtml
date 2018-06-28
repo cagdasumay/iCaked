@@ -1,0 +1,36 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataTable emails = dc.DBQueryGetter("select distinct ContactEmail from OrderLogs");
+}
+
+<style>
+
+    html, body {
+    -webkit-user-select: auto !important; /* Chrome/Safari */
+    -moz-user-select: auto !important; /* Firefox */
+    -ms-user-select: auto !important; /* IE10+ */
+    -o-user-select: auto !important;
+    user-select: auto !important;
+}
+
+</style>
+
+<div class="container" style="padding:0px;">
+
+    <div style="width:100%; float:left; text-align:center;">
+        <label style="float:left; font-size:18px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px dashed #3f2518; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">Toplu Mail Gönderimi</label>
+
+       @{ 
+           for(int i = 0; i < emails.Rows.Count; i++)
+           {
+               <label style="float:left; padding-right:10px;">@emails.Rows[i][0].ToString()</label>
+           }
+       }
+
+    </div>
+
+</div>
+

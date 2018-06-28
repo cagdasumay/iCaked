@@ -1,0 +1,654 @@
+﻿@using EventApp.Models
+
+@{ 
+    ViewBag.Title = "Agenda";
+    List<Event> AllEvents = (List<Event>)Session["AllEvents"];
+    List<Event> MyEventList = (List<Event>)Session["MyEventList"];
+    List<Event> Scheduled = (List<Event>)Session["Scheduled"];
+    List<Event> MyScheduled = (List<Event>)Session["MyScheduled"];
+
+    int ConNum = (int)Session["ConNum"];
+    int MeeNum = (int)Session["MeeNum"];
+    int PreNum = (int)Session["PreNum"];
+    int ActNum = (int)Session["ActNum"];
+    int OthNum = (int)Session["OthNum"];
+
+    String Choice = (String)Session["Choice"];
+}
+
+
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a>Agenda</a>
+                    <i class="fa fa-circle"></i>
+                    <a>List</a>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title" style="float: left;">
+            Agenda
+            <small>Kullanıcı ismi gelecek</small>
+        </h1>
+        <a href="@Url.Action("AgendaTable", "Agenda")" id="continue-btn" class="btn btn-outline green button-next" style="float: right; margin-top: 20px;">
+            My Table
+        </a>
+        <a href="" id="continue-btn" class="btn green" style="float: right; margin-top: 20px;">
+            List
+        </a> 
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+
+                <div class="todo-ui">
+                    <div class="todo-sidebar">
+                        <div class="portlet light ">
+                            <div class="portlet-title">
+                                <div class="caption" data-toggle="collapse" data-target=".todo-project-list-content">
+                                    <span class="caption-subject font-green-sharp bold uppercase"> My Schedule </span>
+                                </div>
+                            </div>
+
+                            <div class="portlet-body todo-project-list-content">
+                                <div class="todo-project-list">
+                                    <ul class="nav nav-stacked">
+                                        <li>
+                                            <a href="javascript:;" style="cursor: default;">
+                                                Conference <span class="badge badge-primary" style="cursor: default;"> @ConNum </span> 
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" style="cursor: default;">
+                                                <span class="badge badge-warning" style="cursor: default;"> @MeeNum </span> Meeting
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" style="cursor: default;">
+                                                <span class="badge badge-danger" style="cursor: default;"> @PreNum </span> Presentation
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" style="cursor: default;">
+                                                <span class="badge badge-success" style="cursor: default;"> @ActNum </span> Activity
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" style="cursor: default;">
+                                                <span class="badge badge-info"> @OthNum </span> Other
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="todo-content">
+                        @{
+                            if (Choice == "Show All")
+                            {
+                            <div class="portlet light ">
+                            <!-- PROJECT HEAD -->
+                            <div class="portlet-title">
+                                <div class="caption">
+                                    <i class="icon-bar-chart font-green-sharp hide"></i>
+                                    <span class="caption-subject font-green-sharp bold uppercase">ICCI 2015</span>
+                                </div>
+                                
+                                <div class="actions">
+                                    <div class="btn-group">
+                                        <a class="btn green btn-circle btn-sm" href="javascript:;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="margin-left: 20px; float: right;">
+                                            Tarih Gelecek
+                                            <i class="fa fa-angle-down"></i>
+                                        </a>
+                                        <a href="@Url.Action("AgendaListScheduled", "Agenda")" id="continue-btn" class="btn btn-outline green button-next" style="float: right">
+                                            My Schedule
+                                        </a>
+                                        <a href="" id="continue-btn" class="btn green" style="float: right;">
+                                            All
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end PROJECT HEAD -->
+                            <div class="portlet-body">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12">
+                                        <div class="todo-tasklist">
+
+                                            @{
+                                                int EventCount = AllEvents.Count;
+                                                int ScheduleCount = Scheduled.Count;
+                                                if (EventCount > 0)
+                                                {
+                                                    for (int i = EventCount-1; i >= 0; i--)
+                                                    {
+                                                        if (AllEvents[i].EventType == 1)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-blue">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = AllEvents[i].Id })" class="todo-tasklist-item-title">
+                                                                    @AllEvents[i].Name
+                                                                    @{
+                                                                        ViewData["count"] = 0;
+                                                                        for (int j = 0; j < ScheduleCount; j++)
+                                                                        {
+                                                                            if (AllEvents[i].Id == Scheduled[j].Id)
+                                                                            {
+                                                                                ViewData["count"] = 1;
+                                                                            }
+                                                                        }
+                                                                        if (AllEvents[i].IsActive == true)
+                                                                        {
+                                                                            if ((int)ViewData["count"] == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("DeleteFromAgendaList","Agenda",new { delEvent = AllEvents[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                    <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                    Cancel
+                                                                                </a>
+                                                                                <a href="" style="float: right; cursor: default;">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    Scheduled
+                                                                                </a>
+
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a href="@Url.Action("AddtoMyScheduleList","Agenda",new { addEvent = AllEvents[i].Id })" style="float: right;">
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                    Add to My Schedule
+                                                                                </a>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor: default;">
+                                                                                <i class="fa fa-warning"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @AllEvents[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @AllEvents[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (AllEvents[i].EventType == 2)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-yellow">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = AllEvents[i].Id })" class="todo-tasklist-item-title">
+                                                                    @AllEvents[i].Name
+                                                                    @{
+                                                                        ViewData["count1"] = 0;
+                                                                        for (int j = 0; j < ScheduleCount; j++)
+                                                                        {
+                                                                            if (AllEvents[i].Id == Scheduled[j].Id)
+                                                                            {
+                                                                                ViewData["count1"] = 1;
+                                                                            }
+                                                                        }
+                                                                        if (AllEvents[i].IsActive == true)
+                                                                        {
+                                                                            if ((int)ViewData["count1"] == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("DeleteFromAgendaList","Agenda",new { delEvent = AllEvents[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                    <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                    Cancel
+                                                                                </a>
+                                                                                <a href="" style="float: right; cursor: default;">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    Scheduled
+                                                                                </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a href="@Url.Action("AddtoMyScheduleList","Agenda",new { addEvent = AllEvents[i].Id })" style="float: right;">
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                    Add to My Schedule
+                                                                                </a>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor: default;">
+                                                                                <i class="fa fa-warning"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @AllEvents[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @AllEvents[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (AllEvents[i].EventType == 3)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-red">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = AllEvents[i].Id })" class="todo-tasklist-item-title">
+                                                                    @AllEvents[i].Name
+                                                                    @{
+                                                                        ViewData["count2"] = 0;
+                                                                        for (int j = 0; j < ScheduleCount; j++)
+                                                                        {
+                                                                            if (AllEvents[i].Id == Scheduled[j].Id)
+                                                                            {
+                                                                                ViewData["count2"] = 1;
+                                                                            }
+                                                                        }
+                                                                        if (AllEvents[i].IsActive == true)
+                                                                        {
+                                                                            if ((int)ViewData["count2"] == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("DeleteFromAgendaList","Agenda",new { delEvent = AllEvents[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                    <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                    Cancel
+                                                                                </a>
+                                                                                <a href="" style="float: right; cursor: default;">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    Scheduled
+                                                                                </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a href="@Url.Action("AddtoMyScheduleList","Agenda",new { addEvent = AllEvents[i].Id })" style="float: right;">
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                    Add to My Schedule
+                                                                                </a>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor: default;">
+                                                                                <i class="fa fa-warning"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @AllEvents[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @AllEvents[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (AllEvents[i].EventType == 4)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-green">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = AllEvents[i].Id })" class="todo-tasklist-item-title">
+                                                                    @AllEvents[i].Name
+                                                                    @{
+                                                                        ViewData["count3"] = 0;
+                                                                        for (int j = 0; j < ScheduleCount; j++)
+                                                                        {
+                                                                            if (AllEvents[i].Id == Scheduled[j].Id)
+                                                                            {
+                                                                                ViewData["count3"] = 1;
+                                                                            }
+                                                                        }
+                                                                        if (AllEvents[i].IsActive == true)
+                                                                        {
+                                                                            if ((int)ViewData["count3"] == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("DeleteFromAgendaList","Agenda",new { delEvent = AllEvents[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                    <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                    Cancel
+                                                                                </a>
+                                                                                <a href="" style="float: right; cursor: default;">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    Scheduled
+                                                                                </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a href="@Url.Action("AddtoMyScheduleList","Agenda",new { addEvent = AllEvents[i].Id })" style="float: right;">
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                    Add to My Schedule
+                                                                                </a>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor: default;">
+                                                                                <i class="fa fa-warning"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @AllEvents[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @AllEvents[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (AllEvents[i].EventType == 8)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-blue">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = AllEvents[i].Id })" class="todo-tasklist-item-title">
+                                                                    @AllEvents[i].Name
+                                                                    @{
+                                                                        ViewData["count4"] = 0;
+                                                                        for (int j = 0; j < ScheduleCount; j++)
+                                                                        {
+                                                                            if (AllEvents[i].Id == Scheduled[j].Id)
+                                                                            {
+                                                                                ViewData["count4"] = 1;
+                                                                            }
+                                                                        }
+                                                                        if (AllEvents[i].IsActive == true)
+                                                                        {
+                                                                            if ((int)ViewData["count4"] == 1)
+                                                                            {
+                                                                                <a href="@Url.Action("DeleteFromAgendaList","Agenda",new { delEvent = AllEvents[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                    <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                    Cancel
+                                                                                </a>
+                                                                                <a href="" style="float: right; cursor: default;">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    Scheduled
+                                                                                </a>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <a href="@Url.Action("AddtoMyScheduleList","Agenda",new { addEvent = AllEvents[i].Id })" style="float: right;">
+                                                                                    <i class="fa fa-plus"></i>
+                                                                                    Add to My Schedule
+                                                                                </a>
+                                                                            }
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor: default;">
+                                                                                <i class="fa fa-warning"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @AllEvents[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @AllEvents[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            }
+                            else if (Choice == "My Schedule")
+                            {
+                            <div class="portlet light ">
+                                                                                <div class="portlet-title">
+                                                                                    <div class="caption">
+                                                                                        <i class="icon-bar-chart font-green-sharp hide"></i>
+                                                                                        <span class="caption-subject font-green-sharp bold uppercase">ICCI 2015</span>
+                                                                                    </div>
+                                                                                    
+                                                                                    <div class="actions">
+                                                                                        <div class="btn-group">
+                                                                                            <a class="btn green btn-circle btn-sm" href="javascript:;" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" style="margin-left: 20px; float: right;">
+                                                                                                Tarih Gelecek
+                                                                                                <i class="fa fa-angle-down"></i>
+                                                                                            </a>
+                                                                                            <a href="" id="continue-btn" class="btn green" style="float: right">
+                                                                                                My Schedule
+                                                                                            </a>
+                                                                                            <a href="@Url.Action("AgendaListAll", "Agenda")" id="continue-btn" class="btn btn-outline green button-next" style="float: right;">
+                                                                                                All
+                                                                                            </a>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="portlet-body">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12">
+                                        <div class="todo-tasklist">
+
+                                            @{
+                                                int EventCount = MyEventList.Count;
+                                                int ScheduleCount = MyScheduled.Count;
+                                                if (EventCount > 0)
+                                                {
+                                                    for (int i = EventCount-1; i >= 0; i--)
+                                                    {
+                                                        if (MyEventList[i].EventType == 1)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-blue">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = MyEventList[i].Id })" class="todo-tasklist-item-title">
+                                                                    @MyEventList[i].Name
+                                                                    @{
+                                                                        if (MyEventList[i].IsActive == true)
+                                                                        {
+                                                                            <a href="@Url.Action("DeleteFromScheduled","Agenda",new { delEvent = MyEventList[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                Cancel
+                                                                            </a>
+                                                                            <a href="" style="float: right; cursor: default;">
+                                                                                <i class="fa fa-check"></i>
+                                                                                Scheduled
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor:default;">
+                                                                                <i class="fa fa-warning" style="margin-left: 10px;"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                    
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @MyEventList[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @MyEventList[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (MyEventList[i].EventType == 2)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-yellow">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = MyEventList[i].Id })" class="todo-tasklist-item-title">
+                                                                    @MyEventList[i].Name
+                                                                    @{
+                                                                        if (MyEventList[i].IsActive == true)
+                                                                        {
+                                                                            <a href="@Url.Action("DeleteFromScheduled","Agenda",new { delEvent = MyEventList[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                Cancel
+                                                                            </a>
+                                                                            <a href="" style="float: right; cursor: default;">
+                                                                                <i class="fa fa-check"></i>
+                                                                                Scheduled
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor:default;">
+                                                                                <i class="fa fa-warning" style="margin-left: 10px;"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @MyEventList[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @MyEventList[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (MyEventList[i].EventType == 3)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-red">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = MyEventList[i].Id })" class="todo-tasklist-item-title">
+                                                                    @MyEventList[i].Name
+                                                                    @{
+                                                                        if (MyEventList[i].IsActive == true)
+                                                                        {
+                                                                            <a href="@Url.Action("DeleteFromScheduled","Agenda",new { delEvent = MyEventList[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                Cancel
+                                                                            </a>
+                                                                            <a href="" style="float: right; cursor: default;">
+                                                                                <i class="fa fa-check"></i>
+                                                                                Scheduled
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor:default;">
+                                                                                <i class="fa fa-warning" style="margin-left: 10px;"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @MyEventList[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @MyEventList[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (MyEventList[i].EventType == 4)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-green">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = MyEventList[i].Id })" class="todo-tasklist-item-title">
+                                                                    @MyEventList[i].Name
+                                                                    @{
+                                                                        if (MyEventList[i].IsActive == true)
+                                                                        {
+                                                                            <a href="@Url.Action("DeleteFromScheduled","Agenda",new { delEvent = MyEventList[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                Cancel
+                                                                            </a>
+                                                                            <a href="" style="float: right; cursor: default;">
+                                                                                <i class="fa fa-check"></i>
+                                                                                Scheduled
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor:default;">
+                                                                                <i class="fa fa-warning" style="margin-left: 10px;"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @MyEventList[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @MyEventList[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else if (MyEventList[i].EventType == 8)
+                                                        {
+                                                            <div class="todo-tasklist-item todo-tasklist-item-border-blue">
+                                                                <a href="@Url.Action("EventInfoDetails","Event",new { eventinfodet = MyEventList[i].Id })" class="todo-tasklist-item-title">
+                                                                    @MyEventList[i].Name
+                                                                    @{
+                                                                        if (MyEventList[i].IsActive == true)
+                                                                        {
+                                                                            <a href="@Url.Action("DeleteFromScheduled","Agenda",new { delEvent = MyEventList[i].Id })" style="float: right; color: #ed6b75;">
+                                                                                <i class="fa fa-times" style="margin-left: 10px;"></i>
+                                                                                Cancel
+                                                                            </a>
+                                                                            <a href="" style="float: right; cursor: default;">
+                                                                                <i class="fa fa-check"></i>
+                                                                                Scheduled
+                                                                            </a>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a href="" style="float: right; color: #ed6b75; cursor:default;">
+                                                                                <i class="fa fa-warning" style="margin-left: 10px;"></i>
+                                                                                The Session is Canceled by Organization
+                                                                            </a>
+                                                                        }
+                                                                    }
+                                                                </a>
+                                                                <div class="todo-tasklist-item-text"> @MyEventList[i].Summary </div>
+                                                                <div class="todo-tasklist-controls pull-left">
+                                                                    <span class="todo-tasklist-date">
+                                                                        <i class="fa fa-calendar"></i> @MyEventList[i].StartDate
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                                                            </div>
+                                                                            }
+                        }
+                        
+                    </div>
+                    <!-- END TODO CONTENT -->
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+        </div>
+
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/apps/scripts/todo-2.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

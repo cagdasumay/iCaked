@@ -1,0 +1,221 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using System.Globalization
+
+@{
+    DatabaseController dc = new DatabaseController();
+    BakeryController bc = new BakeryController();
+    UtilityController uc = new UtilityController();
+
+    DataRow bakery = (DataRow)ViewData["bakeryinfo"];
+    DataTable bakeryProducts = (DataTable)ViewData["bakeryProducts"];
+    String whois = (String)ViewData["whatIsThePermission"];
+
+    List<string> cats = new List<string>();
+    for (int i = 0; i < bakeryProducts.Rows.Count; i++)
+    {
+        DataRow product = bakeryProducts.Rows[i];
+        if (cats.Contains(product["Category"].ToString()) == false) { cats.Add(product["Category"].ToString()); }
+    }
+
+    string h1 = ""; string cat = ""; DataTable designs = new DataTable();
+
+    if(ViewData["category"] != null)
+    {
+        string category = (string)ViewData["category"]; cat = category;
+        h1 = bakery["Name"] + " " + uc.categoryCorrector(category);
+        designs = dc.MemoryCacheByQuery("select * from MadeCakes where Category <> N'Erkek Pastaları' and Category <> N'Yarışma Pastaları' and Visible = 'yes'");
+    }
+    else
+    {
+        if (bakery["Name"].ToString().Contains("Pasta Sanatı")) { h1 = "Pasta Sanatı"; }
+        else { h1 = bakery["Name"] + " Pastanesi"; }
+    }
+
+    string[] foot = uc.bakeryMarketFooter(uc.categoryCorrector(cat)); string footerLabelTitle = foot[0]; string footerLabel = foot[1];
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        setTimeout(function () {
+
+            var checkElems = ["#dogum-gunu-pastalari-check", "#1-yas-pastalari-check", "#bebek-pastalari-check", "#cizgi-film-pastalari-check", "#sevgili-pastalari-check", "#kutlama-pastalari-check"];
+
+            $("#butik-pasta-check").click(function () {
+                if ($("#butik-pasta-check").is(":checked") == false) {
+                    for (x = 0; x < checkElems.length; x++) {
+                        if ($(checkElems[x]).is(":checked")) { $(checkElems[x]).trigger("click"); }
+                    }
+                }
+                else {
+                    for (x = 0; x < checkElems.length; x++) {
+                        if ($(checkElems[x]).is(":checked") == false) { $(checkElems[x]).trigger("click"); }
+                    }
+                }
+            });
+
+            var cat = "@cat";
+            if (cat != "") {
+                $("#bakeryMarket-check-filter-div input[type=checkbox]").not($("#butik-pasta-check")).not($("#" + cat.toLowerCase() + "-check")).trigger('click');
+                if (cat == "butik-pasta") {
+                    $("#butik-pasta-check").trigger("click");
+                }
+            }
+
+        }, 10);
+
+    });
+</script>
+
+<div class="row" style="padding:0px;">
+    <div class="col-md-12 col-sm-12 col-xs-12" id="bakery-market-header-div" style="padding:0px; float:left; margin-bottom:10px;">
+        @{ String thumbnail = "/Images/Bakery/" + bakery["Thumbnail"]; }
+        <div style="float:left; width:100%; text-align:center;">
+            <img alt="pastane resmi" src="@thumbnail" style="width:100%; max-width:150px;" />
+            <h1 style="font-size:36px; color:#3f2518; margin-top:20px;">@h1</h1>
+        </div>
+        <div style="width:100%; float:left; margin-top:20px; ">
+            <label id="bakery-market-description" style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:30px;">@Html.Raw(bakery["Description"])</label>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="padding:0px;">
+
+    <div id="bakery-main-mobile-filter" class="col-xs-12" style="float:left; text-align:center; margin-bottom:10px; display:none;">
+        <label style="width:100%; float:left; font-size:16px; font-weight:500; padding:10px; border-radius:50px; border:1px solid gray;" onclick="toggleMobileFilter('#bakery-main-filter-div', this);">Filter</label>
+        <div id="bakery-mobile-search" style="width:100%; float:left; margin-top:15px;">
+            <input onkeyup="searchBakeryProducts(this)" type="text" placeholder="Search Product" style="width:100%; float:left; border:2px solid #f0f0f0; border-radius:3px; padding:10px; font-size:18px;" />
+        </div>
+    </div>
+
+    <div class="col-md-3 col-sm-4 col-xs-12" id="bakery-main-filter-wrapper" style="padding:0px; float:left;">
+        <div id="bakery-main-filter-div" style="background:#f5f5f5; width:100%; border-radius:5px; padding:13px; margin-top:13px; float:left; margin-bottom:30px;">
+            <div id="bakery-desktop-search" style="width:100%; float:left; margin-bottom:15px;">
+                <input onkeyup="searchBakeryProducts(this)" type="text" placeholder="Search Product" style="width:100%; float:left; border:1px solid #f0f0f0; border-radius:3px; padding:10px; font-size:18px;" />
+            </div>
+            <div style="width:100%; float:left;">
+                <select id="sortProductFilter" onchange="sortBakeryProducts()" style="width:100%; border:1px solid #f0f0f0; border-radius:3px; padding:11px 10px; font-size:18px;">
+                    <option disabled selected>Order</option>
+                    <option value="newest">Newest</option>
+                    <option value="popular">Most Liked</option>
+                    <option value="priceDesc">Price Descending</option>
+                    <option value="priceAsc">Price Ascending</option>
+                </select>
+            </div>
+
+            <label style="width:100%; float:left; font-size:20px; padding-top:10px; text-align:center;">Product Categories</label>
+
+            <div id="bakeryMarket-check-filter-div" style="width:100%; float:left; margin-top:10px; border:1px solid #f0f0f0; padding:10px; border-radius:3px; background:white; color:dimgray;">
+                <div style="width:100%; float:left; padding-top:5px;">
+                    <input class="butik-pasta-check" id="butik-pasta-check" type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:16px;">Boutique Cake</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px; margin-top:10px; padding-left:10%;">
+                    <input class="butik-pasta-check" id="dogum-gunu-pastalari-check" checked type="checkbox" style="width:15px; height:15px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:14px;">Birthday Cakes</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px; padding-left:10%;">
+                    <input class="butik-pasta-check" id="1-yas-pastalari-check" checked type="checkbox" style="width:15px; height:15px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:14px;">Age 1 Cakes</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px; padding-left:10%;">
+                    <input class="butik-pasta-check" id="bebek-pastalari-check" checked type="checkbox" style="width:15px; height:15px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:14px;">Baby Cakes</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px; padding-left:10%;">
+                    <input class="butik-pasta-check" id="cizgi-film-pastalari-check" checked type="checkbox" style="width:15px; height:15px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:14px;">Cartoon Cakes</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px; padding-left:10%;">
+                    <input class="butik-pasta-check" id="sevgili-pastalari-check" checked type="checkbox" style="width:15px; height:15px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:14px;">Valentines Cakes</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px; margin-bottom:5px; padding-left:10%;">
+                    <input class="butik-pasta-check" id="kutlama-pastalari-check" checked type="checkbox" style="width:15px; height:15px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:14px;">Celebration Cakes</label>
+                </div>
+
+                <div style="width:100%; float:left; padding:3px 0px;">
+                    <input id="yas-pasta-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:16px;">Cakes</label>
+                </div>
+                <div style="width:100%; float:left; padding:3px 0px;">
+                    <input id="cikolata-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:16px;">Chocolate</label>
+                </div>
+                <div style="width:100%; float:left; padding-top:5px;">
+                    <input id="tatli-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                    <label style="float:left; font-size:16px;">Dessert</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="bakery-market-main-div" class="col-md-9 col-sm-8 col-xs-12" style="float:left; padding-right:0px;">
+        <div class="row" id="sortFilterBakeryProductWrapper">
+            @{
+                for (int i = 0; i < bakeryProducts.Rows.Count; i++)
+                {
+
+                    DataRow urun = bakeryProducts.Rows[i];
+                    String product_thumbnail = "/Images/Products/" + urun["ProductID"] + "/" + (urun["Thumbnail"].ToString().Split(' '))[0];
+                    String price = urun["Price"].ToString().Split(' ')[0];
+                    price = uc.ArrangePrice(price);
+
+                    String productCategory = uc.cleanseUrlString(urun["Category"].ToString());
+                    String productBakery = uc.cleanseUrlString(bakery["Name"].ToString());
+                    String productName = uc.cleanseUrlString(urun["Name"].ToString()) + "-" + urun["ProductID"].ToString().Split('-')[0];
+
+                    <div class="col-md-4 col-sm-6 col-xs-6 sortFilterBakeryProduct" style="padding:1.5%;" data-name="@urun["Name"]" data-price="@price.Split('.')[0]" data-category="@urun["Category"]" data-date="@Convert.ToDateTime(urun["AddDate"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-favs="@urun["Fav"]">
+                            <a  href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })">
+                                <div class="new-product-wrapper" style="padding:1%; width:100%; float:left;">
+                                    @{
+                                        if (urun["BakeryID"].ToString() == "CB5EDC14-85FD-40AD-A79A-82D6CA460CD9")
+                                        { <img class="new-product-img" alt="ürün pasta" src="@product_thumbnail" onclick="$(this).parent().parent().submit()" /> }
+                                        else
+                                        { <img class="new-product-img" alt="ürün pasta" src="@product_thumbnail" onclick="$(this).parent().parent().submit()" /> }
+                                    }
+                                    <div class="new-product-div">
+                                        <span class="new-product-name">@urun["Name"]</span>
+                                        <span class="new-product-description2">@uc.productCatCorrector(urun)</span>
+                                        <span class="new-product-price"> @price.Split('.')[0] <span style="font-size:16px; margin-left:-7px;">.@price.Split('.')[1] TL</span></span>
+                                    </div>
+                                </div>
+                            </a>
+                    </div>
+                }
+
+                for (int i = 0; i < designs.Rows.Count; i++)
+                {
+                    DataRow design = designs.Rows[i];
+                    String img = "/Images/MadeCakes/" + design["MadeID"] + "/designImg-275x275.png";
+
+                    String designType = uc.cleanseUrlString(design["Type"].ToString().Replace("\r\n", ""));
+                    String designName = uc.cleanseUrlString(design["Name"].ToString()) + "-" + design["MadeID"].ToString().Split('-')[0];
+                    String price = uc.ArrangePrice(design["PriceInterval"].ToString());
+
+                    <div class="col-md-4 col-sm-6 col-xs-6 design-product sortFilterBakeryProduct" style="padding:1.5%; float:left;" data-price="@design["PriceInterval"].ToString()" data-name="@design["Name"]" data-size="@design["SizeOptions"]" data-category="@design["Category"].ToString().Trim()" data-date="@Convert.ToDateTime(design["DateTime"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-likes="@design["Likes"]">
+                        <a  href="@Url.Action("Tasarim","Home", new { type = designType, designName = designName })">
+                            <div class="new-product-wrapper" style="padding:1%;">
+                                <img class="new-product-img" alt="ürün tasarım pasta" src="@img" onclick="$(this).parent().parent().submit()" />
+                                <div class="new-product-div">
+                                    <span class="new-product-name">@design["Name"]</span>
+                                    <span class="new-product-description">@design["SizeOptions"] kişilik</span>
+                                    <span class="new-product-price"> @price.Split('.')[0] <span style="font-size:16px; margin-left:-7px;">.@price.Split('.')[1] TL</span></span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top:7%; margin-bottom:10%;">
+        <label style="font-weight:500; text-align:center; width:100%; float:left; padding-bottom:30px; font-size:20px;">@footerLabelTitle</label>
+        <label style="text-align:justify; width:100%; float:left;">@Html.Raw(footerLabel)</label>
+    </div>
+</div>

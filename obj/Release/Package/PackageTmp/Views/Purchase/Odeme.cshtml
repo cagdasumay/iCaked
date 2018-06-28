@@ -1,0 +1,1407 @@
+﻿@using System.Collections
+@using System.Data
+@using Cake.Controllers
+@using System.Net.Mail;
+@using System.IO;
+@using System.Data.SqlClient;
+@using Cake.Models;
+
+@functions {
+
+    bool paymentSuccessful = false;
+    bool secureSuccessful = false;
+
+    SqlConnection con = new SqlConnection("Server=tcp:infinia.database.windows.net,1433;Data Source=infinia.database.windows.net;Initial Catalog=Cake;Persist Security Info=False;User ID=infinia;Password=15Feposea;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30");
+
+    public string getProductSize(string productID, string productPrice)
+    {
+        try
+        {
+            DataRow product = DBQueryGetter("select * from Products where ProductID = '" + new Guid(productID) + "'").Rows[0];
+            int idx = 0;
+            String[] prices = product["Price"].ToString().Split(' ');
+            String[] sizes = product["SizeOptions"].ToString().Split(' ');
+            for (int i = 0; i < prices.Length; i++) { if (prices[i] == productPrice) { idx = i; } }
+            return sizes[idx];
+        }
+        catch (Exception e) { return ""; }
+    }
+
+    public bool DBQuerySetter(String query)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand(query, con);
+            con.Open();
+            int i = cmd.ExecuteNonQuery();
+            con.Close();
+            if (i == 0) { return false; } else { return true; }
+        }
+        catch (Exception e) { con.Close(); return false; }
+    }
+
+    public DataTable DBQueryGetter(String query)
+    {
+
+        DataTable table = new DataTable();
+        SqlCommand cmd = new SqlCommand(query, con);
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+
+        try
+        {
+            con.Open();
+            da.Fill(table);
+            con.Close();
+        }
+        catch (Exception e) { con.Close(); }
+
+        return table;
+    }
+
+    public void sendOrderMails(FormCollection form, bool isPaymentSuccessful)
+    {
+        DataRow bakery = (DataRow)Session["orderBakery"]; bool partyExists = false; DataRow partyBakery = DBQueryGetter("select * from Bakeries where BakeryID = '98E94E0A-C764-4F99-A2F1-F4915631A891'").Rows[0];
+        FormCollection infoForm = (FormCollection)Session["orderDeliveryInfo"];
+
+        string orderID = (string)Session["orderID"];
+        string orderNumber = ((int)Session["OrderNumber"]).ToString();
+        DataRow order = (DataRow)Session["orderMain"];
+
+        List<DataRow> cart = (List<DataRow>)Session["cart"];
+
+        string carrySecondHour = "";
+        if (infoForm["bakerySecondHourCopy"] != null) { carrySecondHour = infoForm["bakerySecondHourCopy"]; }
+
+        string deliveryDateTime = "";
+        if (infoForm["selectedHour"] == "normal") { deliveryDateTime = infoForm["deliveryDatePicker"] + " " + infoForm["deliveryTimePicker"] + " " + carrySecondHour; }
+        else { deliveryDateTime = infoForm["deliveryDatePicker"] + " " + infoForm["deliveryTimePickerClean"] + " " + carrySecondHour; }
+
+        string totalPrice = "0"; string madeID = ""; string paymentType = ""; string adresStr = ""; string adresLabel = ""; string madeProductStr = ""; string productsStr = ""; string cakeProductStr = ""; string partyProductStr = ""; string odemeOnayi = ""; string tasarimNotlariStr = ""; string tasarimFotolariStr = ""; string editorTextStr = ""; string editorImgStr = ""; string partyTeslimatLabel = ""; string partyTeslimatInfo = "";
+        DataRow address = null; DataRow madeProduct = null;
+        int madeIDx = 0;
+
+        if (Session["orderPayment"] == null | string.IsNullOrEmpty((String)Session["orderPayment"])) { paymentType = "POS"; } else { paymentType = (String)Session["orderPayment"]; }
+
+        string pt2 = "";
+        if (paymentType == "POS") { pt2 = "İNTERNET"; odemeOnayi = "ÖDENDİ"; }
+        else { pt2 = paymentType; odemeOnayi = "ÖDENMEDİ"; }
+
+        string cakePrice = "0"; string partyPrice = "0";
+
+        for (int i = 0; i < cart.Count; i++)
+        {
+            totalPrice = (Convert.ToDouble(totalPrice.Replace(".", ",")) + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","))).ToString();
+            if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()) == false) { madeID = cart[i]["MadeID"].ToString(); madeProduct = cart[i]; }
+
+            if (cart[i]["Category"].ToString() == "Parti Malzemeleri")
+            {
+                partyPrice = (Convert.ToDouble(partyPrice.Replace(".", ",")) + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","))).ToString();
+                partyExists = true;
+            }
+            else
+            {
+                cakePrice = (Convert.ToDouble(cakePrice.Replace(".", ",")) + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","))).ToString();
+            }
+        }
+
+        if (Session["promotion"] != null)
+        {
+            Promotion prom = (Promotion)Session["promotion"];
+            totalPrice = Convert.ToDouble(prom.newCartPrice.Replace(".", ",")).ToString();
+        }
+
+        if (String.IsNullOrEmpty(order["MadeID"].ToString()) == false)
+        {
+            //  madeProduct = DBQueryGetter("select * from MadeCakes where MadeID = '" + order["MadeID"] + "'").Rows[0];
+            for (int i = 0; i < order["ProductIDs"].ToString().Split(' ').Length; i++) { if (order["MadeID"].ToString().ToLower() == order["ProductIDs"].ToString().Split(' ')[i].ToString().ToLower()) { madeIDx = i; break; } }
+        }
+
+        if (Session["orderAddress"] != null) { if (Session["orderAddress"].GetType().Name != "String") { address = (DataRow)Session["orderAddress"]; } }
+        if (address != null)
+        {
+            adresStr = @"
+                    <label style=""float:left; width:100%; padding-bottom:15px;"">" + address["ProvinceName"] + ", " + address["DistrictName"] + ", " + address["TownName"] + ", " + address["NeighborhoodName"] + @"</label>
+                    <label style=""float:left; width:100%; padding-bottom:15px;"">" + address["SpecificAddress"] + @"</label>
+                    <label style=""float:left; width:100%; padding-bottom:15px;"">" + address["Description"] + @"</label>";
+
+            adresLabel = @"
+                    <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Sipariş Adresi : </label>
+                    ";
+        }
+
+        List<DataRow> products = (List<DataRow>)Session["cart"];
+        //for (int i = 0; i < order["ProductIDs"].ToString().Split(' ').Length; i++)
+        //{
+        //    try
+        //    {
+        //        products.Add(DBQueryGetter("select * from Products where ProductID = '" + order["ProductIDs"].ToString().Split(' ')[i] + "'").Rows[0]);
+        //    }
+        //    catch (Exception e) { }
+        //}
+
+        if (madeProduct != null)
+        {
+            string madeInner = "";
+
+            for (int i2 = 0; i2 < madeProduct["ImagePath"].ToString().Split(' ').Length; i2++)
+            {
+                string productImg = "https://www.icaked.com/Images/MadeCakes/" + madeProduct["MadeID"] + "/" + madeProduct["ImagePath"].ToString().Split(' ')[i2];
+                madeInner = madeInner + @"<img src=" + productImg + @" style = ""width:150px; cursor:pointer; float:left; margin:10px;"" />";
+            }
+
+            if (Session["designNotes"] != null | Session["designImages"] != null)
+            {
+                if (Session["designNotes"] != null)
+                {
+                    String note = (string)Session["designNotes"];
+                    tasarimNotlariStr = @"
+                                    <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                        <label style=""float:left; margin-left:10px; font-size:14px; color:#9a4622; margin-right:10px; font-weight:bold; width:100%;"">Tasarım Notları : </label>
+                                        <label style=""float:left; margin-left:10px; font-size:14px;"">" + note + @"</label>
+                                    </div>
+                                    ";
+                }
+
+                if (Session["designImages"] != null)
+                {
+                    List<string> note = (List<string>)Session["designImages"];
+                    String tasarimFotolariSubstr = "";
+
+                    for (int i3 = 0; i3 < note.Count; i3++)
+                    {
+                        tasarimFotolariSubstr = tasarimFotolariSubstr + @"<img src=" + "https://www.icaked.com/" + note[i3] + @" style = ""width:150px; cursor:pointer; float:left; margin:10px;"" />";
+                    }
+
+                    tasarimFotolariStr = @"
+                                    <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                        <label style=""float:left; margin-left:10px; font-size:14px; color:#9a4622; margin-right:10px; font-weight:bold;"">Tasarım İçin İstek Fotoğraflar : </label>
+                                        <div style=""width:100%; float:left; float:left;"">" + tasarimFotolariSubstr + @"</div>
+                                    </div>
+                                    ";
+                }
+            }
+
+            if (Session["editorText"] != null | Session["editorImg"] != null)
+            {
+                if (Session["editorText"] != null)
+                {
+                    List<string> text = (List<string>)Session["editorText"];
+                    String editorTextSubstr = "";
+
+                    for (int i3 = 0; i3 < text.Count; i3++)
+                    {
+                        editorTextSubstr = editorTextSubstr + @"<label style=""float:left; margin:10px; margin-bottom:0px; font-weight:bold; width:100%;"" >" + text[i3] + @"</label>";
+                    }
+
+                    editorTextStr = @"
+                                    <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                        <label style=""float:left; margin-left:10px; font-size:14px; color:#9a4622; margin-right:10px; font-weight:bold;"">Tasarımda Geçen Yazılar : </label>
+                                        <div style=""width:100%; float:left; font-size:16px;"">" + editorTextSubstr + @"</div>
+                                    </div>
+                                    ";
+                }
+
+                if (Session["editorImg"] != null)
+                {
+                    List<string> images = (List<string>)Session["editorImg"];
+                    String editorImgSubstr = "";
+
+                    for (int i3 = 0; i3 < images.Count; i3++)
+                    {
+                        editorImgSubstr = editorImgSubstr + @"<img src=" + "https://www.icaked.com/" + images[i3] + @" style = ""width:200px; cursor:pointer; float:left; margin:10px;"" />";
+                    }
+
+                    editorImgStr = @"
+                                    <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                        <label style=""float:left; margin-left:10px; font-size:14px; color:#9a4622; margin-right:10px; font-weight:bold;"">Tasarımda Geçen Fotoğraflar : </label>
+                                        <div style=""width:100%; float:left; float:left;"">" + editorImgSubstr + @"</div>
+                                    </div>
+                                    ";
+                }
+            }
+
+            madeProductStr = @"
+                        <div style=""width:100%; float:left; margin-bottom:10px; padding-bottom:20px;"">
+                            <div style=""width:100%; float:left; margin-bottom:10px; float:left;"">
+                                <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                    <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Adet : </label>
+                                    <label style=""float:left; margin-left:10px; font-size:14px;"">" + order["ProductNumbers"].ToString().Split(' ')[madeIDx] + @" adet - " + madeProduct["SizeOptions"] + @" kişilik</label>
+                                </div>
+                                <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                    <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün Fiyatı : </label>
+                                    <label style=""float:left; margin-left:10px; font-size:14px;"">" + madeProduct["PagePrice"] + @" TL</label>
+                                </div>
+                                <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                    <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün İsmi : </label>
+                                    <label style=""float:left; margin-left:10px; font-size:14px;"">" + madeProduct["Name"] + @"</label>
+                                </div>
+                                <div style=""width:100%; float:left; margin-bottom:10px;"">
+                                    <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün İçeriği : </label>
+                                    <label style=""float:left; margin-left:10px; font-size:14px;"">" + order["Inside"] + @"</label>
+                                </div>
+                                " + tasarimNotlariStr + tasarimFotolariStr + @"
+                                " + editorTextStr + editorImgStr + @"
+                            </div>
+                            <div style=""width:100%; float:left; float:left;"">" + madeInner + @"</div>
+                        </div>
+                ";
+        }
+
+        for (int i = 0; i < products.Count; i++)
+        {
+            if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()) == true)
+            {
+                string productsInner = "";
+
+                for (int i2 = 0; i2 < products[i]["Thumbnail"].ToString().Split(' ').Length; i2++)
+                {
+                    string productImg = "https://www.icaked.com/Images/Products/" + products[i]["ProductID"] + "/" + products[i]["Thumbnail"].ToString().Split(' ')[i2];
+                    if (String.IsNullOrEmpty(products[i]["Thumbnail"].ToString().Split(' ')[i2]) == false)
+                    {
+                        productsInner = productsInner + @"<img src=" + productImg + @" style=""width:150px; cursor:pointer; float:left; margin-right:10px; margin-left:10px;"" />";
+                    }
+                }
+
+                string inside = "";
+
+                if (Session["orderContent"] != null)
+                {
+                    DataRow content = (DataRow)Session["orderContent"];
+                    inside = @"
+                        <div style=""width:100%; float:left; margin-bottom:10px;"">
+                            <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün İçeriği : </label>
+                            <label style=""float:left; margin-left:10px; font-size:14px;"">" + content["Inside"].ToString() + @"</label>
+                        </div>";
+                }
+
+                productsStr =
+                @"<div style=""width:100%; float:left; margin-bottom:10px; padding-bottom:20px;"">
+                    <div style = ""width:100%; float:left; margin-bottom:10px; float:left;"">
+                        <div style=""width:100%; float:left; margin-bottom:10px;"">
+                            <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Adet : </label>
+                            <label style=""float:left; margin-left:10px; font-size:14px;"">" + order["ProductNumbers"].ToString().Split(' ')[i] + @" adet</label>
+                        </div>
+                        <div style=""width:100%; float:left; margin-bottom:10px;"">
+                            <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün Fiyatı : </label>
+                            <label style=""float:left; margin-left:10px; font-size:14px;"">" + products[i]["PagePrice"] + @" TL</label>
+                        </div>
+                        <div style=""width:100%; float:left; margin-bottom:10px;"">
+                            <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün İsmi : </label>
+                            <label style=""float:left; margin-left:10px; font-size:14px;"">" + products[i]["Name"] + @"</label>
+                        </div>
+                        <div style=""width:100%; float:left; margin-bottom:10px;"">
+                            <label style=""float:left; margin-left:10px; font-size:14px; font-weight:bold; color:#9a4622; margin-right:10px; width:170px;"">Ürün Boyutu : </label>
+                            <label style=""float:left; margin-left:10px; font-size:14px;"">" + getProductSize(products[i]["ProductID"].ToString(), order["ProductPrices"].ToString().Split(' ')[i]) + @"</label>
+                        </div>
+                        " + inside + @"
+                    </div>
+                    <div style=""width:100%; float:left; float:left;"">" + productsInner + @"</div>
+                </div>";
+
+                if (products[i]["Category"].ToString() == "Parti Malzemeleri")
+                {
+                    partyTeslimatLabel = @"<label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Parti Sepeti : </label>";
+                    partyTeslimatInfo = @"<label style=""float:left; width:100%; padding-bottom:15px; font-weight:bold;"">" + DateTime.Now.AddDays(1).ToString("dd.MM.yyyy HH:mm").Replace(".", "/") + @" tarihine kadar kargoya verilecektir.</label>";
+                    partyProductStr = partyProductStr + productsStr;
+                }
+                else
+                {
+                    cakeProductStr = cakeProductStr + productsStr;
+                }
+            }
+        }
+
+        string orderlink = "https://www.icaked.com/BakeryOrderSub?orderID=" + order["OrderID"].ToString();
+
+        string customerDeclaration = @"
+                        <div style =""width:100%; float:left; border-top:1px solid #e6e6e6;"">
+                            <div style=""width:100%; float:left; text-align:justify; padding:40px 0px; text-align:center; margin:20px 0px; border-radius:5px; position:relative;"">
+                                <div style=""width:100%; float:left;"">
+                                    <label style=""font-size:26px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">Siparişiniz bize ulaşmıştır</label>
+                                    <label style=""font-size:14px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">iCaked’i seçtiğiniz teşekkür ederiz. En tatlı anlarınızda yanınızda olmaktan büyük mutluluk duyuyoruz</label>
+                                    <label style=""font-size:14px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">Siparişinizin detayları aşağıda verilmiştir. </label>
+                                    <a href=" + orderlink + @" style=""font-size:14px; float:left; width:100%; text-align:center; padding-bottom:20px; color:black;"">Sipariş durumunuzu buradan takip edebilirsiniz. </a>
+                                </div>
+                            </div>
+                        </div>";
+
+        string bakeryDeclaration = @"
+                        <div style =""width:100%; float:left; border-top:1px solid #e6e6e6;"">
+                            <div style=""width:100%; float:left; text-align:justify; padding:40px 0px; text-align:center; margin:20px 0px; border-radius:5px; position:relative;"">
+                                <div style=""width:100%; float:left;"">
+                                    <label style=""font-size:26px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">Merhaba " + bakery["Name"] + @"</label>
+                                    <label style=""font-size:14px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">iCaked.com üzerinden pastanenizden sipariş oluşturuldu.</label>
+                                    <label style=""font-size:14px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">Siparişinizin detayları aşağıda verilmiştir. </label>
+                                    <a href=" + orderlink + @" style=""font-size:14px; float:left; width:100%; text-align:center; padding-bottom:20px; color:black;"">Sipariş durumunuzu buradan takip edebilirsiniz. </a>
+                                </div>
+                            </div>
+                        </div>";
+
+        string partyDeclaration = @"
+                        <div style =""width:100%; float:left; border-top:1px solid #e6e6e6;"">
+                            <div style=""width:100%; float:left; text-align:justify; padding:40px 0px; text-align:center; margin:20px 0px; border-radius:5px; position:relative;"">
+                                <div style=""width:100%; float:left;"">
+                                    <label style=""font-size:26px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">Merhaba " + partyBakery["Name"] + @"</label>
+                                    <label style=""font-size:14px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">iCaked.com üzerinden pastanenizden sipariş oluşturuldu.</label>
+                                    <label style=""font-size:14px; color:#9a4622; float:left; width:100%; text-align:center; padding-bottom:20px;"">Siparişinizin detayları aşağıda verilmiştir. </label>
+                                    <a href=" + orderlink + @" style=""font-size:14px; float:left; width:100%; text-align:center; padding-bottom:20px; color:black;"">Sipariş durumunuzu buradan takip edebilirsiniz. </a>
+                                </div>
+                            </div>
+                        </div>";
+
+        String customerMailBody = @"
+                 <div style=""width:90%; margin-left:5%; font-family:Helvetica, sans-serif;"">
+                    <div style=""margin:auto; min-width:330px; max-width:800px;"">
+
+                        <div style=""padding:20px 0px; margin-top:30px; width:100%; float:left; background:white; text-align:center;"">
+                            <img src=""https://www.icaked.com/Images/Site/main_logo.png"" style=""width:150px;"" />
+                        </div>"
+            + customerDeclaration +
+                @"<label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">Sipariş Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:20%; float:left; min-width:125px; color:#9a4622;"">
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Ödeme Şekli : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Ödeme Durumu : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Pastane : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Sipariş Numarası : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Teslimat Tarihi : </label>
+                                " + partyTeslimatLabel +
+                                @"<label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Toplam Fiyat : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Sipariş Notları : </label>
+                                " + adresLabel +
+                  @"</div>
+                            <div style=""width:60%; float:left;"">
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + pt2 + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + odemeOnayi + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + bakery["Name"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + orderNumber + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-weight:bold;"">" + deliveryDateTime.Replace("/", ".") + @"</label>
+                                " + partyTeslimatInfo +
+                                @"<label style=""float:left; width:100%; padding-bottom:15px;"">" + totalPrice + @" TL </label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["orderNotes"] + @"</label>
+                                " + adresStr +
+                  @"</div>
+                        </div>
+
+                        <label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">İletişim Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:20%; min-width:125px; float:left; color:#9a4622;"">
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">İsim - Soyisim : </label>
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">E-Posta : </label>
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">Telefon : </label>
+                            </div>
+                            <div style=""width:60%; float:left;"">
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactName"] + " " + infoForm["contactSurname"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactMail"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactTel"] + @"</label>
+                            </div>
+                        </div>
+
+                        <label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">Ürün Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:99%; padding:0px; float:left;"">" + madeProductStr + productsStr + partyProductStr + @"
+                            </div>
+                        </div>
+
+                        <div style=""width:100%; float:left; margin:50px 0px; text-align:center;"">
+                            <img src=""https://www.icaked.com/Images/Site/mailing.png"" style=""width:100%;"" />
+                        </div>
+
+                        <div style=""background:#f9f9f9; border-radius:5px; width:100%; float:left; padding:20px 0px; margin:20px 0px;"">
+                            <a href=""http://www.facebook.com/icaked""><img src=""https://www.icaked.com/Images/Site/fb_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px; margin-left:15px;"" /></a>
+                            <a href=""http://www.twitter.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/tw_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a href=""http://www.instagram.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/in_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a href=""http://www.facebook.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/pi_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a style=""text-decoration:none; float:right;"">
+                                <label style=""font-size:14px; line-height:30px; float:right; color:black; margin-right:20px;"">2016 © www.iCaked.com</label>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            ";
+
+        String bakeryMailBody = @"
+                 <div style=""width:90%; margin-left:5%; font-family:Helvetica, sans-serif;"">
+                    <div style=""margin:auto; min-width:330px; max-width:800px;"">
+
+                        <div style=""padding:20px 0px; margin-top:30px; width:100%; float:left; background:white; text-align:center;"">
+                            <img src=""https://www.icaked.com/Images/Site/main_logo.png"" style=""width:150px;"" />
+                        </div>"
+                + bakeryDeclaration +
+                    @"<label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">Sipariş Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:20%; float:left; min-width:125px; color:#9a4622;"">
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px; font-size:15px; font-weight:600;"">Ödeme Şekli : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px; font-size:15px; font-weight:600;"">Ödeme Durumu : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Pastane : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Sipariş Numarası : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Teslimat Tarihi : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Toplam Fiyat : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Sipariş Notları : </label>
+                                " + adresLabel +
+                      @"</div>
+                            <div style=""width:60%; float:left;"">
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-size:15px; font-weight:600;"">" + pt2 + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-size:15px; font-weight:600;"">" + odemeOnayi + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + bakery["Name"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + orderNumber + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-weight:bold;"">" + deliveryDateTime.Replace("/", ".") + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + cakePrice + @" TL </label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["orderNotes"] + @"</label>
+                                " + adresStr +
+                      @"</div>
+                        </div>
+
+                        <label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">İletişim Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:20%; min-width:125px; float:left; color:#9a4622;"">
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">İsim - Soyisim : </label>
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">E-Posta : </label>
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">Telefon : </label>
+                            </div>
+                            <div style=""width:60%; float:left;"">
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactName"] + " " + infoForm["contactSurname"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactMail"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactTel"] + @"</label>
+                            </div>
+                        </div>
+
+                        <label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">Ürün Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:99%; padding:0px; float:left;"">" + madeProductStr + cakeProductStr + @"
+                            </div>
+                        </div>
+                        <div style=""background:#f9f9f9; border-radius:5px; width:100%; float:left; padding:20px 0px; margin:20px 0px;"">
+                            <a href=""http://www.facebook.com/icaked""><img src=""https://www.icaked.com/Images/Site/fb_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px; margin-left:15px;"" /></a>
+                            <a href=""http://www.twitter.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/tw_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a href=""http://www.instagram.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/in_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a href=""http://www.facebook.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/pi_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a style=""text-decoration:none; float:right;"">
+                                <label style=""font-size:14px; line-height:30px; float:right; color:black; margin-right:20px;"">2016 © www.iCaked.com</label>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            ";
+
+        String partyMailBody = @"
+                <div style=""width:90%; margin-left:5%; font-family:Helvetica, sans-serif;"">
+                    <div style=""margin:auto; min-width:330px; max-width:800px;"">
+
+                        <div style=""padding:20px 0px; margin-top:30px; width:100%; float:left; background:white; text-align:center;"">
+                            <img src=""https://www.icaked.com/Images/Site/main_logo.png"" style=""width:150px;"" />
+                        </div>"
+                + partyDeclaration +
+                    @"<label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">Sipariş Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:20%; float:left; min-width:125px; color:#9a4622;"">
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px; font-size:15px; font-weight:600;"">Ödeme Şekli : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px; font-size:15px; font-weight:600;"">Ödeme Durumu : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Sipariş Numarası : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Teslimat Tarihi : </label>
+                                <label style=""font-weight:bold; width:100%; float:left; padding-bottom:15px;"">Toplam Fiyat : </label>
+                                " + adresLabel +
+                      @"</div>
+                            <div style=""width:60%; float:left;"">
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-size:15px; font-weight:600;"">" + pt2 + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-size:15px; font-weight:600;"">" + odemeOnayi + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + orderNumber + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px; font-weight:bold;"">" + DateTime.Now.AddDays(1).ToString("dd.MM.yyyy HH:mm").Replace(".", "/") + @" tarihine kadar kargoya verilecektir.</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + partyPrice + @" TL </label>
+                                " + adresStr +
+                      @"</div>
+                        </div>
+
+                        <label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">İletişim Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:20%; min-width:125px; float:left; color:#9a4622;"">
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">İsim - Soyisim : </label>
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">E-Posta : </label>
+                                <label style=""font-weight:bold; width:100%; padding-bottom:15px; float:left;"">Telefon : </label>
+                            </div>
+                            <div style=""width:60%; float:left;"">
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactName"] + " " + infoForm["contactSurname"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactMail"] + @"</label>
+                                <label style=""float:left; width:100%; padding-bottom:15px;"">" + infoForm["contactTel"] + @"</label>
+                            </div>
+                        </div>
+
+                        <label style=""float:left; font-size:24px; padding:15px; background:#f9f9f9; border-radius:10px; width:100%; margin-bottom:20px; text-align:left; color:#9a4622; line-height:initial;"">Ürün Bilgileri</label>
+                        <div style=""width:100%; float:left; text-align:left; padding:15px 0px;"">
+                            <div style=""width:99%; padding:0px; float:left;"">" + partyProductStr + @"
+                            </div>
+                        </div>
+                        <div style=""background:#f9f9f9; border-radius:5px; width:100%; float:left; padding:20px 0px; margin:20px 0px;"">
+                            <a href=""http://www.facebook.com/icaked""><img src=""https://www.icaked.com/Images/Site/fb_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px; margin-left:15px;"" /></a>
+                            <a href=""http://www.twitter.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/tw_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a href=""http://www.instagram.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/in_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a href=""http://www.facebook.com/icakedcom""><img src=""https://www.icaked.com/Images/Site/pi_icon.png"" style=""float:left; margin:3px; width:25px; margin-top:0px;"" /></a>
+                            <a style=""text-decoration:none; float:right;"">
+                                <label style=""font-size:14px; line-height:30px; float:right; color:black; margin-right:20px;"">2016 © www.iCaked.com</label>
+                            </a>
+                        </div>
+                    </div>
+                </div>";
+
+        // bakery Mail
+
+        String bakeryMail = bakery["Email"].ToString();
+        String bakerySubject = "iCaked - Sipariş Bildirimi";
+
+        // customer Mail
+
+        String customerMail = infoForm["contactMail"];
+        String customerSubject = "iCaked - Sipariş Bildirimi";
+
+        List<string> cc = new List<string>();
+        if (bakeryMail.Contains(" "))
+        {
+            string[] temp = bakeryMail.Split(' ');
+            for (int i = 0; i < temp.Length; i++) { cc.Add(temp[i]); }
+        }
+        if (cc.Count == 0) { cc = null; }
+
+        sendMail(customerMail, customerSubject, customerMailBody, null, null);
+        sendMail(bakeryMail, bakerySubject, bakeryMailBody, cc, null);
+        sendMail("info@icaked.com", customerSubject, customerMailBody, null, null);
+        sendMail("cagdasumay@gmail.com", customerSubject, customerMailBody, null, null);
+        sendMail("berker.yasar@infinia.com.tr", customerSubject, customerMailBody, null, null);
+
+        if (partyExists)
+        {
+            // party Mail
+
+            String partyMail = partyBakery["Email"].ToString();
+            String partySubject = "iCaked - Sipariş Bildirimi";
+            sendMail(partyMail, partySubject, partyMailBody, null, null);
+        }
+    }
+
+    public void sendMail(String to, String subject, String body, List<string> cc, List<string> bcc)
+    {
+        try
+        {
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 25);
+            client.EnableSsl = true;
+
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+            MailMessage msg = new MailMessage("info@icaked.com", to, subject, body);
+            msg.IsBodyHtml = true;
+            if (cc != null) { for (int i = 0; i < cc.Count; i++) { msg.CC.Add(cc[i]); } }
+            if (bcc != null) { for (int i = 0; i < bcc.Count; i++) { msg.Bcc.Add(bcc[i]); } }
+
+            client.UseDefaultCredentials = true;
+            client.Credentials = new NetworkCredential("info@icaked.com", "huzzud15Feposea");
+
+            client.Send(msg);
+        }
+        catch (Exception e) { }
+    }
+
+    public void continue3dSecure()
+    {
+        IEnumerator e = Request.Form.GetEnumerator();
+        while (e.MoveNext())
+        {
+            String xkey = (String)e.Current;
+            String xval = Request.Form.Get(xkey);
+            //Response.Write("<tr><td>" + xkey + "</td><td>" + xval + "</td></tr>");
+        }
+
+        String hashparams = Request.Form.Get("HASHPARAMS");
+        String hashparamsval = Request.Form.Get("HASHPARAMSVAL");
+        String storekey = "TRPS2658";
+        String paramsval = "";
+        int index1 = 0, index2 = 0;
+        // hash hesaplamada kullanılacak değerler ayrıştırılıp değerleri birleştiriliyor.
+        do
+        {
+            index2 = hashparams.IndexOf(":", index1);
+            String val = Request.Form.Get(hashparams.Substring(index1, index2 - index1)) == null ? "" : Request.Form.Get(hashparams.Substring(index1, index2 - index1));
+            paramsval += val;
+            index1 = index2 + 1;
+        }
+        while (index1 < hashparams.Length);
+
+        String hashval = paramsval + storekey;         //elde edilecek hash değeri için paramsval e store key ekleniyor. (işyeri anahtarı)
+        String hashparam = Request.Form.Get("HASH");
+
+        System.Security.Cryptography.SHA1 sha = new System.Security.Cryptography.SHA1CryptoServiceProvider();
+        byte[] hashbytes = System.Text.Encoding.GetEncoding("ISO-8859-9").GetBytes(hashval);
+        byte[] inputbytes = sha.ComputeHash(hashbytes);
+
+        String hash = Convert.ToBase64String(inputbytes); //Güvenlik ve kontrol amaçlı oluşturulan hash
+
+        if (!paramsval.Equals(hashparamsval) || !hash.Equals(hashparam)) //oluşturulan hash ile gelen hash ve hash parametreleri değerleri ile ayrıştırılıp edilen edilen aynı olmalı.
+        {
+            //Response.Write("<h4>Güvenlik Uyarısı. Sayısal İmza Geçerli Değil</h4>");
+        }
+
+        // Ödeme için gerekli parametreler
+        String nameval = "infiniadmin";              //İşyeri kullanıcı adı
+        String passwordval = "BOSS1302";        //İşyeri şifresi
+        String clientidval = Request.Form.Get("clientid"); // İşyeri numarası
+        String modeval = "P";                   //P olursa gerçek işlem, T olursa test işlemi yapar.
+        String typeval = "Auth";           //Auth PreAuth PostAuth Credit Void olabilir.
+        String expiresval = Request.Form.Get("Ecom_Payment_Card_ExpDate_Month") + "/" + Request.Form.Get("Ecom_Payment_Card_ExpDate_Year"); //Kredi Kartı son kullanım tarihi mm/yy formatından olmalı
+        String cv2val = Request.Form.Get("cv2");    //Güvenlik Kodu
+        String totalval = Request.Form.Get("amount"); //Tutar
+        String numberval = Request.Form.Get("md");    //Kart numarası olarak 3d sonucu dönem md parametresi kullanılır.
+        String taksitval = "";                  //Taksit sayısı peşin satışlar da boş olarak gönderilmelidir.
+        String currencyval = "949";           //ytl için
+        String orderidval = "";                //Sipariş numarası
+
+        String mdstatus = Request.Form.Get("mdStatus"); // mdStatus 3d işlemin sonucu ile ilgili bilgi verir. 1,2,3,4 başarılı, 5,6,7,8,9,0 başarısızdır.
+
+        // 3D parametreler
+        if (mdstatus.Equals("1") || mdstatus.Equals("2") || mdstatus.Equals("3") || mdstatus.Equals("4")) //3D Onayı alınmıştır.
+        {
+            secureSuccessful = true;
+            String cardholderpresentcodeval = "13";
+            String payersecuritylevelval = Request.Form.Get("eci");
+            String payertxnidval = Request.Form.Get("xid");
+            String payerauthenticationcodeval = Request.Form.Get("cavv");
+
+            String ipaddressval = "";
+            String emailval = "";
+            String groupidval = "";
+            String transidval = "";
+            String useridval = "";
+
+            //Fatura Bilgileri
+            String billnameval = "";      //Fatur İsmi
+            String billstreet1val = "";   //Fatura adres 1
+            String billstreet2val = "";   //Fatura adres 2
+            String billstreet3val = "";   //Fatura adres 3
+            String billcityval = "";      //Fatura şehir
+            String billstateprovval = ""; //Fatura eyalet
+            String billpostalcodeval = ""; //Fatura posta kodu
+
+            //Teslimat Bilgileri
+            String shipnameval = "";      //isim
+            String shipstreet1val = "";   //adres 1
+            String shipstreet2val = "";   //adres 2
+            String shipstreet3val = "";   //adres 3
+            String shipcityval = "";      //şehir
+            String shipstateprovval = ""; //eyalet
+            String shippostalcodeval = "";//posta kodu
+
+            String extraval = "";
+
+            //Ödeme için gerekli xml yapısı oluşturuluyor
+
+            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
+
+            System.Xml.XmlDeclaration dec =
+            doc.CreateXmlDeclaration("1.0", "ISO-8859-9", "yes");
+
+            doc.AppendChild(dec);
+
+            System.Xml.XmlElement cc5Request = doc.CreateElement("CC5Request");
+            doc.AppendChild(cc5Request);
+
+            System.Xml.XmlElement name = doc.CreateElement("Name");
+            name.AppendChild(doc.CreateTextNode(nameval));
+            cc5Request.AppendChild(name);
+
+            System.Xml.XmlElement password = doc.CreateElement("Password");
+            password.AppendChild(doc.CreateTextNode(passwordval));
+            cc5Request.AppendChild(password);
+
+            System.Xml.XmlElement clientid = doc.CreateElement("ClientId");
+            clientid.AppendChild(doc.CreateTextNode(clientidval));
+            cc5Request.AppendChild(clientid);
+
+            System.Xml.XmlElement ipaddress = doc.CreateElement("IPAddress");
+            ipaddress.AppendChild(doc.CreateTextNode(ipaddressval));
+            cc5Request.AppendChild(ipaddress);
+
+            System.Xml.XmlElement email = doc.CreateElement("Email");
+            email.AppendChild(doc.CreateTextNode(emailval));
+            cc5Request.AppendChild(email);
+
+            System.Xml.XmlElement mode = doc.CreateElement("Mode");
+            mode.AppendChild(doc.CreateTextNode(modeval));
+            cc5Request.AppendChild(mode);
+
+            System.Xml.XmlElement orderid = doc.CreateElement("OrderId");
+            orderid.AppendChild(doc.CreateTextNode(orderidval));
+            cc5Request.AppendChild(orderid);
+
+            System.Xml.XmlElement groupid = doc.CreateElement("GroupId");
+            groupid.AppendChild(doc.CreateTextNode(groupidval));
+            cc5Request.AppendChild(groupid);
+
+            System.Xml.XmlElement transid = doc.CreateElement("TransId");
+            transid.AppendChild(doc.CreateTextNode(transidval));
+            cc5Request.AppendChild(transid);
+
+            System.Xml.XmlElement userid = doc.CreateElement("UserId");
+            userid.AppendChild(doc.CreateTextNode(useridval));
+            cc5Request.AppendChild(userid);
+
+            System.Xml.XmlElement type = doc.CreateElement("Type");
+            type.AppendChild(doc.CreateTextNode(typeval));
+            cc5Request.AppendChild(type);
+
+            System.Xml.XmlElement number = doc.CreateElement("Number");
+            number.AppendChild(doc.CreateTextNode(numberval));
+            cc5Request.AppendChild(number);
+
+            System.Xml.XmlElement expires = doc.CreateElement("Expires");
+            expires.AppendChild(doc.CreateTextNode(expiresval));
+            cc5Request.AppendChild(expires);
+
+            System.Xml.XmlElement cvv2val = doc.CreateElement("Cvv2Val");
+            cvv2val.AppendChild(doc.CreateTextNode(cv2val));
+            cc5Request.AppendChild(cvv2val);
+
+            System.Xml.XmlElement total = doc.CreateElement("Total");
+            total.AppendChild(doc.CreateTextNode(totalval));
+            cc5Request.AppendChild(total);
+
+            System.Xml.XmlElement currency = doc.CreateElement("Currency");
+            currency.AppendChild(doc.CreateTextNode(currencyval));
+            cc5Request.AppendChild(currency);
+
+            System.Xml.XmlElement taksit = doc.CreateElement("Taksit");
+            taksit.AppendChild(doc.CreateTextNode(taksitval));
+            cc5Request.AppendChild(taksit);
+
+            System.Xml.XmlElement payertxnid = doc.CreateElement("PayerTxnId");
+            payertxnid.AppendChild(doc.CreateTextNode(payertxnidval));
+            cc5Request.AppendChild(payertxnid);
+
+            System.Xml.XmlElement payersecuritylevel = doc.CreateElement("PayerSecurityLevel");
+            payersecuritylevel.AppendChild(doc.CreateTextNode(payersecuritylevelval));
+            cc5Request.AppendChild(payersecuritylevel);
+
+            System.Xml.XmlElement payerauthenticationcode = doc.CreateElement("PayerAuthenticationCode");
+            payerauthenticationcode.AppendChild(doc.CreateTextNode(payerauthenticationcodeval));
+            cc5Request.AppendChild(payerauthenticationcode);
+
+            System.Xml.XmlElement cardholderpresentcode = doc.CreateElement("CardholderPresentCode");
+            cardholderpresentcode.AppendChild(doc.CreateTextNode(cardholderpresentcodeval));
+            cc5Request.AppendChild(cardholderpresentcode);
+
+            System.Xml.XmlElement billto = doc.CreateElement("BillTo");
+            cc5Request.AppendChild(billto);
+
+            System.Xml.XmlElement billname = doc.CreateElement("Name");
+            billname.AppendChild(doc.CreateTextNode(billnameval));
+            billto.AppendChild(billname);
+
+            System.Xml.XmlElement billstreet1 = doc.CreateElement("Street1");
+            billstreet1.AppendChild(doc.CreateTextNode(billstreet1val));
+            billto.AppendChild(billstreet1);
+
+            System.Xml.XmlElement billstreet2 = doc.CreateElement("Street2");
+            billstreet2.AppendChild(doc.CreateTextNode(billstreet2val));
+            billto.AppendChild(billstreet2);
+
+            System.Xml.XmlElement billstreet3 = doc.CreateElement("Street3");
+            billstreet3.AppendChild(doc.CreateTextNode(billstreet3val));
+            billto.AppendChild(billstreet3);
+
+            System.Xml.XmlElement billcity = doc.CreateElement("City");
+            billcity.AppendChild(doc.CreateTextNode(billcityval));
+            billto.AppendChild(billcity);
+
+            System.Xml.XmlElement billstateprov = doc.CreateElement("StateProv");
+            billstateprov.AppendChild(doc.CreateTextNode(billstateprovval));
+            billto.AppendChild(billstateprov);
+
+            System.Xml.XmlElement billpostalcode = doc.CreateElement("PostalCode");
+            billpostalcode.AppendChild(doc.CreateTextNode(billpostalcodeval));
+            billto.AppendChild(billpostalcode);
+
+            System.Xml.XmlElement shipto = doc.CreateElement("ShipTo");
+            cc5Request.AppendChild(shipto);
+
+            System.Xml.XmlElement shipname = doc.CreateElement("Name");
+            shipname.AppendChild(doc.CreateTextNode(shipnameval));
+            shipto.AppendChild(shipname);
+
+            System.Xml.XmlElement shipstreet1 = doc.CreateElement("Street1");
+            shipstreet1.AppendChild(doc.CreateTextNode(shipstreet1val));
+            shipto.AppendChild(shipstreet1);
+
+            System.Xml.XmlElement shipstreet2 = doc.CreateElement("Street2");
+            shipstreet2.AppendChild(doc.CreateTextNode(shipstreet2val));
+            shipto.AppendChild(shipstreet2);
+
+            System.Xml.XmlElement shipstreet3 = doc.CreateElement("Street3");
+            shipstreet3.AppendChild(doc.CreateTextNode(shipstreet3val));
+            shipto.AppendChild(shipstreet3);
+
+            System.Xml.XmlElement shipcity = doc.CreateElement("City");
+            shipcity.AppendChild(doc.CreateTextNode(shipcityval));
+            shipto.AppendChild(shipcity);
+
+            System.Xml.XmlElement shipstateprov = doc.CreateElement("StateProv");
+            shipstateprov.AppendChild(doc.CreateTextNode(shipstateprovval));
+            shipto.AppendChild(shipstateprov);
+
+            System.Xml.XmlElement shippostalcode = doc.CreateElement("PostalCode");
+            shippostalcode.AppendChild(doc.CreateTextNode(shippostalcodeval));
+            shipto.AppendChild(shippostalcode);
+
+            System.Xml.XmlElement extra = doc.CreateElement("Extra");
+            extra.AppendChild(doc.CreateTextNode(extraval));
+            cc5Request.AppendChild(extra);
+
+            String xmlval = doc.OuterXml;     //Oluşturulan xml string olarak alınıyor.
+
+            // Ödeme için bağlantı kuruluyor. ve post ediliyor
+            String url = "https://sanalpos.teb.com.tr/fim/api";
+            System.Net.HttpWebResponse resp = null;
+            try
+            {
+                System.Net.HttpWebRequest request = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
+
+                string postdata = "DATA=" + xmlval.ToString();
+                byte[] postdatabytes = System.Text.Encoding.GetEncoding("ISO-8859-9").GetBytes(postdata);
+                request.Method = "POST";
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.ContentLength = postdatabytes.Length;
+                System.IO.Stream requeststream = request.GetRequestStream();
+                requeststream.Write(postdatabytes, 0, postdatabytes.Length);
+                requeststream.Close();
+
+                resp = (System.Net.HttpWebResponse)request.GetResponse();
+                System.IO.StreamReader responsereader = new System.IO.StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding("ISO-8859-9"));
+
+                String gelenXml = responsereader.ReadToEnd(); //Gelen xml string olarak alındı.
+
+                System.Xml.XmlDocument gelen = new System.Xml.XmlDocument();
+                gelen.LoadXml(gelenXml);    //string xml dökumanına çevrildi.
+
+                System.Xml.XmlNodeList list = gelen.GetElementsByTagName("Response");
+                String xmlResponse = list[0].InnerText;
+                list = gelen.GetElementsByTagName("AuthCode");
+                String xmlAuthCode = list[0].InnerText;
+                list = gelen.GetElementsByTagName("HostRefNum");
+                String xmlHostRefNum = list[0].InnerText;
+                list = gelen.GetElementsByTagName("ProcReturnCode");
+                String xmlProcReturnCode = list[0].InnerText;
+                list = gelen.GetElementsByTagName("TransId");
+                String xmlTransId = list[0].InnerText;
+                list = gelen.GetElementsByTagName("ErrMsg");
+                String xmlErrMsg = list[0].InnerText;
+
+                if ("Approved".Equals(xmlResponse)) { paymentSuccessful = true; }
+                else { paymentSuccessful = false; Session["errorMessage"] = xmlErrMsg; }
+
+                resp.Close();
+            }
+            catch (Exception ex)
+            {
+                paymentSuccessful = false;
+                Console.Write(ex.ToString());
+            }
+            finally
+            {
+                if (resp != null) { resp.Close(); }
+            }
+        }
+        else
+        {
+            secureSuccessful = false;
+        }
+
+    }
+
+}
+
+@{
+
+    ViewBag.Title = "Ödeme Sonucu";
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    DatabaseController dc = new DatabaseController();
+    PurchaseController pc = new PurchaseController();
+    UtilityController uc = new UtilityController();
+
+    FormCollection form = (FormCollection)Session["paymentForm"];
+    FormCollection infoform = (FormCollection)Session["orderDeliveryInfo"];
+
+    if ((String)Session["orderPayment"] == "POS")
+    {
+        bool secureWanted = (bool)Session["secureWanted"];
+        Session["secureWanted"] = null;
+
+        if (secureWanted)
+        {
+            continue3dSecure();
+            if (paymentSuccessful)
+            {
+                DBQuerySetter("update OrderLogs set PaymentApproved = 'yes' where OrderID = '" + new Guid((String)Session["orderID"]) + "'");
+
+                Session["orderID"] = null;
+
+                if (Session["promotion"] != null)
+                {
+                    Promotion prom = (Promotion)Session["promotion"];
+                    int count = prom.newCount - 1; string isActive = "yes"; if (count <= 0) { isActive = "no"; }
+                    DBQuerySetter("update Promotions set isActive = '" + isActive + "',Count = '" + count + "' where PromotionID = '" + prom.code + "'");
+                }
+            }
+        }
+        else
+        {
+            if (ViewData["result"] != null)
+            {
+                paymentSuccessful = ((string)ViewData["result"] == "1");
+            }
+        }
+    }
+    else
+    {
+        paymentSuccessful = false;
+    }
+
+    string odemeSekli = (String)Session["orderPayment"];
+
+    List<DataRow> cart = (List<DataRow>)Session["cart"];
+
+    Double total = 0;
+
+    for (int i = 0; i < cart.Count; i++)
+    {
+        if (cart[i]["PagePrice"] != null)
+        {
+            if (String.IsNullOrEmpty(cart[i]["PagePrice"].ToString()) == false)
+            {
+                total = total + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","));
+            }
+        }
+    }
+
+    String errorMessage = "";
+
+    if (Session["errorMessage"] != null)
+    {
+        errorMessage = (string)Session["errorMessage"];
+    }
+
+    string carrySecondHour = "";
+    if (form["bakerySecondHourCopy"] != null) { carrySecondHour = form["bakerySecondHourCopy"]; }
+
+    string deliveryDateTime = "";
+    if (form["selectedHour"] == "normal") { deliveryDateTime = form["deliveryDatePicker"] + " " + form["deliveryTimePicker"] + " " + carrySecondHour; }
+    else { deliveryDateTime = form["deliveryDatePicker"] + " " + form["deliveryTimePickerClean"] + " " + carrySecondHour; }
+
+    string orderNumber = ((int)Session["OrderNumber"]).ToString();
+
+    String kdv = uc.CalculateCartKDV(cart);
+    String kdvsiz = uc.CalculateCartWithoutKDV(cart);
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(window).bind("beforeunload", function (event) {
+            return "You have some unsaved changes";
+        });
+    });
+</script>
+
+@{
+
+    <script>
+        window.dataLayer = window.dataLayer || []
+        dataLayer.push({
+            'transactionId': '@orderNumber',
+            'transactionAffiliation': 'www.icaked.com',
+            'transactionTotal': @total,
+            'transactionTax': 0,
+            'transactionShipping': 0,
+            'transactionProducts': [{
+                'sku': '@cart[0]["Name"]',
+                'name': '@cart[0]["Name"]',
+                'category': 'cake',
+                'price': '@cart[0]["PagePrice"]',
+                'quantity': 1
+            }]
+        });
+    </script>
+
+    <!-- Google Code for Sipari&#351; Sayfas&#305; Conversion Page -->
+    <script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 865847086;
+var google_conversion_language = "en";
+var google_conversion_format = "3";
+var google_conversion_color = "ffffff";
+var google_conversion_label = "_2WkCKrJ8mwQro7vnAM";
+var google_remarketing_only = false;
+/* ]]> */
+    </script>
+    <script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js">
+    </script>
+    <noscript>
+        <div style="display:inline;">
+            <img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/865847086/?label=_2WkCKrJ8mwQro7vnAM&amp;guid=ON&amp;script=0" />
+        </div>
+    </noscript>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div style="width:100%; float:left; text-align:center; margin:30px 0px; margin-bottom:50px;">
+                @{
+                    if (paymentSuccessful)
+                    {
+                        sendOrderMails(form, paymentSuccessful);
+
+                        try
+                        {
+                            if (Session["ilanExists"] != null)
+                            {
+                                dc.DBQuerySetterGP("update Ilan set IlanActive = 'no' where IlanID like '%" + (string)Session["ilanExists"] + "%'");
+                                String id = dc.DBQueryGetter("select IlanID from Ilan where IlanID like '%" + (string)Session["ilanExists"] + "%'").Rows[0][0].ToString();
+                                string orderID = (string)Session["orderID"];
+                                dc.DBQuerySetterGP("insert into Orders (ID,IlanID,OrderID,DateTime) values ('" + Guid.NewGuid() + "','" + new Guid(id) + "','" + new Guid(orderID) + "','" + DateTime.Now.ToString() + "')");
+                            }
+                        }
+                        catch (Exception e) { }
+
+                        String odemeTemp = "";
+
+                        <div style="width:100%; float:left;">
+                            <img alt="ödeme başarılı" src="~/Images/Site/success_icon.png" style="width:60px; margin-bottom:20px;" />
+                        </div>
+                        <label style="font-size:20px; width:100%; float:left; text-align:center; color:#14a54a;">Teşekkürler ! <br /> Siparişiniz Bize Ulaşmıştır.</label>
+
+                        if (odemeSekli == "POS") { odemeTemp = "Ödemeniz kartınız üzerinden başarıyla gerçekleştirilmiştir."; }
+                        else if (odemeSekli == "Şubede Ödeme") { odemeTemp = "Ödemeniz pastane şubesinde gerçekleşecektir."; }
+                        else if (odemeSekli.Contains("Kapıda")) { odemeTemp = "Ödeme Şekli : " + odemeSekli; }
+
+                        <label style="width:100%; float:left; text-align:center; padding-top:10px; color:#14a54a; font-size:14px;">@odemeTemp</label>
+                        <label style="width:100%; float:left; text-align:center; padding-top:10px; color:#14a54a; font-size:16px;">Teslimat Zamanı : @deliveryDateTime</label>
+                        <label style="width:100%; float:left; text-align:center; padding-top:10px; color:#14a54a; font-size:16px;">Sipariş Numarası : @orderNumber</label>
+
+                    }
+                    else
+                    {
+                        if (odemeSekli == "POS")
+                        {
+                            <div style="width:100%; float:left;">
+                                <img alt="ödeme başarısız" src="~/Images/Site/fail_icon.png" style="width:60px; margin-bottom:20px;" />
+                            </div>
+                            <label style="font-size:20px; width:100%; float:left; text-align:center; color:#ee2724;">Bir Hata Oluştu.</label>
+                            <label style="font-size:14px; width:100%; float:left; text-align:center; color:#ee2724; padding-top:5px;">Ödeme esnasında bir hata oluştu ve ödeme yapılamadı.</label>
+                            <label style="font-size:14px; width:100%; float:left; text-align:center; color:#ee2724; padding-top:20px;">Bankadan dönen hata mesajı:</label>
+                            <label style="font-size:14px; width:100%; float:left; text-align:center; color:#ee2724; padding-top:5px;">@errorMessage</label>
+                        }
+                        else
+                        {
+                            sendOrderMails(form, paymentSuccessful);
+
+                            String odemeTemp = "";
+                            <div style="width:100%; float:left;">
+                                <img alt="ödeme başarılı" src="~/Images/Site/success_icon.png" style="width:60px; margin-bottom:20px;" />
+                            </div>
+                            <label style="font-size:20px; width:100%; float:left; text-align:center; color:#14a54a;">Teşekkürler ! <br /> Siparişiniz Bize Ulaşmıştır.</label>
+                            if (odemeSekli == "Şubede Ödeme") { odemeTemp = "Ödemeniz pastane şubesinde gerçekleşecektir."; }
+                            else if (odemeSekli.Contains("Kapıda")) { odemeTemp = "Ödeme Şekli : " + odemeSekli; }
+                            <label style="width:100%; float:left; text-align:center; padding-top:10px; color:#14a54a; font-size:14px;">@odemeTemp</label>
+                            <label style="width:100%; float:left; text-align:center; padding-top:10px; color:#14a54a; font-size:16px;">Teslimat Zamanı : @deliveryDateTime</label>
+                            <label style="width:100%; float:left; text-align:center; padding-top:10px; color:#14a54a; font-size:16px;">Sipariş Numarası : @orderNumber</label>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="padding:0px; float:left; width:100%; margin-bottom:200px;">
+
+        @{
+            if (Session["orderBakery"] != null)
+            {
+                DataRow bakery = (DataRow)Session["orderBakery"];
+
+                String calismaGunleri = "";
+                if (bakery["workDays"].ToString()[0] == '1') { calismaGunleri = calismaGunleri + " Pzt"; }
+                if (bakery["workDays"].ToString()[1] == '1') { calismaGunleri = calismaGunleri + " Sal"; }
+                if (bakery["workDays"].ToString()[2] == '1') { calismaGunleri = calismaGunleri + " Çar"; }
+                if (bakery["workDays"].ToString()[3] == '1') { calismaGunleri = calismaGunleri + " Per"; }
+                if (bakery["workDays"].ToString()[4] == '1') { calismaGunleri = calismaGunleri + " Cum"; }
+                if (bakery["workDays"].ToString()[5] == '1') { calismaGunleri = calismaGunleri + " Cmt"; }
+                if (bakery["workDays"].ToString()[6] == '1') { calismaGunleri = calismaGunleri + " Paz"; }
+
+                String imgBakery = "Images/Bakery/" + bakery["Thumbnail"].ToString();
+
+                <div id="pastane_secimi_div" class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                    <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                        Pastane Seçimi (@bakery["Name"])
+                    </label>
+                    <div class="bakeryInfos" style="width:100%; float:left; padding:15px;">
+                        <div class="col-md-2 col-sm-3 col-xs-12 bakeryImg" style="float:left; text-align:center; ">
+                            <img src="@imgBakery" style="width:120px; margin-top:5px;" />
+                        </div>
+                        <div class="col-md-2 col-sm-3 col-xs-4" style="float:left; padding:0px;">
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Çalışma Saatleri : </label>
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Çalışma Günleri : </label>
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Telefon : </label>
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Adres : </label>
+                        </div>
+                        <div class="col-md-8 col-sm-6 col-xs-8" style="float:left; padding:0px 5px;">
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@bakery["workHours"]</label>
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@calismaGunleri</label>
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@bakery["Phone"]</label>
+                            <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@bakery["SpecificAddress"]</label>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            if (Session["orderAddress"] != null)
+            {
+                <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                    <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; padding-left:15px; font-weight:600; border-bottom:1px solid #e6e6e6; ">
+                        Adres Seçimi
+                    </label>
+                    <div style="width:100%; float:left; padding:15px;">
+                        @{
+                            if (Session["subeTeslim"] != null)
+                            {
+                                <label style="width:100%; float:left;">Pastaneden gidip teslim alacağım.</label>
+                            }
+                            else
+                            {
+                                DataRow adres = (DataRow)Session["orderAddress"];
+                                <div>
+                                    <div style="width:100%; float:left;">
+                                        <label style="float:left; font-size:13px;">@adres["ProvinceName"], @adres["DistrictName"], @adres["TownName"], @adres["NeighborhoodName"]</label>
+                                    </div>
+                                    <label style="padding-top:5px; float:left; width:100%; font-size:13px;">@adres["SpecificAddress"]</label>
+                                    <label style="padding-top:10px; font-weight:600; float:left; width:100%; font-size:13px;">Adres Tarifi:</label>
+                                    <label style="padding-top:5px; float:left; width:100%; font-size:13px;">@adres["Description"]</label>
+                                </div>
+
+                            }
+                        }
+                    </div>
+                </div>
+                            }
+
+                            if (Session["orderDeliveryInfo"] != null)
+                            {
+                                FormCollection info = (FormCollection)Session["orderDeliveryInfo"];
+                                <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                    <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                        İletişim Bilgileri
+                                    </label>
+                                    <div style="float:left; padding:15px;">
+                                        <label style="width:100%; float:left; text-align:left; font-size:16px; font-family:'Open Sans';">@info["contactName"] @info["contactSurname"] - @info["contactMail"] - @info["contactTel"]</label>
+                                    </div>
+                                </div>
+
+                                                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                                <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                                                    Teslimat Tarihi
+                                                                </label>
+                                                                <div style="float:left; padding:15px;">
+                                                                    <label style="width:100%; float:left; text-align:left; font-size:16px; font-family:'Open Sans';">@info["deliveryDatePicker"] @info["deliveryTimePicker"] -  arası</label>
+                                                                </div>
+                                                            </div>
+                            }
+
+                            if (Session["orderContent"] != null)
+                            {
+                                DataRow content = (DataRow)Session["orderContent"];
+                                <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                    <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                        Tasarım/Butik Pasta İçerik Seçimi
+                                    </label>
+                                    <div style="float:left; padding:15px;">
+                                        <label style="width:100%; float:left; text-align:left; font-size:16px;">@content["Inside"]</label>
+                                    </div>
+                                </div>
+                            }
+        }
+
+        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; float:left; margin-top:10px;">
+            <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; padding:0px; text-align:right;">
+                <div class="col-md-6 col-sm-6 col-xs-12" style="float:left; background:white; padding:0px; border:1px solid #e6e6e6;">
+                    <div style="float:left; width:100%;">
+                        <div style="float:left; width:100%;">
+                            <label style="float:right; font-size:14px; padding:15px; font-weight:600; width:100%; color:#3f2518; text-align:left; border-bottom:1px solid #e6e6e6;">Ürünler</label>
+                            <label style="float:right; width:100%; font-size:14px; padding-left:15px; padding-top:10px; text-align:left;">@cart.Count ürün</label>
+                        </div>
+                    </div>
+
+                    @{
+                        for (int i = 0; i < cart.Count; i++)
+                        {
+                            bool isMade = !String.IsNullOrEmpty(cart[i]["isMade"].ToString()); String partyrule = "";
+                            DataRow urun = cart[i]; String img = "";
+
+                            if (isMade) { img = "/Images/MadeCakes/" + urun["MadeID"] + "/" + urun["ImagePath"].ToString().Split(' ')[0]; }
+                            else { img = "/Images/Products/" + urun["ProductID"] + "/" + urun["Thumbnail"].ToString().Trim().Split(' ')[0]; }
+
+                            String priceStrLeft = ""; String priceStrRight = "";
+                            if (urun["PagePrice"] != null)
+                            {
+                                if (String.IsNullOrEmpty(urun["PagePrice"].ToString()) == false)
+                                {
+                                    if (urun["PagePrice"].ToString().Contains(".")) { priceStrLeft = urun["PagePrice"].ToString().Split('.')[0]; priceStrRight = "," + urun["PagePrice"].ToString().Split('.')[1] + " TL"; }
+                                    else if (urun["PagePrice"].ToString().Contains(",")) { priceStrLeft = urun["PagePrice"].ToString().Split(',')[0]; priceStrRight = "," + urun["PagePrice"].ToString().Split(',')[1] + " TL"; }
+                                    else { priceStrLeft = urun["PagePrice"].ToString(); priceStrRight = ",00 TL"; }
+                                }
+                                else { priceStrRight = "-"; }
+                            }
+
+                            if (urun["Category"].ToString() == "Parti Malzemeleri") { partyrule = "background:url('/Images/Site/party_bg.jpg'); background-size:contain;"; }
+
+                            <div class="row cart-product-div">
+                                <div class="col-md-2 col-sm-3 col-xs-4" style="padding:0px;">
+                                    <img src="@img" class="siparis-product-img" style="width:100%; float:left; @partyrule" />
+                                </div>
+                                <div class="col-md-10 col-sm-9 col-xs-8" style="padding-right:0px;">
+                                    <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; float:left;">
+                                        <div style="float:left; width:100%;">
+
+                                            <label style="float:left; width:100%; text-align:left; font-weight:600; font-size:14px;">@urun["Name"]</label>
+                                            <label style="float:left; text-align:left; font-size:14px; font-weight:400; width:100%;">@uc.productCatCorrector(urun)</label>
+                                        </div>
+                                        <div style="float:right;">
+                                            <label class="" style="float:right; font-size:24px; font-family:'Open Sans'; line-height:24px;">@priceStrLeft <span style="float:right; font-size:14px; line-height:18px;">@priceStrRight</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12" id="sepet_ozeti_div" style="padding:0px 10px; padding-right:0px; float:left;">
+                    <div style="width:100%; float:left; background:white; border:1px solid #e6e6e6;">
+                        <div style="width:100%; float:left;">
+                            <label style="float:right; font-size:14px; font-weight:600; width:100%; color:#3f2518; text-align:left; padding:15px; border-bottom:1px solid #e6e6e6;">Sepet Özeti</label>
+                        </div>
+                        <div style="width:100%; float:left; padding:15px;">
+                            <div style="width:100%; float:left; margin-bottom:5px;">
+                                <label style="float:left; font-size:12px; line-height:22px;">KDV : </label>
+                                <label style="float:right; font-size:16px; font-family:'Open Sans';">@kdv TL</label>
+                            </div>
+                            <div style="width:100%; float:left; margin-bottom:15px;">
+                                <label style="float:left; font-size:12px; line-height:22px;">KDV'siz : </label>
+                                <label style="float:right; font-size:16px; font-family:'Open Sans';">@kdvsiz TL</label>
+                            </div>
+                            <div style="width:100%; float:left;">
+                                <label style="float:left; font-size:14px; line-height:40px;">Genel Toplam : </label>
+                                <label style="float:right; font-family:'Open Sans';">
+                                    <span style="font-size:16px; float:right; padding-top:15px; padding-left:5px;">TL</span>
+                                    <span style="float:right; font-size:28px;">@total</span>
+                                </label>
+                            </div>
+                            <div style="width:100%; float:left; display:none;" id="toplamAppend">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @{
+
+            if (Session["designNotes"] != null | Session["designImages"] != null)
+            {
+                <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                    <label style="width:100%; float:left; padding:15px; color:#3f2518;font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6; margin-bottom:15px !important;">
+                        Tasarım Notları
+                    </label>
+                    @{
+                        if (Session["designNotes"] != null)
+                        {
+                            String note = (String)Session["designNotes"];
+                            <div style="float:left; width:100%; padding:15px; ">
+                                <label style="width:100%; float:left; text-align:left; font-size:16px;">@note</label>
+                            </div>
+                        }
+                        if (Session["designImages"] != null)
+                        {
+                            List<string> images = (List<string>)Session["designImages"];
+                            <div style="width:100%; float:left; padding:0px 15px; ">
+                                @{
+                                    for (int i = 0; i < images.Count; i++)
+                                    {
+                                        <img src="@images[i]" style="width:200px; float:left; margin:5px; border:1px solid #e6e6e6; border-radius:3px;" />
+                                    }
+                                }
+                            </div>
+                                    }
+                    }
+                </div>
+                                    }
+
+                                    if (Session["editorText"] != null | Session["editorImg"] != null)
+                                    {
+                                        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; float:left; background:white; margin-top:10px;">
+                                            <label style="width:100%; float:left; padding:15px;  color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6; margin-bottom:15px !important;">
+                                                Tasarımın İçerdiği Yazı ve Resimler
+                                            </label>
+                                            @{
+                                                if (Session["editorText"] != null)
+                                                {
+                                                    List<string> texts = (List<string>)Session["editorText"];
+                                                    <div style="float:left; width:100%; padding:15px; ">
+                                                        <label style="width:100%; float:left; padding:10px; padding-left:0px; font-size:18px; font-weight:500;">Yazılar</label>
+                                                        @{
+                                                            for (int i = 0; i < texts.Count; i++)
+                                                            {
+                                                                <label style="width:100%; float:left; text-align:left; padding-left:10px; font-size:16px;">@texts[i]</label>
+                                                            }
+                                                        }
+                                                    </div>
+                                                            }
+                                                            if (Session["editorImg"] != null)
+                                                            {
+                                                                List<string> images = (List<string>)Session["editorImg"];
+                                                                <div style="width:100%; float:left; padding:0px 15px; ">
+                                                                    <label style="width:100%; float:left; padding:10px; padding-left:0px;  font-size:16px; font-weight:500;">Resimler</label>
+                                                                    @{
+                                                                        for (int i = 0; i < images.Count; i++)
+                                                                        {
+                                                                            <img src="@images[i]" style="width:200px; float:left; padding-left:10px; margin:5px; margin-left:0px; border:1px solid #e6e6e6; border-radius:3px;" />
+                                                                        }
+                                                                    }
+                                                                </div>
+                                                                        }
+                                            }
+                                        </div>
+                                                                        }
+        }
+    </div>
+</div>
+
+@{
+    Session["cart"] = null;
+    Session["userAddresses"] = null;
+    Session["orderAddress"] = null;
+    Session["orderBakery"] = null;
+    Session["orderContent"] = null;
+    Session["bakeryRequired"] = null;
+    Session["contentRequired"] = null;
+    Session["bakeryDeliver"] = null;
+    Session["orderPayment"] = null;
+    Session["subeTeslim"] = null;
+    Session["pdfID"] = null;
+    Session["orderID"] = null;
+    Session["paymentForm"] = null;
+    Session["OrderNumber"] = null;
+    Session["errorMessage"] = null;
+    Session["orderMain"] = null;
+    Session["designNotes"] = null;
+    Session["designImages"] = null;
+    Session["editorOutput"] = null;
+    Session["editorText"] = null;
+    Session["editorImg"] = null;
+    Session["PacketWarning"] = null;
+    Session["PacketWarningAddress"] = null;
+}

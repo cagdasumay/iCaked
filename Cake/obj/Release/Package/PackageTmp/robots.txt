@@ -1,0 +1,21 @@
+User-agent: *
+Disallow: /objects2/
+Disallow: /Objects/
+Disallow: /Bills/
+Disallow: /bin/
+Disallow: /fonts/
+Disallow: /img/
+Disallow: /fonts/
+Disallow: /Mutfak/
+Disallow: /References/
+Disallow: /Service References/
+Disallow: /textures2/
+Disallow: /https://www.icaked.com/urunler
+Disallow: /https://www.icaked.com/urunler/Cikolata
+Disallow: /https://www.icaked.com/urunler/Tatli
+Disallow: /https://www.icaked.com/urunler/Pasta
+Disallow: /https://www.icaked.com/Profil
+Disallow: /https://www.icaked.com/pastane-girisi
+Disallow: /https://www.icaked.com/Gizlilik
+Disallow: /https://www.icaked.com/mesafeli-satis-sozlesmesi
+Sitemap: http://www.icaked.com/sitemap.xml

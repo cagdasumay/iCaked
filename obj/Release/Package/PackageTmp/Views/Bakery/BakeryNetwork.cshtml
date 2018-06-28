@@ -1,0 +1,134 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using System.Globalization
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow bakery = (DataRow)Session["bakeryinfo"];
+
+    DataTable network = dc.DBQueryGetter("select * from BakeryNetwork where BakeryID = '" + bakery["BakeryID"] + "'");
+
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+    String[] cityIds = new String[] { "81", "80", "79", "78", "14", "77", "76", "75", "7", "74", "73", "72", "8", "10", "13", "71", "70", "69", "68", "67", "66", "65", "64", "63", "62", "61", "1", "60", "59", "58", "57", "56", "55", "54", "53", "52", "51", "6", "50", "48", "47", "36", "4", "12", "46", "45", "44", "3", "11", "43", "42", "41", "40", "39", "38", "37", "35", "49", "34", "33", "32", "31", "30", "2", "29", "28", "27", "19", "26", "25", "9", "24", "23", "22", "21", "20", "18", "17", "5", "16", "15", };
+}
+
+<div id="editLocationPopup">
+    <img onclick="$(this).parent().fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+    @using (Html.BeginForm("EditLocation", "Bakery"))
+    {
+        <div style="width:100%; float:left;">
+            <label id="editLocationLabel" style="width:100%; float:left;"></label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <label style="width:100%; float:left; padding:5px 0px;">Bu lokasyona minimum paket tutarı (örn. 15.00) :</label>
+            <input min="0" value="0" type="number" id="editMinPacket" name="editMinPacket" style="float:left; width:100px; border:1px solid #cccccc; padding:5px; border-radius:3px; font-family:'Open Sans';" />
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <label style="width:100%; float:left; padding:5px 0px;">Bu lokasyona kargo ücreti (örn. 15.00) :</label>
+            <input min="0" value="0" type="number" id="editDeliveryPrice" name="editDeliveryPrice" style="float:left; width:100px; border:1px solid #cccccc; padding:5px; border-radius:3px; font-family:'Open Sans';" />
+        </div>
+        <input id="editTownID" type="hidden" name="town" value="" />
+        <div style="width:100%; float:left; margin-top:10px;">
+            <input type="submit" class="cart_gradient" style="float:left;" />
+        </div>
+    }
+</div>
+
+<div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left; padding:0px;">
+
+    <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6; margin-bottom:30px !important; padding:15px 0px; padding-top:0px;">
+        <label style="float:left; font-size:30px;   text-align:left; color:#3f2518; line-height:initial;">Dağıtım Ağı</label>
+        <button style="float:right;" class="cart_gradient" onclick="$('#bakery_locations_div').slideToggle(300)">Ekle</button>
+    </div>
+
+    @*<label style="float:left; width:100%; text-align:center; padding-top:50px;">Bu bölüm henüz geliştirme aşamasındadır.</label>*@
+
+    <div style="width:100%; float:left;">
+        <label style="width:100%; float:left; font-size:13px; padding-bottom:30px;">Pastanenizin dağıtım yaptığı yerler aşağıdaki tabloda gösterilmiştir. Yeni bir yer girmek isterseniz sağ üstteki ekle butonuna tıklayınız.
+        <br /> Varolanı silmek isterseniz satırların sağındaki çarpı butonlarını kullanabilirsiniz.
+        </label>
+
+        <div id="bakery_locations_div" style="width:100%; float:left; border-top:1px dashed #3f2518; border-bottom:1px dashed #3f2518; margin-bottom:40px; display:none;">
+            <div  style="width:100%; float:left; padding:20px 0px;">
+                @using (Html.BeginForm("AddEditLocation", "Bakery", FormMethod.Post, new { id = "addLocationForm" }))
+                {
+                    <div style="width:100%; float:left;">
+                        <label style="width:100%; float:left; padding-bottom:5px;">Lokasyon :</label>
+                        <select id="bakeryProvinceLocation" name="bakeryProvinceLocation" onchange="appendBakeryDistricts('#bakeryDistrictLocation', $(this).val()); $(this).css('border-color', '#cccccc');" style="float:left; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px; width:100px;">
+                            @{
+                                for (int i = 0; i < cities.Length; i++)
+                                {
+                                    <option value="@cityIds[i]">@cities[i]</option>
+                                }
+                            }
+                        </select>
+                        <select onchange="appendBakeryTowns('#bakeryTownLocation', $(this).val()); $(this).css('border-color', '#cccccc');" id="bakeryDistrictLocation" name="bakeryDistrictLocation" style="margin-left:10px; float:left; border:1px solid #cccccc; background:white; width:100px; border-radius:3px; padding:5px;"></select>
+                        <select onchange="$(this).css('border-color', '#cccccc');" id="bakeryTownLocation" name="bakeryTownLocation" style="margin-left:10px; float:left; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px; width:100px;"></select>
+                    </div>
+                    <div style="width:100%; float:left; margin-top:20px;">
+                        <label style="width:100%; float:left; padding:5px 0px;">Bu lokasyona minimum paket tutarı (örn. 15.00) :</label>
+                        <input min="0" value="0" type="number" id="bakeryMinPacket" name="bakeryMinPacket" style="float:left; width:100px; border:1px solid #cccccc; padding:5px; border-radius:3px; font-family:'Open Sans';" />
+                    </div>
+                    <div style="width:100%; float:left; margin-top:20px;">
+                        <label style="width:100%; float:left; padding:5px 0px;">Bu lokasyona kargo ücreti (örn. 15.00) :</label>
+                        <input min="0" value="0" type="number" id="bakeryDeliveryPrice" name="bakeryDeliveryPrice" style="float:left; width:100px; border:1px solid #cccccc; padding:5px; border-radius:3px; font-family:'Open Sans';" />
+                    </div>
+                    <div style="width:100%; float:left; margin-top:20px;">
+                        <input type="submit" id="addLocationButton" onclick="validateAddLocation()" class="cart_gradient" value="Kaydet" style="float:left;" />
+                        <div style="width:100%; float:left; display:none;" id="addLocationLoadingDiv">
+                            <label style="float:left; font-size:13px;">Lokasyonlar Ekleniyor. Lütfen Sayfa Yenilenene Kadar Bekleyiniz...</label>
+                            <img src="~/Images/Site/loading_mini.gif" style="width:15px; float:left; margin-left:10px;" />
+                        </div>
+                    </div>
+                                }
+            </div>
+        </div>
+
+        <table id="bakery-network-table" style="width:100%; float:left; text-align:center; margin-top:30px; font-size:13px; font-family:'Open Sans';" class="row-border">
+
+            <thead>
+                <tr>
+                    <td>İl</td>
+                    <td>İlçe</td>
+                    <td>Semt</td>
+                    <td>Mahalle</td>
+                    <td>Minimum Paket</td>
+                    <td>Kargo Ücreti</td>
+                    <td>Eylem</td>
+                </tr>
+            </thead>
+
+            @{
+                for (int i = 0; i < network.Rows.Count; i++)
+                {
+                    DataRow net = network.Rows[i];
+
+                    String minPacket = "0"; String deliveryPacket = "0";
+
+                    if (String.IsNullOrEmpty(net["MinPacket"].ToString()) == false) { minPacket = net["MinPacket"].ToString(); }
+                    if (String.IsNullOrEmpty(net["DeliveryPrice"].ToString()) == false) { deliveryPacket = net["DeliveryPrice"].ToString(); }
+
+                    <tr>
+                        <td>@net["ProvinceName"].ToString().ToLower(new CultureInfo("tr-TR", false))</td>
+                        <td>@net["DistrictName"].ToString().ToLower(new CultureInfo("tr-TR", false))</td>
+                        <td>@net["TownName"].ToString().ToLower(new CultureInfo("tr-TR", false))</td>
+                        <td>@net["NeighborhoodName"].ToString().ToLower(new CultureInfo("tr-TR", false))</td>
+                        <td>@minPacket TL</td>
+                        <td>@deliveryPacket TL</td>
+                        <td>
+                            @{
+                                string editLocationData = net["ProvinceName"].ToString() + ", " + net["DistrictName"].ToString() + ", " + net["TownName"].ToString() + ", " + net["NeighborhoodName"].ToString();
+                            }
+                            <div style="width:100%; float:left; text-align:center;">
+                                <img data-town="@net["Town"]" data-location="@editLocationData" src="~/Images/Site/edit_icon.png" onclick="$('#editLocationPopup').fadeToggle(300); $('#editTownID').val($(this).attr('data-town')); $('#editLocationLabel').text($(this).attr('data-location'))" class="yukle_gradient" style="width:20px; margin-left:7px; margin-bottom:0px !important; padding:5px;" />
+                                <a href="@Url.Action("DeleteLocation","Bakery", new { id = net["NetworkID"] })" onclick="validateDeleteLocation()">
+                                    <img src="~/Images/Site/close_icon.png" class="yukle_gradient" style="width:20px; margin-left:7px; margin-bottom:0px !important; padding:5px;" />
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </table>
+    </div>
+</div>

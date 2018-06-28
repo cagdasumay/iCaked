@@ -1,0 +1,387 @@
+﻿
+<style>
+    .tasarla-button a {
+        transition: all 0.1s;
+    }
+
+    .tasarla-button:hover a {
+        background: black !important;
+        color: white;
+    }
+</style>
+
+<div class="header">
+
+    <nav class="wsdownmenu clearfix">
+        <ul class="wsdown-mobile wsdownmenu-list">
+
+            <li id="main-megamenu" style="float:left;">
+                <a href="#">PASTANELER<img src="~/Images/Site/header_down_arrow.png" style="width:10px; margin-bottom:5px; margin-left:10px;" /></a>
+                <div class="megamenu clearfix" style="box-shadow: 0 5px 10px rgba(0,0,0,.2); min-height:390px;">
+                    <ul id="navbar-bakery-dd" class="col-md-6 col-xs-12 link-list" style="padding:15px; border-right:1px solid #f0f0f0; min-height:390px;">
+                        <li class="title">Pastaneler</li>
+                        @{
+                            if ((string)Session["city"] == "Ankara")
+                            {
+                                <li class="navbar-subtitle">Ankara</li>
+                                <li class="hasdd" data-dd="liva-dd" data-bp="liva-bp-dd" style="margin-bottom:10px;">
+                                    <div style="font-size:18px; padding:10px 0px; cursor:pointer;">
+                                        <img src="~/Images/Bakery/liva_thumbnail.png" style="width:60px; margin:0px 10px; float:left;" />
+                                        <span style="font-size:16px; line-height:32px; font-weight:500; transition:ease-in-out 0.2s;">Liva</span>
+                                    </div>
+                                </li>
+                                <li class="hasdd" data-dd="ferlife-dd" data-bp="ferlife-bp-dd" style="margin-bottom:10px;">
+                                    <div style="font-size:18px; padding:10px 0px; cursor:pointer;">
+                                        <img src="~/Images/Bakery/ferlife_thumbnail.png" style="width:60px; margin:0px 10px; float:left;" />
+                                        <span style="font-size:16px; line-height:32px; font-weight:500; transition:ease-in-out 0.2s;">Ferlife</span>
+                                    </div>
+                                </li>
+                                <li class="hasdd" data-dd="karameli-dd" data-bp="karameli-bp-dd" style="margin-bottom:10px;">
+                                    <div style="font-size:18px; padding:10px 0px; cursor:pointer;">
+                                        <img src="~/Images/Bakery/karameli_thumbnail.png" style="width:60px; margin:0px 10px; float:left;" />
+                                        <span style="font-size:16px; line-height:32px; font-weight:500; transition:ease-in-out 0.2s;">Karameli</span>
+                                    </div>
+                                </li>
+                            }
+                            else if ((string)Session["city"] == "İstanbul")
+                            {
+                                <li class="navbar-subtitle">İstanbul</li>
+                                <li class="hasdd" data-dd="ps-dd" data-bp="ps-bp-dd">
+                                    <div style="font-size:18px; padding:10px 0px; cursor:pointer;">
+                                        <img src="~/Images/Bakery/pastasanati_thumbnail.png" style="width:60px; margin:0px 10px; float:left;" />
+                                        <span style="font-size:16px; line-height:32px; font-weight:500; transition:ease-in-out 0.2s;">Pasta Sanatı</span>
+                                    </div>
+                                </li>
+                            }
+                        }
+
+
+                    </ul>
+
+                    <ul id="liva-dd" style="display:none; padding:15px; border-right:1px solid #f0f0f0; min-height:390px;" class="col-md-6 col-xs-12 link-list bakery-dd">
+                        <li class="title">Liva Ürünleri</li>
+                        <li class="hasbp col-md-6 col-sm-6 col-xs-6" data-bp="liva-bp-dd">
+                            <a href="/pastane/liva/butik-pasta">
+                                <img src="~/Images/Site/butik-pasta.jpg" />
+                                <span>Butik Pasta</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/liva/yas-pasta">
+                                <img src="~/Images/Site/hazir-urun.jpg" />
+                                <span>Yaş Pasta</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/liva/cikolata">
+                                <img src="~/Images/Site/cikolata.jpg" />
+                                <span>Çikolata</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/liva/tatli">
+                                <img src="~/Images/Site/tatli.jpg" />
+                                <span>Tatlı</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul id="ferlife-dd" style="display:none; padding:15px; border-right:1px solid #f0f0f0; min-height:390px;" class="col-md-6 col-xs-12 link-list bakery-dd">
+                        <li class="title">Ferlife Ürünleri</li>
+                        @*<li><a href="/pastane/liva"><span style="font-size:16px;">Tüm Liva Ürünleri</span></a></li>*@
+                        <li class="hasbp col-md-6 col-sm-6 col-xs-6" data-bp="ferlife-bp-dd">
+                            <a href="/pastane/ferlife/butik-pasta">
+                                <img src="~/Images/Site/butik-pasta3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                <span>Butik Pasta</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/ferlife/yas-pasta">
+                                <img src="~/Images/Site/hazir-urun3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                <span>Yaş Pasta</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/ferlife/cikolata">
+                                <img src="~/Images/Site/cikolata3.jpg" />
+                                <span>Çikolata</span>
+                            </a>
+                        </li>
+                        @*<li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/ferlife/tatli">
+                                <img src="~/Images/Site/tatli.jpg" />
+                                <span>Tatlı</span>
+                            </a>
+                        </li>*@
+                    </ul>
+                    <ul id="karameli-dd" style="display:none; padding:15px; border-right:1px solid #f0f0f0; min-height:390px;" class="col-md-6 col-xs-12 link-list bakery-dd">
+                        <li class="title">Karameli Ürünleri</li>
+                        @*<li><a href="/pastane/karameli"><span style="font-size:16px;">Tüm karameli Ürünleri</span></a></li>*@
+                        <li class="hasbp col-md-6 col-sm-6 col-xs-6" data-bp="karameli-bp-dd">
+                            <a href="/pastane/karameli/butik-pasta">
+                                <img src="~/Images/Site/butik-pasta4.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                <span>Butik Pasta</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/karameli/yas-pasta">
+                                <img src="~/Images/Site/hazir-urun4.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                <span>Yaş Pasta</span>
+                            </a>
+                        </li>
+                        @*<li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/karameli/cikolata">
+                                <img src="~/Images/Site/cikolata3.jpg" />
+                                <span>Çikolata</span>
+                            </a>
+                        </li>*@
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/karameli/tatli">
+                                <img src="~/Images/Site/tatli4.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                <span>Tatlı</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul id="ps-dd" style="display:none; padding:15px; border-right:1px solid #f0f0f0; min-height:390px;" class="col-md-6 col-xs-12 link-list bakery-dd">
+                        <li class="title">Pasta Sanatı Ürünleri</li>
+                        <li class="hasbp col-md-6 col-sm-6 col-xs-6" data-bp="ps-bp-dd">
+                            <a href="/pastane/pasta-sanati/butik-pasta">
+                                <img style="background:url(/Images/Site/product_bg.png); background-size:cover;" src="~/Images/Site/butik-pasta2.jpg" />
+                                <span>Butik Pasta</span>
+                            </a>
+                        </li>
+                        <li class="col-md-6 col-sm-6 col-xs-6">
+                            <a href="/pastane/pasta-sanati/yas-pasta">
+                                <img style="background:url(/Images/Site/product_bg.png); background-size:cover;" src="~/Images/Site/hazir-urun2.jpg" />
+                                <span>Yaş Pasta</span>
+                            </a>
+                        </li>
+
+                    </ul>
+                    @{
+                        if (false)
+                        {
+                            <ul id="liva-bp-dd" class="col-lg-6 col-md-6 col-xs-12 link-list bp-dd" style="padding:15px; display:none; min-height:390px;">
+                                <li class="title">Liva Butik Pasta</li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/liva/dogum-gunu-pastalari">
+                                        <img src="~/Images/Site/dogum-gunu-pastalari1.jpg" />
+                                        <span>Doğum Günü Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/liva/bebek-pastalari">
+                                        <img src="~/Images/Site/bebek-pastalari1.jpg" />
+                                        <span>Bebek Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/liva/1-yas-pastalari">
+                                        <img src="~/Images/Site/1-yas-pastalari1.jpg" />
+                                        <span>1 Yaş Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/liva/cizgi-film-pastalari">
+                                        <img src="~/Images/Site/cizgi-film-pastalari1.jpg" />
+                                        <span>Çizgi Film Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/liva/sevgili-pastalari">
+                                        <img src="~/Images/Site/sevgili-pastalari1.jpg" />
+                                        <span>Sevgili Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/liva/kutlama-pastalari">
+                                        <img src="~/Images/Site/kutlama-pastalari1.jpg" />
+                                        <span>Kutlama Pastaları</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul id="ferlife-bp-dd" class="col-lg-6 col-md-6 col-xs-12 link-list bp-dd" style="padding:15px; display:none; min-height:390px;">
+                                <li class="title">Ferlife Butik Pasta</li>
+                                @*<li><a href="/pastane/liva"><span>Tüm Butik Pastalar</span></a></li>*@
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/ferlife/dogum-gunu-pastalari">
+                                        <img src="~/Images/Site/dogum-gunu-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Doğum Günü Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/ferlife/bebek-pastalari">
+                                        <img src="~/Images/Site/bebek-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Bebek Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/ferlife/1-yas-pastalari">
+                                        <img src="~/Images/Site/1-yas-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>1 Yaş Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/ferlife/cizgi-film-pastalari">
+                                        <img src="~/Images/Site/cizgi-film-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Çizgi Film Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/ferlife/sevgili-pastalari">
+                                        <img src="~/Images/Site/sevgili-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Sevgili Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/ferlife/kutlama-pastalari">
+                                        <img src="~/Images/Site/kutlama-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Kutlama Pastaları</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul id="karameli-bp-dd" class="col-lg-6 col-md-6 col-xs-12 link-list bp-dd" style="padding:15px; display:none; min-height:390px;">
+                                <li class="title">Karameli Butik Pasta</li>
+                                @*<li><a href="/pastane/karameli"><span>Tüm Butik Pastalar</span></a></li>*@
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/karameli/dogum-gunu-pastalari">
+                                        <img src="~/Images/Site/dogum-gunu-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Doğum Günü Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/karameli/bebek-pastalari">
+                                        <img src="~/Images/Site/bebek-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Bebek Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/karameli/1-yas-pastalari">
+                                        <img src="~/Images/Site/1-yas-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>1 Yaş Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/karameli/cizgi-film-pastalari">
+                                        <img src="~/Images/Site/cizgi-film-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Çizgi Film Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/karameli/sevgili-pastalari">
+                                        <img src="~/Images/Site/sevgili-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Sevgili Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/karameli/kutlama-pastalari">
+                                        <img src="~/Images/Site/kutlama-pastalari3.jpg" style="background:url(/Images/Site/product_bg.png); background-size:cover;" />
+                                        <span>Kutlama Pastaları</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul id="ps-bp-dd" class="col-lg-6 col-md-6 col-xs-12 link-list bp-dd" style="padding:15px; display:none; min-height:390px;">
+                                <li class="title">Pasta Sanatı Butik Pasta</li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/pasta-sanati/dogum-gunu-pastalari">
+                                        <img src="~/Images/Site/dogum-gunu-pastalari2.jpg" />
+                                        <span>Doğum Günü Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/pasta-sanati/bebek-pastalari">
+                                        <img src="~/Images/Site/bebek-pastalari2.jpg" />
+                                        <span>Bebek Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/pasta-sanati/1-yas-pastalari">
+                                        <img src="~/Images/Site/1-yas-pastalari2.jpg" />
+                                        <span>1 Yaş Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/pasta-sanati/cizgi-film-pastalari">
+                                        <img src="~/Images/Site/cizgi-film-pastalari2.jpg" />
+                                        <span>Çizgi Film Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/pasta-sanati/sevgili-pastalari">
+                                        <img src="~/Images/Site/sevgili-pastalari2.jpg" />
+                                        <span>Sevgili Pastaları</span>
+                                    </a>
+                                </li>
+                                <li class="col-md-4 col-sm-4 col-xs-6">
+                                    <a href="/pastane/pasta-sanati/kutlama-pastalari">
+                                        <img src="~/Images/Site/kutlama-pastalari2.jpg" />
+                                        <span>Kutlama Pastaları</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        }
+                    }
+                </div>
+            </li>
+
+            <li style="float:left;">
+                <a href="#">BUTİK PASTALAR<img src="~/Images/Site/header_down_arrow.png" style="width:10px; margin-bottom:5px; margin-left:10px;" /></a>
+                <ul class="col-lg-6 col-md-6 col-xs-12 bp-dd wsdownmenu-submenu" style="padding:5px; box-shadow: 0 5px 10px rgba(0,0,0,.2); min-height:370px;">
+                    <li class="title">Liva Butik Pasta</li>
+                    @*<li><a href="/pastane/liva"><span>Tüm Butik Pastalar</span></a></li>*@
+                    <li class="col-md-4 col-sm-4 col-xs-6">
+                        <a href="/butik-pastalar/dogum-gunu-pastalari">
+                            <img src="~/Images/Site/dogum-gunu-pastalari1.jpg" />
+                            <span>Doğum Günü Pastaları</span>
+                        </a>
+                    </li>
+                    <li class="col-md-4 col-sm-4 col-xs-6">
+                        <a href="/butik-pastalar/bebek-pastalari">
+                            <img src="~/Images/Site/bebek-pastalari1.jpg" />
+                            <span>Bebek Pastaları</span>
+                        </a>
+                    </li>
+                    <li class="col-md-4 col-sm-4 col-xs-6">
+                        <a href="/butik-pastalar/1-yas-pastalari">
+                            <img src="~/Images/Site/1-yas-pastalari1.jpg" />
+                            <span>1 Yaş Pastaları</span>
+                        </a>
+                    </li>
+                    <li class="col-md-4 col-sm-4 col-xs-6">
+                        <a href="/butik-pastalar/cizgi-film-pastalari">
+                            <img src="~/Images/Site/cizgi-film-pastalari1.jpg" />
+                            <span>Çizgi Film Pastaları</span>
+                        </a>
+                    </li>
+                    <li class="col-md-4 col-sm-4 col-xs-6">
+                        <a href="/butik-pastalar/sevgili-pastalari">
+                            <img src="~/Images/Site/sevgili-pastalari1.jpg" />
+                            <span>Sevgili Pastaları</span>
+                        </a>
+                    </li>
+                    <li class="col-md-4 col-sm-4 col-xs-6">
+                        <a href="/butik-pastalar/kutlama-pastalari">
+                            <img src="~/Images/Site/kutlama-pastalari1.jpg" />
+                            <span>Kutlama Pastaları</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li style="float:left;">
+                <a href="/tezgah-pastalari">TEZGAH PASTALAR</a>
+            </li>
+
+            <li style="float:left;">
+                <a href="/parti-sepeti">PARTİ SEPETLERİ</a>
+            </li>
+
+            <li class="tasarla-button" id="pt-navbar" style="float:right;">
+                <a href="@Url.Action("Editor","Home")" style="border:1px solid black; letter-spacing:2px; border-radius:30px; line-height:30px; padding:0px 20px; margin-top:8px;">
+                    PASTANI TASARLA
+                </a>
+            </li>
+
+
+        </ul>
+    </nav>
+</div>

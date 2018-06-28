@@ -1,0 +1,342 @@
+﻿@using EventApp.Models
+
+@{
+    ViewBag.Title = "Konuşmacılar";
+    User speaker = (User)ViewData["SpeakerDetails"];
+
+    List<Activity> SpeakerSessions = (List<Activity>)ViewData["SpeakerSessions"];
+    List<bool> isScheduled = (List<bool>)ViewData["isScheduled"];
+
+    List<string> times = (List<string>)ViewData["StartEndTimes"];
+    List<string> StartDate = (List<string>)ViewData["StartDate"];
+}
+
+<link href="../assets/pages/css/about.css" rel="stylesheet" type="text/css" />
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#id").change(function () {
+            var type = $("#id").val();
+            $("#back-btn").attr("href", "/Map/Delete?id=" + type);
+        });
+
+        $("#id").change(function () {
+            var type = $("#id").val();
+            $("#back-btn").attr("href", "/Map/Delete?id=" + type);
+        });
+
+    });
+
+</script>
+
+<div class="page-content-wrapper" style="min-height: 700px !important;">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content" style="min-height: 700px !important;">
+        @{
+            String photo = "../Images/Users/" + speaker.Id + ".jpg";
+        }
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("SpeakersOrg", "Users")">Konuşmacılar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>@speaker.Name @speaker.Surname</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <h1 class="page-title" style="float: left;">
+                    @speaker.Name @speaker.Surname
+                </h1>
+                <h1>
+                    <a href="@Url.Action("SpeakersOrg", "Users")" style="float: right;" class="btn green">
+                        Listeye Dön
+                        <i class="fa fa-arrow-left"></i>
+                    </a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <!-- BEGIN PROFILE SIDEBAR -->
+                <div class="profile-sidebar">
+                    <!-- PORTLET MAIN -->
+                    <div class="portlet light profile-sidebar-portlet stories-cont ">
+                        <!-- SIDEBAR USERPIC -->
+
+                        <div class="profile-userpic photo mt-card-round">
+                            <img src="@photo" class="img-responsive" alt="">
+                        </div>
+                        <!-- END SIDEBAR USERPIC -->
+                        <!-- SIDEBAR USER TITLE -->
+                        <div class="profile-usertitle">
+                            <div class="profile-usertitle-name"> @speaker.Name @speaker.Surname </div>
+                            <div class="profile-usertitle-job"> @speaker.Company </div>
+                            <div class="profile-usertitle-job"> @speaker.PersonelTitle </div>
+                        </div>
+                        
+                        @{
+                            String deletespeaker = "hidden-td1";
+                        }
+
+                        <div class="profile-userbuttons editDeleteButtons2">
+                            <a href="@Url.Action("EditSpeaker", "Users", new { SpeakerId = @speaker.Id })" type="button" class="btn btn-circle green btn-sm">
+                                Düzenle
+                                <i class="fa fa-pencil"></i>
+                            </a>
+                            <div data-td="@deletespeaker" onclick="$(this).parent().slideUp(200); $('.editDeleteConfirm2').slideDown(200); " class="btn btn-circle red btn-sm delete-type2" style="background-color: #ed6b75 !important; cursor: pointer;">
+                                Sil
+                                <i class="fa fa-times"></i>
+                            </div>
+                        </div>
+
+                        <div class="display-none editDeleteConfirm2 @deletespeaker">
+                            <div style="float: left; margin-top: 8px; margin-bottom:8px; text-align:center; width: 100%;">
+                                Silmek istediğinize emin misiniz?
+                            </div>
+                        </div>
+                        <div class="display-none editDeleteConfirm2 profile-userbuttons @deletespeaker">
+                            <a href="@Url.Action("DeleteSpeaker", "Account", new { UserID = @speaker.Id })" class="btn btn-circle red btn-sm" style="background-color: #ed6b75 !important;">
+                                Evet
+                            </a>
+                            <div onclick="$(this).parent().hide(200); $('.editDeleteConfirm2').hide(200); $('.editDeleteButtons2').slideDown(200)" type="button" class="btn btn-circle green btn-sm">
+                                Hayır
+                            </div>
+                        </div>
+
+                        <div class="profile-usermenu">
+                            <ul class="nav">
+                                <li>
+                                    @{
+                                        if (speaker.Facebook == null)
+                                        {
+                                            <a href="" style="cursor: default;">
+                                                <i class="icon-social-facebook"></i> Facebook
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@speaker.Facebook" target="_blank">
+                                                <i class="icon-social-facebook"></i> Facebook
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (speaker.Twitter == null)
+                                        {
+                                            <a href="" style="cursor: default;">
+                                                <i class="icon-social-twitter"></i> Twitter
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@speaker.Twitter" target="_blank">
+                                                <i class="icon-social-twitter"></i> Twitter
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (speaker.Instagram == null)
+                                        {
+                                            <a href="" style="cursor: default;">
+                                                <i class="icon-social-youtube"></i> Instagram
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@speaker.Instagram" target="_blank">
+                                                <i class="icon-social-youtube"></i> Instagram
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (speaker.Linkedin == null)
+                                        {
+                                            <a href="" style="cursor: default;">
+                                                <i class="icon-social-tumblr"></i> Linkedin
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@speaker.Linkedin" target="_blank">
+                                                <i class="icon-social-tumblr"></i> Linkedin
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (speaker.Website == null)
+                                        {
+                                            <a href="" style="cursor: default;">
+                                                <i class="icon-social-dribbble"></i> Website
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a href="@speaker.Website" target="_blank">
+                                                <i class="icon-social-dribbble"></i> Website
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- END MENU -->
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <div class="row">
+                        <div class="col-md-12" style="padding-right: 0px;">
+                            <!-- BEGIN PORTLET -->
+                            <div class="portlet light ">
+                                <div class="portlet-title">
+                                    <div class="caption caption-md">
+                                        <i class="icon-bar-chart theme-font hide"></i>
+                                        <span class="caption-subject font-blue-madison bold uppercase">Hakkında</span>
+                                        <span class="caption-helper hide">weekly stats...</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <p> @speaker.About </p>
+                                </div>
+                            </div>
+                            <!-- END PORTLET -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- BEGIN PORTLET -->
+                            <div class="portlet light ">
+                                <div class="portlet-title">
+                                    <div class="caption caption-md">
+                                        <i class="icon-bar-chart theme-font hide"></i>
+                                        <span class="caption-subject font-blue-madison bold uppercase">Oturumlar</span>
+                                    </div>
+                                </div>
+                                @{
+                                    int count = SpeakerSessions.Count;
+                                    if (count > 0)
+                                    {
+                                        for (int i = 0; i < SpeakerSessions.Count; i++)
+                                        {
+                                            <div style="border: 1px solid #578ebe; padding: 5px; margin-bottom: 10px; width: 100%;">
+
+                                                <div style="margin-bottom: 5px">
+                                                    @{ 
+                                                        if (SpeakerSessions[i].EndDate == "Konferans")
+                                                        {
+                                                            <a href="@Url.Action("ConferenceDetailsOrg", "Activities", new { IDofActivity = @SpeakerSessions[i].Id, from = "Speaker", FromSpeaker = @speaker.Id })" class="title">
+                                                                <div style="font-size: 18px;">
+                                                                    @SpeakerSessions[i].Name
+                                                                    <div class="list-datetime" style="float: right !important; font-size: 14px; color: #333;">
+                                                                        Konferans
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        }
+                                                        else if (SpeakerSessions[i].EndDate == "Sunum")
+                                                        {
+                                                            <a href="@Url.Action("PresentationDetailsOrg", "Activities", new { IDofActivity = @SpeakerSessions[i].Id, from = "Speaker", FromSpeaker = @speaker.Id })" class="title">
+                                                                <div style="font-size: 18px;">
+                                                                    @SpeakerSessions[i].Name
+                                                                    <div class="list-datetime" style="float: right !important; font-size: 14px; color: #333;">
+                                                                        Sunum
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        }
+                                                        else if (SpeakerSessions[i].EndDate == "Panel")
+                                                        {
+                                                            <a href="@Url.Action("PanelDetailsOrg", "Activities", new { IDofActivity = @SpeakerSessions[i].Id, from = "Speaker", FromSpeaker = @speaker.Id })" class="title">
+                                                                <div style="font-size: 18px;">
+                                                                    @SpeakerSessions[i].Name
+                                                                    <div class="list-datetime" style="float: right !important; font-size: 14px; color: #333;">
+                                                                        Panel
+                                                                    </div>
+                                                                </div>
+                                                            </a>
+                                                        }
+                                                    }
+
+                                                </div>
+                                                <div class="portlet-body" style="padding-top: 0;">
+                                                    <div>
+                                                        <div class="mt-list-container">
+                                                            <div class="mt-list-item" style="border-top: 1px solid #e7ecf1; border-bottom: 1px solid #e7ecf1;">
+                                                                <div class="list-datetime" style="margin-top: 5px;">
+                                                                    <i class="fa fa-calendar-o"></i>
+                                                                    @StartDate[i]
+                                                                    <i class="fa fa-clock-o"></i>
+                                                                    @times[i]
+                                                                </div>
+
+                                                                <div style="color:#68717d;">
+                                                                    <h5>@SpeakerSessions[i].Summary</h5>
+                                                                </div>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                                                        }
+
+                                                                    }
+                                }
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <!-- END PROFILE CONTENT -->
+            </div>
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="../assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/profile.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

@@ -1,0 +1,256 @@
+﻿@using EventApp.Models
+@model EventApp.Models.Activity
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Oturumlar";
+
+    List<Map> MapList = (List<Map>)ViewData["MapList"];
+    int countMap = MapList.Count();
+    List<User> OrgList = (List<User>)ViewData["OrgList"];
+    int countOrg = OrgList.Count();
+
+    string DateCompareError = (string)ViewData["DateCompareError"];
+    string SDateError = (string)ViewData["SDateError"];
+    string EDateError = (string)ViewData["EDateError"];
+
+    string NameError = (string)ViewData["NameError"];
+    string ContentError = (string)ViewData["ContentError"];
+    string PlaceError = (string)ViewData["PlaceError"];
+
+    Map ThisMap = (Map)ViewData["ThisMap"];
+    User ThisOrg = (User)ViewData["ThisOrg"];
+    Activity ThisActivity = (Activity)ViewData["ThisCoffee"];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setTimeout(function () { $(this).scrollTop(0); }, 1);
+    });
+</script>
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("ActivityListEditable", "Activities")">Oturumlar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>@ThisActivity.Name</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title">
+            Düzenle
+            <small>@ThisActivity.Name</small>
+        </h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet-body">
+                        <div class="mt-element-step">
+                            <div class="row step-background-thin">
+                                <div class="col-md-6 bg-grey-steel mt-step-col">
+                                    <div class="mt-step-number">1</div>
+                                    <div class="mt-step-title font-grey-cascade">Oturum Tipini</div>
+                                    <div class="mt-step-content font-grey-cascade">Seçin</div>
+                                </div>
+                                <div class="col-md-6 bg-grey-steel mt-step-col active">
+                                    <div class="mt-step-number">2</div>
+                                    <div class="mt-step-title font-grey-cascade">Oturum Bilgilerini</div>
+                                    <div class="mt-step-content font-grey-cascade">Girin</div>
+                                </div>
+                            </div>
+                        </div>
+                        @using (Html.BeginForm("CoffeeEdit", "Activities", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal">
+                                <h3 class="block">Etkinlik Detaylarını Girin</h3>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Etkinik İsmi</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                        @{
+                                            if (NameError == "NameError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Etkinlik İsmi Girin </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Başlama Tarihi & Saati</label>
+                                    <div class="col-md-5">
+                                        <div class="input-group date form_datetime">
+                                            @Html.EditorFor(model => model.StartDate, new { htmlAttributes = new { @class = "form-control string" } })
+                                            @Html.ValidationMessageFor(model => model.StartDate, "", new { @class = "text-danger" })
+                                            <span class="input-group-btn">
+                                                <button class="btn default date-set" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        @{
+                                            if (SDateError == "SDateError")
+                                            {
+                                                <div>
+                                                    <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Başlama Tarihi & Saati Girin </span>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Bitiş Tarihi & Saati</label>
+                                    <div class="col-md-5">
+                                        <div class="input-group date form_datetime">
+                                            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control string" } })
+                                            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                            <span class="input-group-btn">
+                                                <button class="btn default date-set" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        @{
+                                            if (EDateError == "EDateError")
+                                            {
+                                                <div>
+                                                    <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Bitiş Tarihi & Saati Girin </span>
+                                                </div>
+                                            }
+                                            else if (DateCompareError == "DateCompareError")
+                                            {
+                                                <div>
+                                                    <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Geçerli Başlangıç/Bitiş Zamanı Girin </span>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Etkinlik Kısa Tanıtımı</label>
+                                    <div class="col-md-5">
+                                        @Html.TextAreaFor(model => model.Summary, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Summary, "", new { @class = "text-danger" })
+                                        @{
+                                            if (ContentError == "ContentError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Etkinlik Tanıtımı Girin </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Etkinlik Sorumlusu</label>
+                                    <div class="col-md-5">
+                                        <select name="Responsible" id="Responsible" class="form-control form-control-solid placeholder-no-fix">
+                                            @{
+                                                for (int k = 0; k < countOrg; k++)
+                                                {
+                                                    if (OrgList[k].Id != ThisOrg.Id)
+                                                    {
+                                                        <option selected value=@OrgList[k].Id>@OrgList[k].Name @OrgList[k].Surname</option>
+                                                    }
+                                                }
+                                            }
+                                            <option selected value=@ThisOrg.Id>@ThisOrg.Name @ThisOrg.Surname</option>)
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Etkinlik Salonu</label>
+                                    <div class="col-md-5">
+                                        <select name="Places" id="Places" class="form-control form-control-solid placeholder-no-fix">                                          
+                                            @{
+                                                for (int k = 0; k < countMap; k++)
+                                                {
+                                                    if (MapList[k].Id != ThisMap.Id)
+                                                    {
+                                                        <option selected value=@MapList[k].Id>@MapList[k].Name</option>
+                                                    }
+                                                }
+                                            }
+                                            <option selected value=@ThisMap.Id>@ThisMap.Name</option>)
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <a href="@Url.Action("ActivityListEditable","Activities")" id="continue-btn" class="btn btn-success">
+                                            Geri
+                                        </a>
+                                        @{ 
+                                            TempData["IDofActivity"] = ThisActivity.Id;
+                                        }
+                                        <button href="@Url.Action("CreateConference","Activities")" id="CompleteConference" name="CompleteConference" value="CompleteConference" class="btn btn-outline green button-next">
+                                            Oluştur
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                                                                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+
+
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

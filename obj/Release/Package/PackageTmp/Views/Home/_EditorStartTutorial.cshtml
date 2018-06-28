@@ -1,0 +1,196 @@
+﻿<link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+
+<style>
+
+.tutorialSteps {
+    width:100%;
+    z-index:999999999;
+    position:absolute;
+    text-align: center;
+    display:none;
+}
+
+.tutorialSteps div {
+    width:100%; float:left; text-align:center;
+}
+
+.tutorialHeaders{
+    font-family: 'Indie Flower', cursive;
+    color:white;
+    text-align:center;
+    font-size:26px;
+}
+
+.tutorial-upleft {
+    width:100px;
+    margin-right:25%;
+}
+
+.tutorialClose {
+    transition:ease-in-out 0.1s; font-size:18px; margin-top:30px; cursor:pointer;
+}
+
+.tutorialClose:hover {
+    font-weight:600 !important;
+}
+</style>
+
+<script type="text/javascript">
+
+    var desktopDevice = !isMobile();
+
+    $(document).ready(function () {
+        if (!desktopDevice) { $("#editor-start-wrapper").remove(); }
+        $(".tutorialClose").click(function () { finishTutorial(); desktopDevice = false; });
+    });
+
+    function TutorialManualCall(elem) {
+        if (desktopDevice) {
+            $('.tutorialSteps').fadeOut(300); $('#tutorial' + elem).fadeIn(500);
+
+            $(".add-cake").attr("onclick", "$('#tutorialS3').fadeOut(1200)");
+            $(".add-obj").attr("onclick", "$('#tutorialS4').fadeOut(1200)");
+            $(".add-side").attr("onclick", "$('#tutorialS6').fadeOut(1200)")
+            $("#add-relief-input").attr("onkeydown", "$('#tutorialS7').fadeOut(1200)");
+            $(".objectTextures").attr("onclick", "$('#tutorialS8').fadeOut(1200)");
+        }
+    }
+
+    function nextbuttonAnimation() {
+        $("#canvas-next button").removeClass("demo");
+        setTimeout(function () {
+            $("#canvas-next button").addClass("demo");
+        }, 1);
+        $("#canvas-next button").removeClass("demo");
+    }
+
+    function closeTutorialStep() {
+
+    }
+
+    function finishTutorial() {
+        $('.tutorialSteps').fadeOut(300); desktopDevice = false;
+        $.ajax({
+            url: "/Home/sendTutorialCookie",
+            type: 'POST',
+            cache: false,
+            success: function (result) {
+            }
+        });
+    }
+</script>
+
+<div id="editor-start-wrapper" style="position:absolute; z-index:9999999; width:300px; height:100%; left:0; margin:auto; padding:0px 20px; top:53px;">
+
+    <div id="tutorialS1" class="tutorialSteps" style="margin-top: calc(30% + 240px);">
+        <div>
+            <img alt="anlatım 1. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Öncelikle sehir seçimi yapınız.</label>
+        <label class="tutorialHeaders tutorialClose">X Kapat</label>
+    </div>
+
+    <div id="tutorialS2" class="tutorialSteps" style="margin-top:calc(150px);  display:inline;">
+        <label class="tutorialHeaders">Pastanın kaç kisilik olduguna karar verdikten sonra 'Tamam' butonuna basınız.</label>
+        <div>
+            <img alt="anlatım 2. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_downleft_white.png" />
+        </div>
+        <label class="tutorialHeaders tutorialClose">X Kapat</label>
+    </div>
+
+    <div id="tutorialS3" class="tutorialSteps">
+        <div style="margin-top: calc(38% + 140px);">
+            <img alt="anlatım 3. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Simdi sıra pasta tabanınızı seçmekte. Sürükleyip bırakarak veya tıklayarak ekleyebilirsiniz.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS4" class="tutorialSteps">
+        @*<div id="addition1" style="margin-top: calc(52px + 0% + 140px);">
+        <img alt="anlatım 3.5 aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+            <label class="tutorialHeaders">2D figürlere buradan ulaşabilirsiniz.</label>
+        </div>*@
+        <div style="margin-top: calc(140px);">
+            <img alt="anlatım 4. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">3D veya 2D figürlerden birini pastanıza ekleyebilirsiniz. 2D figürler pasta tabanına yapısık hareket eder.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    @*<div id="tutorialS5" class="tutorialSteps" style="display:none;">
+        <div style="margin-top: calc(30% + 140px);">
+            <img alt="anlatım 5. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">2D figürlerden birini pastanıza ekleyebilirsiniz. </label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>*@
+
+    <div id="tutorialS6" class="tutorialSteps">
+        @*<div id="addition2" style="margin-top: calc(52px + 0% + 140px);">
+            <img alt="anlatım 5.5 aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+            <label class="tutorialHeaders">Yan süslere buradan ulaşabilirsiniz.</label>
+        </div>*@
+        <div style="margin-top: calc(100px);">
+            <img alt="anlatım 6. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Isterseniz pastanıza kenar süsü ekleyebilirsiniz. Süse tıklamanız yeterlidir.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS7" class="tutorialSteps">
+        <div style="margin-top: calc(30% + 20px);">
+            <img alt="anlatım 7. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Pastanıza yazı eklemek için metni girip, özelliklerini seçtikten sonra ekle butonuna basın.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS8" class="tutorialSteps">
+        <div style="margin-top: calc(30% + 20px);">
+            <img alt="anlatım 8. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Resim eklemek için istediginiz resmin üstüne tıklayın. Kendi resminizi yüklemek için "Kendi Resmini Yükle" butonuna tıklayabilirsiniz.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS9" class="tutorialSteps">
+        <div style="margin-top: calc(30% + 20px);">
+            <img alt="anlatım 9. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_downright_white.png" />
+        </div>
+        <label class="tutorialHeaders">Bu bölüm siparis bölümüdür. Öncelikle pastanıza bir isim verin ve kategori seçin.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS10" class="tutorialSteps">
+        <div style="margin-top: calc(8%);">
+            <img alt="anlatım 10. aşama ok resmi" class="tutorial-upleft" style="width:70px;" src="~/Images/Site/tutorial_downright_white.png" />
+        </div>
+        <label class="tutorialHeaders">Pastanızı pastaneye anlatmak amacıyla buradan not ve resim ekleyebilirsiniz. Simdi sırada pastane seçimi var.</label>
+        <img alt="anlatım 10. aşama ok resmi" class="tutorial-upleft" style="width:70px;" src="~/Images/Site/tutorial_downleft_white.png" />
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS11" class="tutorialSteps">
+        <div style="margin-top: calc(85%);">
+            <img alt="anlatım 11. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Burada seçtiginiz sehirdeki pastaneler sergilenir. Siparis vermek istediğinize tıklayın.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS12" class="tutorialSteps">
+        <div style="margin-top: calc(95%);">
+            <img alt="anlatım 12. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Son olarak damak zevkinize göre pastanızın içerigini seçin ve bekleyin pastanın fiyatı hesaplanacaktır.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+
+    <div id="tutorialS13" class="tutorialSteps">
+        <div style="margin-top: calc(70%);">
+            <label class="tutorialHeaders">Pastanız artık hazır :) Ister siparis verin, ister üye olup (pastanız kaybolmayacaktır) kaydedin.</label>
+        </div>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Kapat</label>
+    </div>
+</div>

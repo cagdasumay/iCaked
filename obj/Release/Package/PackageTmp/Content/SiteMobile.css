@@ -1,0 +1,682 @@
+﻿@media only screen and (max-width: 780px) {
+    .wsdownmenu {
+        margin:0px !important;
+        border-radius:0px !important;
+        border:1px solid #f0f0f0;
+        border-bottom:none;
+        width:100% !important;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .tooltiptext2 { display:none !important; }
+
+    .cakeImgOrnek { margin-top:20px !important; }
+
+    #desktop-main-slider { display:none !important; }
+    #mobile-main-slider { display:inline !important; }
+
+    .introCityLabel2{
+        margin-bottom:20px !important;
+    }
+
+    #userContractLabel {
+        width:100% !important;
+    }
+
+    #acceptUserContract {
+        width:20px !important; height:20px !important;
+    }
+
+    .megamenu {
+        width:100% !important;
+    }
+
+    #main-slider {
+        margin-bottom:50px !important;
+    }
+
+    .swiper-slide {
+        width:100% !important;
+    }
+
+    .swiper-slide img {
+        height:inherit !important;
+    }
+
+    .swiper-container {
+        height:inherit !important;
+    }
+
+    #login-button,#register-button,#forgot-button {
+        padding:0px !important;
+    }
+
+    #email-login-div {
+        margin-top:0px !important;
+    }
+
+    #email-register-div {
+        margin-top:10px !important;
+    }
+
+    .input-text {
+        padding:5px 20px !important;
+        border-radius:20px !important;
+    }
+
+    #login-floating-div div, #register-floating-div div {
+        border-radius:20px !important;
+    }
+
+    #copyright_label {
+        text-align:center !important;
+        padding-top:30px !important;
+    }
+
+    #pastane_secimi_div .bakeryImg{
+        display:none !important;
+    }
+    #pastane_secimi_div .bakeryInfos {
+        padding:15px 7px !important;
+    }
+
+    #sepet_ozeti_div {
+        margin-top:10px !important;
+        padding-left:0px !important;
+    }
+
+    #sepet_table td:nth-child(1) {
+        min-width:50px !important;
+    }
+
+    #sepet_table td:nth-child(2) > div > div {
+        width:145px !important;
+    }
+
+
+    #sepet_table td:nth-child(3),#sepet_table td:nth-child(4),#sepet_table td:nth-child(5) {
+        display:none;
+    }
+
+    .se-btn {
+        padding:5px 15px !important; margin-top:0px !important;
+    }
+
+    .bnl {
+        padding-bottom:0px !important;
+    }
+
+    .owl-buttons {
+        display:none !important;
+    }
+
+    .owl-theme .owl-controls .owl-page span {
+        width:12px !important;
+        height:12px !important;
+    }
+
+    #index-sub-slider-container {
+        padding-top:30px !important;
+    }
+
+    .product-page-name {
+        width:100%;
+        padding-bottom:10px;
+    }
+
+    #resimli-logo-div,#resimli-logo-div2,#resimli-hosgeldiniz {
+        display:none !important;
+    }
+
+    #editor-page3 h1{
+        padding-top:0px !important; padding-bottom:10px !important;
+    }
+
+    .product-photo-div { 
+        margin-top:30px !important;
+    }
+
+    #editorCitySelect ,#editor-cakeSize-1  {
+        padding:5px 10px !important;
+        margin-top:5px !important;
+    }
+
+    .product-top-label {
+        font-size:24px !important;
+    }
+
+
+    .white-gradient {
+        padding:5px 7px !important; font-size:14px !important;
+    }
+
+    .white-gradient img {
+        width:12px !important; margin-right:5px !important; padding-top:3px !important;
+    }
+
+    .owl-prev {
+        left: -35%!important;
+        top: 55%!important;
+    }
+
+    .owl-next {
+        right: -35%!important;
+        top: 55%!important;
+    }
+
+    .index-blog-desc {
+        font-size:12px !important;
+    }
+
+    .index-blog-title { margin-top:0px !important;}
+
+    /*#blogfeed-title {
+        padding:20px !important;
+    }
+
+    .index-blog-wrapper {
+        padding:5px 5px !important;
+    }*/
+
+    #contactMailUpperWrapper {
+        width:100% !important;
+    }
+
+    #bakery-desktop-search,#design-desktop-search {
+        display:none;
+    }
+
+    #design-sapka-wrapper {
+        margin-top:20px;
+    }
+
+    #bakery-main-mobile-filter, #design-main-mobile-filter {
+        display:inline !important;
+    }
+
+    #tasarimlarh1 {
+        margin-bottom:30px !important;
+    }
+
+    #bakery-market-header-div {
+        margin-bottom:0px !important;
+    }
+
+    #bakery-main-filter-wrapper {
+        padding:0px 15px !important;
+    }
+
+    #bakery-main-filter-div {
+        margin-top:0px !important;
+        display:none;
+    }
+
+    #designs-main-filter-div {
+        margin-top:0px !important;
+        display:none;
+        padding:0px 15px !important;
+        margin-bottom:30px !important;
+        float:left;
+    }
+
+    #bakery-main-container {
+        margin-top:0px !important;
+    }
+
+    #bakery-market-description {
+        display:none !important;
+    }
+
+    #pt-navbar {
+        /*border-top:1px solid #e0e0e0;*/
+        border-left:none !important;
+    }
+
+    #main_logo {
+        float:left;
+    }
+
+    .kategori-main-div {
+        margin-bottom:20px !important;
+    }
+
+    .kategori-main-div > div:nth-child(1){
+        margin-bottom:20px !important;
+    }
+
+    .tum-urunler-link {
+        padding-top:20px; text-align:center;
+    }
+
+    .tum-urunler-link * { float:none !important; }
+
+    .tum-urunler-link img { display:none; }
+
+    #header-lower-menu {
+        box-shadow:0px 1px 1px 0px rgba(0,0,0,0.2) !important; padding:0px !important;
+    }
+
+    #header-lower-menu .container {
+        padding:0px 0px !important;
+    }
+
+    #main-logo-wrapper {
+        margin-top:10px !important;
+    }
+
+    #header-utility-wrapper {
+        margin-bottom:0px !important;
+        padding:0px !important;
+        margin-top:20px !important;
+    }
+
+    .header-utility-sub, .header-utility-sub a {
+        line-height:35px !important;
+    }
+
+    .header-utility-sub img {
+        margin-left:15px !important;
+        width:24px !important;
+        margin-top:0px !important;
+    }
+
+    .header-main-label {
+        display:none !important;
+    }
+
+    .header-dot {
+        display:none !important;
+    }
+
+    .nav li:not(.li-dots) {
+        display:block !important;
+    }
+
+    .li-dots {
+        display:none !important;
+    }
+
+    #main-slide1 {
+         background-image:url('../../Images/HD/main_slide1_mobile.png') !important;
+         background-position:bottom !important;
+    }
+
+    #main-slide2 {
+         background-position:bottom !important;
+    }
+
+    #main-slide1 > div {
+        top:10% !important;
+    }
+
+    .bp-dd li:not(:nth-child(1)) {
+        padding:0px 3px !important;
+    }
+
+    .bp-dd a {
+        padding-left:0px !important;
+    }
+
+    .bp-dd img {
+        width:100% !important; margin-left:0px !important;
+    }
+
+    #bakery-market-main-div,#filter-design-wrapper {
+        padding:0px !important;
+    }
+
+    #bakery-market-header-div {
+        padding:0px 15px !important;
+        margin-top:20px;
+    }
+
+    #bakery-market-header-div img {
+        width:100px !important;
+    }
+
+    #bakery-market-header-div h1 {
+        font-size:20px !important;
+    }
+
+    #siparis-takip-button {
+        margin-left:0px !important;
+    }
+
+    .tasarla-button a {
+        padding:10px !important; 
+        margin:10px !important;
+        text-align:center !important;
+    }
+
+    #account-floating-div {
+        position: absolute;
+        width: 300px;
+        border: 1px solid rgba(0,0,0,.2);
+        background: white;
+        z-index: 99999;
+        right: 0px;
+        left: -100% !important;
+        margin: auto;
+        padding:15px !important;
+    }
+
+    .selectBakeryLink {
+        margin:0px !important;
+    }
+
+    #main-megamenu * {
+        min-height:unset !important;
+    }
+
+    #sepetim-header-div {
+        position: absolute;
+        width: 310px;
+        background: white;
+        padding: 10px;
+        border-radius: 3px;
+        z-index: 10001;
+        display: none;
+        top: 60px;
+        border: 1px solid #e0e0e0;
+        margin-left: -140px;
+        box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        color: #3f2518;
+        right: 0px;
+        left: -100%;
+        margin: auto;
+    }
+
+    #tutorial {
+        display:none !important;
+    }
+
+    .tutorial-buttons {
+        height:220px !important;
+        overflow-y:scroll;
+    }
+
+    #canvas-upper {
+        padding:0px 1%;
+    }
+
+    .canvas-category-search input {
+        width:100px;
+    }
+
+    .canvas-category-search {
+        padding-top:5px;
+        margin-bottom:0px;
+    }
+
+    .category-cake-draggable,.category-object-draggable,.category-object2d-draggable, .category-side-draggable, .category-random-draggable {
+        width: 50% !important;
+        margin:0px !important;
+        height:70px !important;
+        background-size:80% !important;
+    }
+
+    .canvas-category-wrapper {
+        display:none;
+    }
+
+    .draggable-div2 {
+        max-height:140px;
+    }
+
+    .mobile-nav {
+        display:none;
+    }
+
+    .figure-header,.figure-header2d, .side-decoration-header, .random-decoration-header, .relief-header, .decal-header {
+        padding: 5px;
+    }
+
+    .canvas-category-header {
+        margin-top:10px;
+        font-size:13px !important;
+        font-weight:600;
+    }
+
+    .category-decal-draggable {
+        width: 45% !important;
+        border: none !important;
+        height: 50px !important;
+        background-size: contain;
+        background-position: center !important;
+        padding: 1% !important;
+        margin: 0px !important;
+        cursor: pointer;
+        transition: ease-in-out 0.05s;
+        border-radius: 5px;
+    }
+
+    #userDecalLabel {
+        margin-top:10px !important;
+        padding:5px !important;
+        font-size:14px !important;
+        margin-bottom:0px !important;
+    }
+
+    #design-name-prefix {
+        display:none !important;
+    }
+
+    #editor-main-container label:not(.order-design), #editor-main-container a, #editor-main-container h3, #editor-main-container h1, #editor-main-container h2 {
+        font-size:0.85em !important;
+    }
+
+    #canvas-left-lower {
+        padding:5px;
+    }
+
+    #canvas-prev button, #canvas-next button {
+        padding:5px !important;
+    }
+
+    .canvas-category-search input {
+        padding-left:5px;
+        padding-bottom:5px;
+    }
+
+    .relief-header, .decal-header {
+        margin-top:0px !important;
+    }
+
+    .canvas-font {
+        width:100% !important;
+        margin:0px !important;
+    }
+
+    #decal-categories-header > div {
+        margin-top:5px !important;
+    }
+
+    #userDecalLabel {
+        font-size:12px !important;
+        margin-top:5px !important;
+    }
+
+    #last-used-colors-label, #last-used-colors {
+        display:none;
+    }
+
+    #objImageDiv {
+        margin:0px !important;
+    }
+
+    #objImageDiv img {
+        width:50px !important;
+    }
+
+    #color-picker-div {
+        padding:0px !important;
+    }
+
+    .editor-platebar {
+        margin-top:0px !important;
+    }
+
+    .editor-platebar img {
+        width:100% !important;
+    }
+
+    .editor-objectbar-utilitydiv {
+        padding:0px !important;
+        background:white !important;
+    }
+
+    .editor-objectbar-utilitydiv > div {
+        box-shadow:none !important;
+        border:none !important;
+    }
+
+    #close-utilitydiv {
+        right:0px !important;
+    }
+
+    .zopim {
+        display:none !important;
+    }
+
+    .kenar-susu-label {
+        padding:5px 0px;
+    }
+
+    #yazi-ekle-label {
+        padding:5px 8px;
+    }
+
+    #editor-gramaj {
+        padding:5px 0px !important;
+    }
+
+    #page3-cake {
+        padding:0px 5px !important;
+    }
+
+    #editor-sub-main {
+        margin-top:10% !important;
+    }
+
+    #editor-order-wrapper {
+        width:100% !important;
+        margin:0px !important;
+    }
+
+    #design-category-input {
+        width:95% !important; margin-left:5px !important;
+    }
+
+    #design-name-input {
+        width:100% !important;
+    }
+
+    #design-note-input {
+        width:95% !important;
+        height:50px !important;
+    }
+
+    #design-photos-label {
+        padding:5px !important;
+        margin-top:0px !important;
+    }
+
+    #editorCitySelect {
+        width:90% !important;
+    }
+
+    #pastaneleri-bul {
+        padding:7px 15px !important;
+    }
+
+    #designVisible-label {
+        margin:0px !important;
+        margin-right:7px !important;
+    }
+
+    #designVisible-wrapper {
+        margin-top:5px !important;
+    }
+
+    .pastaneAppend {
+        padding:5px 0px !important;
+    }
+
+        #order-design {
+        padding:0px;
+    }
+
+    .order-design {
+        font-size:13px !important;
+        padding:5px !important;
+        width:100%;
+    }
+
+    #add-relief-font,#add-relief-style {
+        padding:5px !important;
+    }
+
+    #add-relief-font {
+        margin-top:10px !important;
+    }
+
+    .pastaSecimi {
+        padding:10px 5px !important;
+    }
+
+    .pastaSecimi img {
+        margin-top:0px !important;
+    }
+
+    .pastaSecimi > label {
+        font-weight:600 !important;
+    }
+
+    #canvas-upper .container > div {
+        padding:5px 0px !important;
+        background-size:18px !important;
+    }
+
+    #canvas-left-side {
+        top:43px !important;
+    }
+
+    #dragBall-container {
+        background-color:rgba(226, 226, 226, 0.62) !important;
+    }
+
+    #dragBall-wrapper {
+        top:45px !important; display:none;
+    }
+
+    .slide-text {
+        font-size:38px; line-height:46px; padding-left:0%; text-align:center;
+    }
+
+    #deleteCopyObject-div {
+        padding:0px !important;
+        margin-top:10px !important;
+        margin-bottom:10px !important;
+    }
+
+    #deleteCopyObject-div img {
+        display:none;
+    }
+
+    .editor-platebar {
+        margin-bottom:10px !important;
+    }
+
+    #deleteCopyObject-div label {
+        float:left !important;
+        line-height:20px !important;
+        width:100% !important;
+        text-align:center !important;
+    }
+
+    #deleteCopyObject-div > div {
+        padding:0px 2px !important;
+    }
+}

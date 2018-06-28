@@ -1,0 +1,145 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using Cake.Models;
+@using System.Xml.Serialization;
+
+@{
+    String whoseProfileIsThis = (String)ViewData["whoseProfileIsThis"];
+    String whatIsThePermission = (String)ViewData["whatIsThePermission"];
+}
+
+<script src="~/scripts/UtilityScripts/jscolor.min.js"></script>
+<script type="text/javascript" src="~/scripts/UtilityScripts/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="~/Content/jquery.dataTables.min.css" />
+
+<style>
+    input[type=search] {
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+    }
+
+    table.dataTable tbody th, table.dataTable tbody td {
+        padding: 5px 10px;
+    }
+
+    #admin-objects-table_length {
+        float: left;
+    }
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#admin-objects-table').DataTable();
+        $("#admin-product-comments-table").DataTable({
+            "order": [[8, "desc"]],
+            responsive: true
+        });
+        $("#admin-design-comments-table").DataTable({
+            "order": [[7, "desc"]],
+            responsive: true
+        });
+        $("#admin-orders-table,#admin-photos-table").DataTable({
+            "order": [[1, "desc"]]
+        });
+    });
+</script>
+
+@{
+
+        <div class="row" style="padding:0px; margin-top:30px;">
+            <div id="profile-management-wrapper" class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:30px; padding:0px;">
+                <div class="row" style="padding:0px;">
+
+                    <nav class="navbar navbar-default" style="background:none; margin-bottom:0px; background:white;">
+                        <div class="container-fluid">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#adminNavbar" aria-expanded="false">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="collapse navbar-collapse" id="adminNavbar" style="padding:0px;">
+                                <ul class="nav navbar-nav">
+                                    <li class="block-wrapper active-bakery" onclick="toggleAdminDivs('admin-orders-div', 'orders', this)" style="border-top-left-radius:5px; border-bottom-left-radius:5px;">
+                                        <img src="~/Images/Site/delivery_icon_gray.png" />
+                                        <label id="admin-orders-link">Siparişler</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-reports-div', 'reports', this)">
+                                        <img src="~/Images/Site/copy_icon_gray.png" />
+                                        <label id="admin-reports-link">Raporlar</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-objects-div', 'objects', this)">
+                                        <img src="~/Images/Site/object_icon_gray.png" />
+                                        <label id="admin-objects-link">Objeler</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-products-div', 'products', this)">
+                                        <img src="~/Images/Site/editor_cake_icon_gray.png" />
+                                        <label id="admin-products-link">Ürünler</label>
+                                    </li>
+                                    @*<li class="block-wrapper" onclick="toggleAdminDivs('admin-comments-div', 'comments', this)">
+                                        <img src="~/Images/Site/edit_icon_gray.png" />
+                                        <label id="admin-comments-link">Yorumlar</label>
+                                    </li>*@
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-multiple-div', 'multiple', this)">
+                                        <img src="~/Images/Site/step3.png" />
+                                        <label id="admin-multiple-link">Çoklu Upload</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-photos-div', 'photos', this)">
+                                        <img src="~/Images/Site/photo_icon.png" style="margin-top:2px; margin-bottom:8px;" />
+                                        <label id="admin-photos-link">Foto Onayı</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-mails-div', 'mails', this)">
+                                        <img src="~/Images/Site/admin_mail_icon.png" style="margin-top:2px; margin-bottom:3px;" />
+                                        <label id="admin-mails-link">Günlük Mail</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-bulk-div', 'bulk', this)">
+                                        <img src="~/Images/Site/admin_bulk_mail_icon.png" style="margin-top:2px; margin-bottom:3px; padding:2.5px 0px;" />
+                                        <label id="admin-bulk-link">Toplu Mail</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleAdminDivs('admin-stat-div', 'stat', this)">
+                                        <img src="~/Images/Site/statistics_icon.png" style="margin-top:0px; margin-bottom:0px; padding:2px 0px;" />
+                                        <label id="admin-bulk-link">İstatistikler</label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <div class="row admin-menu-div" id="admin-orders-div" style="display:inline-block;">
+            @Html.Partial("AdminOrders", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-reports-div">
+            @Html.Partial("AdminReports", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-objects-div">
+            @Html.Partial("AdminObjects", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-products-div">
+            @Html.Partial("AdminProducts", ViewData)
+        </div>
+        @*<div class="row admin-menu-div" id="admin-comments-div">
+            @Html.Partial("AdminComments", ViewData)
+        </div>*@
+        <div class="row admin-menu-div" id="admin-multiple-div">
+            @Html.Partial("AdminOverallUpload", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-photos-div">
+            @Html.Partial("AdminPhotos", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-mails-div">
+            @Html.Partial("AdminDailyMail", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-bulk-div">
+            @Html.Partial("AdminBulkMail", ViewData)
+        </div>
+        <div class="row admin-menu-div" id="admin-stat-div">
+            @Html.Partial("AdminStatistics", ViewData)
+        </div>
+
+}

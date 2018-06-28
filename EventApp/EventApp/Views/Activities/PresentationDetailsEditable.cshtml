@@ -1,0 +1,339 @@
+﻿@using EventApp.Models
+
+@{
+    ViewBag.Title = "Oturumlar";
+    Activity act = (Activity)ViewData["PreActivityDetails"];
+    List<User> AddedSpeakers = (List<User>)ViewData["PreAddedSpeaker"];
+    int countSpeaker = AddedSpeakers.Count;
+    List<User> AddedResponsibles = (List<User>)ViewData["PreAddedResponsible"];
+    int countResponsible = AddedResponsibles.Count;
+    List<Map> AddedPlaces = (List<Map>)ViewData["PreAddedPlace"];
+    int countPlaces = AddedPlaces.Count;
+    List<string> dates = (List<string>)ViewData["Dates"];
+
+    List<Document> documents = (List<Document>)ViewData["Documents"];
+    int isdocexist = documents.Count;
+    List<string> TypeOfDoc = (List<string>)ViewData["TypeOfDoc"];
+}
+
+<link href="../assets/pages/css/about.css" rel="stylesheet" type="text/css" />
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#id").change(function () {
+            var type = $("#id").val();
+            $("#back-btn").attr("href", "/Map/Delete?id=" + type);
+        });
+
+        $("#id").change(function () {
+            var type = $("#id").val();
+            $("#back-btn").attr("href", "/Map/Delete?id=" + type);
+        });
+
+
+        $(".delete-docmm").click(function () {
+            var hidden = $(this).attr("data-td");
+            $("." + hidden).slideToggle(200);
+        });
+
+    });
+
+</script>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("ActivityListEditable", "Activities")">Oturumlar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Sunum</span>
+                </li>
+            </ul>
+        </div>
+
+        <h1 class="page-title" style="float: left;">
+            @act.Name
+        </h1>
+        <a href="@Url.Action("ActivityListEditable", "Activities")" id="continue-btn" class="btn green" style="float: right; margin-top: 20px;  margin-left: 5px;">
+            Devam
+            <i class="fa fa-check"></i>
+        </a>
+        <a href="@Url.Action("PresentationEdit","Activities",new { IDofActivity = @act.Id })" id="continue-btn" class="btn btn-outline green button-next" style="float: right; margin-top: 20px; border-color: #ed6b75; background-color: #ed6b75; color: white;">
+            Düzenle
+            <i class="fa fa-pencil"></i>
+        </a>
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <!-- BEGIN PROFILE SIDEBAR -->
+                <div class="profile-sidebar">
+                    <!-- PORTLET MAIN -->
+                    <div class="portlet light profile-sidebar-portlet stories-cont " style="text-align: center;">
+                        <div class="profile-usertitle" style="color: #578ebe; font-size: 20px; margin-top: 0px; margin-bottom: 0px; color: #ed6b75"><b>@act.Name</b></div>
+                        <div class="profile-usertitle">
+
+                            <div style="line-height: 35px;">
+                                <i class="fa fa-calendar-o"></i>
+                                Başlangıç: @dates[0]
+                            </div>
+                            <div style="line-height: 35px; border-bottom: 1px solid #eee;">
+                                <i class="fa fa-calendar-o"></i>
+                                Bitiş: @dates[1]
+                            </div>
+
+                            <div style="border-bottom: 1px solid #eee;">
+                                <div class="profile-usertitle" style="color: #578ebe; font-size: 16px; margin-top: 10px;"><b>Konuşmacı(lar)</b></div>
+                                @{
+                                    if (countSpeaker != 0)
+                                    {
+                                        for (int i = 0; i < countSpeaker; i++)
+                                        {
+                                            <div style="line-height: 35px;">
+                                                <a style="color: #333;" href="@Url.Action("SpeakerDetails","Users",new { sprdet = AddedSpeakers[i].Id })">
+                                                    <i class="fa fa-user"></i> @AddedSpeakers[i].Name @AddedSpeakers[i].Surname
+                                                    <i style="color: #337ab7;" class="fa fa-arrow-circle-o-right"></i>
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div style="line-height: 35px;">
+                                            <div style="color: #333;">
+                                                <i class="fa fa-location-arrow"></i> Konuşmacı Belirtilmemiş
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                            <div style="border-bottom: 1px solid #eee;">
+                                <div class="profile-usertitle" style="color: #578ebe; font-size: 16px; margin-top: 10px;"><b>Sorumlu(lar)</b></div>
+                                @{
+                                    if (countResponsible != 0)
+                                    {
+                                        for (int i = 0; i < countResponsible; i++)
+                                        {
+                                            <div style="line-height: 35px;">
+                                                <a style="color: #333;" href="">
+                                                    <i class="fa fa-user"></i> @AddedResponsibles[i].Name @AddedResponsibles[i].Surname
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div style="line-height: 35px;">
+                                            <div style="color: #333;">
+                                                <i class="fa fa-location-arrow"></i> Sorumlu Belirtilmemiş
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                            <div style="border-bottom: 1px solid #eee;">
+                                <div class="profile-usertitle" style="color: #578ebe; font-size: 16px; margin-top: 10px;"><b>Salon(lar)</b></div>
+                                @{
+                                    if (countPlaces != 0)
+                                    {
+                                        for (int i = 0; i < countPlaces; i++)
+                                        {
+                                            <div style="line-height: 35px;">
+                                                <a style="color: #333;" href="@Url.Action("DisplayMap","Maps",new { mapdet = AddedPlaces[i].Id })">
+                                                    <i class="fa fa-location-arrow"></i> @AddedPlaces[i].Name
+                                                    <i style="color: #337ab7;" class="fa fa-arrow-circle-o-right"></i>
+                                                </a>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <div style="line-height: 35px;">
+                                            <div style="color: #333;">
+                                                <i class="fa fa-location-arrow"></i> Salon Belirtilmemiş
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="profile-usermenu">
+                            <ul class="nav"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <div class="row">
+                        <div class="col-md-12" style="padding-right: 0px;">
+                            <!-- BEGIN PORTLET -->
+                            <div class="portlet light ">
+                                <div class="portlet-title">
+                                    <div class="caption caption-md">
+                                        <i class="icon-bar-chart theme-font hide"></i>
+                                        <span class="caption-subject font-blue-madison bold uppercase">Sunum Konusu</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <p> @act.Summary </p>
+                                </div>
+                            </div>
+                            <!-- END PORTLET -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="padding-right: 0px;">
+                            <!-- BEGIN PORTLET -->
+                            <div class="portlet light ">
+                                <div class="portlet-title">
+                                    <div class="caption caption-md">
+                                        <i class="icon-bar-chart theme-font hide"></i>
+                                        <span class="caption-subject font-blue-madison bold uppercase">Sunum Hakkında</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <p> @act.Content </p>
+                                </div>
+                            </div>
+                            <!-- END PORTLET -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" style="padding-right: 0px;">
+                            <!-- BEGIN PORTLET -->
+                            <div class="portlet light ">
+                                <div class="portlet-title">
+                                    <div class="caption caption-md">
+                                        <i class="icon-bar-chart theme-font hide"></i>
+                                        <span class="caption-subject font-blue-madison bold uppercase">Dokümanlar</span>
+                                    </div>
+                                </div>
+
+                                @{
+                                    int doc = documents.Count;
+                                    <table class="table">
+                                        <thead style="display:none;">
+                                            <tr>
+                                                <th> Doküman İsmi </th>
+                                                <th style="text-align:center; text-align: right;"> Sil </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                            @{
+                                                for (int i = 0; i < doc; i++)
+                                                {
+                                                    String hidden = "hidden-td" + (i + 1);
+                                                    <tr>
+                                                        <td style="border-color: white;">
+                                                            <i class="icon-paper-clip"></i>
+                                                            @{
+                                                                if (TypeOfDoc[i] == "PDF")
+                                                                {
+                                                                    <a href="@Url.Action("DisplayDocument","Documents",new { docID = @documents[i].Id })">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (TypeOfDoc[i] == "Power Point Sunumu (.pptx)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".pptx")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (TypeOfDoc[i] == "Excel Dosyası (.xlsx)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".xlsx")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (TypeOfDoc[i] == "Excel Dosyası (.xlsm)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".xlsm")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (TypeOfDoc[i] == "Word Dosyası (.docx)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".docx")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                            }
+
+                                                        </td>
+                                                        <td class="pull-left-right delete-docmm" data-td="@hidden" style="text-align:right; cursor:pointer; padding-right: 35px; width: 10px; border-color: white;"> Sil </td>
+                                                    </tr>
+
+                                                                using (Html.BeginForm())
+                                                                {
+                                                                    @Html.AntiForgeryToken()
+                                                                    <tr>
+                                                                        <td class="display-none @hidden">
+                                                                            <div style="margin-top: 8px;" class="pull-left">
+                                                                                @documents[i].Name silmek istediğinize emin misiniz?
+                                                                            </div>
+                                                                            <a href="/Documents/AddDocument" id="continue-btn" class="btn btn-default pull-right" style="text-align:right; border-color: #36c6d3; color: #36c6d3"> Hayır </a>
+                                                                        </td>
+                                                                        <td class="display-none @hidden">
+                                                                            <a class="btn btn-default green pull-right" style="text-align: right;" href="@Url.Action("DeleteDocument", "Activities", new { docID = documents[i].Id, IDofActivity = act.Id, returnto = "PresentationDetailsEditable" })">
+                                                                                Evet
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                    }
+
+                                                                }
+                                            }
+
+                                        </tbody>
+                                    </table>
+                                }
+                                <div style="text-align: right;">
+                                    <a href="@Url.Action("AddDocument", "Documents")" id="continue-btn" class="btn btn-outline green button-next">
+                                        Doküman Ekle
+                                        <i class="fa fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <!-- END PORTLET -->
+                        </div>
+                    </div>
+                </div>
+                <!-- END PROFILE CONTENT -->
+            </div>
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="../assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/profile.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

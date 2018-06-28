@@ -1,0 +1,181 @@
+﻿<link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+
+<style>
+
+.tutorialSteps {
+    width:100%;
+    z-index:999999999;
+    position:absolute;
+    text-align: center;
+    display:none;
+}
+
+.tutorialSteps div {
+    width:100%; float:left; text-align:center;
+}
+
+.tutorialHeaders{
+    font-family: 'Indie Flower', cursive;
+    color:white;
+    text-align:center;
+    font-size:26px;
+}
+
+.tutorial-upleft {
+    width:100px;
+    margin-right:25%;
+}
+
+.tutorialClose {
+    transition:ease-in-out 0.1s; font-size:18px; margin-top:30px; cursor:pointer;
+}
+
+.tutorialClose:hover {
+    font-weight:600 !important;
+}
+</style>
+
+<script type="text/javascript">
+
+    var desktopDevice = !isMobile();
+
+    $(document).ready(function () {
+        //if (!desktopDevice) { $("#editor-start-wrapper").remove(); }
+        $("#editor-start-wrapper").remove();
+        //$(".tutorialClose").click(function () { finishTutorial(); desktopDevice = false; });
+    });
+
+    function TutorialManualCall(elem) {
+        if (desktopDevice) {
+            $('.tutorialSteps').fadeOut(300); $('#tutorial' + elem).fadeIn(500);
+
+            $(".add-cake").attr("onclick", "$('#tutorialS3').fadeOut(1200)");
+            $(".add-obj").attr("onclick", "$('#tutorialS4').fadeOut(1200)");
+            $(".add-side").attr("onclick", "$('#tutorialS6').fadeOut(1200)")
+            $("#add-relief-input").attr("onkeydown", "$('#tutorialS7').fadeOut(1200)");
+            $(".objectTextures").attr("onclick", "$('#tutorialS8').fadeOut(1200)");
+        }
+    }
+
+    function nextbuttonAnimation() {
+        $("#canvas-next button").removeClass("demo");
+        setTimeout(function () {
+            $("#canvas-next button").addClass("demo");
+        }, 1);
+        $("#canvas-next button").removeClass("demo");
+    }
+
+    function closeTutorialStep() {
+
+    }
+
+    function finishTutorial() {
+        $('.tutorialSteps').fadeOut(300); desktopDevice = false;
+        $.ajax({
+            url: "/Home/sendTutorialCookie",
+            type: 'POST',
+            cache: false,
+            success: function (result) {
+            }
+        });
+    }
+</script>
+
+<div id="editor-start-wrapper" style="position:absolute; z-index:9999999; width:300px; height:100%; left:0; margin:auto; padding:0px 20px; top:53px; display:none;">
+
+    <div id="tutorialS1" class="tutorialSteps" style="margin-top: calc(30% + 240px);">
+        <div>
+            <img alt="anlatım 1. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">First choose the city.</label>
+        <label class="tutorialHeaders tutorialClose">X Close</label>
+    </div>
+
+    <div id="tutorialS2" class="tutorialSteps" style="margin-top:calc(150px);  display:inline;">
+        <label class="tutorialHeaders">Once you have decided how many of your patisseries are, we will click on the 'OK' button.</label>
+        <div>
+            <img alt="anlatım 2. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_downleft_white.png" />
+        </div>
+        <label class="tutorialHeaders tutorialClose">X Close</label>
+    </div>
+
+    <div id="tutorialS3" class="tutorialSteps">
+        <div style="margin-top: calc(38% + 140px);">
+            <img alt="anlatım 3. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Now you are choosing your cake base. You can add by dragging and dropping or clicking.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS4" class="tutorialSteps">
+        <div style="margin-top: calc(140px);">
+            <img alt="anlatım 4. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">You can add one of 3D or 2D figurines to your pastel. 2D figures move glue to the cake base.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS6" class="tutorialSteps">
+        <div style="margin-top: calc(100px);">
+            <img alt="anlatım 6. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">If you wish you can add side decoration. Just click the decoration.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS7" class="tutorialSteps">
+        <div style="margin-top: calc(30% + 20px);">
+            <img alt="anlatım 7. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Enter the text to add text to the pasta, press the add button after selecting the properties.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS8" class="tutorialSteps">
+        <div style="margin-top: calc(30% + 20px);">
+            <img alt="anlatım 8. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Click on the desired image to insert the image. You can click on the "Upload your own image" button to upload your own image.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS9" class="tutorialSteps">
+        <div style="margin-top: calc(30% + 20px);">
+            <img alt="anlatım 9. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_downright_white.png" />
+        </div>
+        <label class="tutorialHeaders">This section is the order section. First, give your pasta a name and choose a category.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS10" class="tutorialSteps">
+        <div style="margin-top: calc(8%);">
+            <img alt="anlatım 10. aşama ok resmi" class="tutorial-upleft" style="width:70px;" src="~/Images/Site/tutorial_downright_white.png" />
+        </div>
+        <label class="tutorialHeaders">You can add notes and pictures from here to tell your pastry to cake. There is now a pastry selection.</label>
+        <img alt="anlatım 10. aşama ok resmi" class="tutorial-upleft" style="width:70px;" src="~/Images/Site/tutorial_downleft_white.png" />
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS11" class="tutorialSteps">
+        <div style="margin-top: calc(85%);">
+            <img alt="anlatım 11. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Here are the bakeries in the city you have selected. Click on you want to order from.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS12" class="tutorialSteps">
+        <div style="margin-top: calc(95%);">
+            <img alt="anlatım 12. aşama ok resmi" class="tutorial-upleft" src="~/Images/Site/tutorial_upleft_white.png" />
+        </div>
+        <label class="tutorialHeaders">Finally, choose the content of your pastry according to your taste and wait and the price of the pastry will be calculated.</label>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+
+    <div id="tutorialS13" class="tutorialSteps">
+        <div style="margin-top: calc(70%);">
+            <label class="tutorialHeaders">Your cake is ready :) Order or save your cake.</label>
+        </div>
+        <label class="tutorialHeaders tutorialClose" style="font-size:18px; margin-top:30px; cursor:pointer;">X Close</label>
+    </div>
+</div>

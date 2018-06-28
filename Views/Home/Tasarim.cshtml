@@ -1,0 +1,413 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DataRow design = (DataRow)ViewData["design"];
+    ViewBag.Title = "Tasarım Pastalar - " + design["Name"];
+    ViewBag.Keywords = "Butik pasta siparişi," + design["Name"] + "," + design["Name"] + " siparişi, online pasta siparişi, ankara pasta siparişi, tasarım pasta siparişi";
+
+    String img = "/Images/MadeCakes/" + design["MadeID"] + "/" + design["ImagePath"].ToString().Split(' ')[0];
+
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+    DataTable dt_user = dc.DBQueryGetter("select * from Users where UserID = '" + design["UserID"] + "'");
+
+    DataRow user = null;
+    if (dt_user.Rows.Count > 0) { user = dt_user.Rows[0]; }
+
+    bool isFaved = (bool)ViewData["isFaved"];
+
+    DataTable recommended = dc.DBQueryGetter("SELECT TOP 6 * FROM MadeCakes where Visible = 'yes' and UserID <> '00000000-0000-0000-0000-000000000000' ORDER BY NEWID()");
+
+    List<DataRow> recommendedUsers = new List<DataRow>();
+    for (int i = 0; i < recommended.Rows.Count; i++) { recommendedUsers.Add(dc.DBQueryGetter("select * from Users where UserID = '" + recommended.Rows[i]["UserID"] + "'").Rows[0]); }
+
+    DataTable comments = dc.DBQueryGetter("select * from DesignComments where MadeID='" + new Guid(design["MadeID"].ToString()) + "'");
+    DataView dataview = comments.DefaultView; dataview.Sort = "Likes desc"; comments = dataview.ToTable();
+
+    String profileName = "";
+    if (user != null) { profileName = uc.cleanseUrlString(user["Name"].ToString()) + "-" + uc.cleanseUrlString(user["Surname"].ToString()) + "-" + user["UserID"].ToString().Split('-')[0]; }
+
+    String photoImg = "/Images/MadeCakes/" + design["MadeID"] + "/" + design["ImagePath"].ToString().Split(' ')[0];
+
+    ViewBag.description = design["Description"];
+
+    String rating = design["Rating"].ToString();
+    String review = design["Review"].ToString();
+
+    //String minCakePrice = dc.DBQueryGetter("select MIN(CakePrice) from Bakeries").Rows[0][0].ToString();
+    //String maxCakePrice = dc.DBQueryGetter("select MAX(CakePrice) from Bakeries").Rows[0][0].ToString();
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#design-recommended-slider").owlCarousel({
+            items: 5,
+            itemsTablet: [600, 3],
+            itemsMobile: [479, 2],
+            pagination: true,
+            navigation: true,
+            navigationText: [
+              "<img src='/Images/Site/nav_left.png'  style='width:30px;' />",
+              "<img src='/Images/Site/nav_right.png' style='width:30px;' />",
+            ]
+        });
+
+            $("#designRating").rateYo({
+                rating: "@rating",
+                starWidth: "15px"
+            });
+
+            $("#rateDesign").rateYo({
+                rating: "@rating",
+                starWidth: "15px"
+            });
+
+            $(".commentRatingDesign").rateYo({
+                rating: 0,
+                starWidth: "12px"
+            });
+
+            var commentRates = $(".commentRatingDesign");
+            for (i = 0; i < commentRates.length; i++) { $(commentRates[i]).rateYo("option", "rating", $(commentRates[i]).attr("data-rating")); }
+
+            $("#rateDesign").click(function () {
+                var rating = $("#rateDesign").rateYo("rating");
+                $("#design-comment-rating").val(rating);
+            });
+
+            $("#select-design-size").change(function () {
+                var price = $(this).find(':selected').attr('data-price');
+                $("#designPrice").text(price);
+            });
+    });
+</script>
+
+<link rel="stylesheet" href="~/Content/jquery.rateyo.min.css">
+<script src="~/scripts/UtilityScripts/jquery.rateyo.min.js"></script>
+<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5885a5455798cd0f"></script>
+
+<div class="container">
+    <div class="row" style="padding:0px;">
+
+        @{
+            String thisDesignType = uc.cleanseUrlString(design["Type"].ToString().Replace("\r\n", ""));
+            String thisDesignName = uc.cleanseUrlString(design["Name"].ToString()) + "-" + design["MadeID"].ToString().Split('-')[0];
+        }
+
+        <div class="product-category-div hidden-xs">
+            <a  href="/tasarim-pasta">Tasarım Pasta</a> <img alt="tasarım pasta sekmesi" src="~/Images/Site/right.png" />
+            <a  href="/tasarim-pasta">@design["Category"].ToString().Replace("ları","sı")</a> <img alt="tasarım pasta kategori sekmesi" src="~/Images/Site/right.png" />
+            <a  href="@Url.Action("Tasarim","Home", new { type = thisDesignType, designName = thisDesignName })">@design["Name"]</a>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-12 product-photo-div" style="margin-bottom:50px; float:left;">
+            <div style="width:100%; float:left; border:1px solid #e5e5e5;">
+                <img alt="tasarım ana resim" class="designMainImage" id="designMainImage" src="@img" style="width:100%; float:left;" />
+            </div>
+
+            <div style="width:100%; float:left; background:#f0f0f0; margin-top:20px;">
+                @{
+                    String active = "";
+                    for (int i = 0; i < design["ImagePath"].ToString().Split(' ').Length; i++)
+                    {
+                        //if (i < 4)
+                        //{
+                        if (i == 0) { active = "item active"; } else { active = "item"; }
+                        String photoUrl = "/Images/MadeCakes/" + design["MadeID"] + "/" + design["ImagePath"].ToString().Split(' ')[i];
+                        <div class="@active" style="float:left; margin:2.5px; width:55px;">
+                            <img alt="tasarım mini resim" class="lazy mini-image" data-original="@photoUrl" onclick="updateDesignMainImage(this)" />
+                            <noscript>
+                                <img src="@photoUrl">
+                            </noscript>
+                        </div>
+                    }
+                    //}
+                }
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-12" style="color:gray; float:left;">
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; padding:0px; margin-bottom:20px; display:none;">
+                <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6; padding-top:5px; padding-bottom:15px; font-size:16px;">
+                    @{
+                        if (user != null)
+                        {
+                            <div style="float:left; cursor:pointer;">
+                                <img alt="tasarım kullanıcı ikon" src="~/Images/Site/user_2.png" style="width:13px; float:left; margin-right:10px; margin-top:2px;" />
+                                <a  href="@Url.Action("UserProfile","Account", new { profileName = profileName })" style="float:left; color:#3f2518; text-transform:capitalize;">@user["Name"] @user["Surname"]</a>
+                            </div>
+                        }
+                    }
+                    <div style="float:right; ">
+                        <label style="float:right; font-size:18px; margin-top:2px; margin-left:2px;">@design["Likes"]</label>
+                        @{
+                            Guid bakeryID = new Guid();
+                            if (String.IsNullOrEmpty(design["BakeryID"].ToString()) == false) { bakeryID = new Guid(design["BakeryID"].ToString()); }
+                            if (isFaved)
+                            {
+                                if (Session["userinfo"] != null)
+                                {
+                                    <a onclick="UnFaveProductJson(this)" data-productID="@design["MadeID"]" data-bakeryID="@bakeryID.ToString()">
+                                        <img alt="tasarım beğen ikon" src="~/Images/Site/heart_icon_filled.png" style="width:20px; margin-top:5px; float:right; margin-right:5px;" />
+                                    </a>
+                                }
+                                else
+                                {   <img alt="tasarım beğen ikon" src="~/Images/Site/heart_icon_filled.png" style="width:20px; margin-top:5px; float:right; margin-right:5px;" /> }
+                            }
+                            else
+                            {
+                                if (Session["userinfo"] != null)
+                                {
+                                    <a onclick="FaveProductJson(this)" data-productID="@design["MadeID"]" data-bakeryID="@bakeryID.ToString()">
+                                        <img alt="tasarım beğen ikon" src="~/Images/Site/heart_icon.png" style="width:20px; margin-top:5px; float:right; margin-right:5px;" />
+                                    </a>
+                                }
+                                else
+                                {  <img alt="tasarım beğen ikon" src="~/Images/Site/heart_icon.png" style="width:20px; margin-top:5px; float:right; margin-right:5px;" /> }
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div style="width:100%; padding-bottom:20px; border-bottom:1px solid #e6e6e6; float:left;">
+                <div style="width:100%; float:left;">
+                    <h1 style="float:left; text-align:left; font-size:34px; font-weight:500; color:#3f2518;">@design["Name"] </h1>
+                </div>
+                <div style="width:100%; float:left; margin-top:13px;">
+                    <div id="designRating" style="float:left; pointer-events:none;"></div>
+                </div>
+                <div style="width:100%; float:left;">
+                    <h2 style="float:left; font-weight:500; width:100%; font-size:13px; padding-top:20px; color:#3f2518;">@design["Description"]</h2>
+                    <div style="width:100%; float:left;">
+                        <div style="float:left; width:150px;">
+                            <h3 style="float:left; width:100%; font-weight:500; font-size:13px; padding-top:20px; color:gray;">@design["Category"].ToString().Replace("ları", "sı")</h3>
+                            <select id="select-design-size" style="float:left; border:1px solid #e6e6e6; padding:5px; border-radius:3px; margin-top:10px;">
+                                @{
+                                    for (int i = Convert.ToInt32(design["SizeOptions"]); i < 64; i = i + 2)
+                                    {
+                                        double priceInterval = Convert.ToDouble(design["PriceInterval"].ToString().Replace(".", ","));
+                                        string livaPrice = uc.ArrangePrice(((priceInterval - 12 * Convert.ToDouble(design["SizeOptions"])) + 12 * i).ToString()).Replace(".", ",");
+                                        string cakePrice = livaPrice + " - " + uc.ArrangePrice((Convert.ToDouble(livaPrice.Replace(".",",")) * 1.2).ToString()).Replace(".", ",");
+
+                                        if (i == Convert.ToInt32(design["SizeOptions"]))
+                                        {
+                            <option data-price="@cakePrice" selected value="@i">@i</option> }
+                                        else
+                                        {
+                            <option data-price="@cakePrice" value="@i">@i</option> }
+                                    }
+                                }
+                            </select>
+                            <label style="float:left; margin-left:10px; line-height:30px; margin-top:10px;"> kişilik</label>
+                        </div>
+                        <div style="float:right; padding-top:35px; color:black;">
+                            @{
+                                double priceInterval2 = Convert.ToDouble(design["PriceInterval"].ToString().Replace(".", ","));
+                                double sizeOption = Convert.ToDouble(design["SizeOptions"].ToString().Replace(".", ","));
+                                string livaPrice2 = uc.ArrangePrice(((priceInterval2 - 12 * Convert.ToDouble(design["SizeOptions"])) + 12 * sizeOption).ToString()).Replace(".", ",");
+                                string price = livaPrice2 + " - " + uc.ArrangePrice((Convert.ToDouble(livaPrice2.Replace(".", ",")) * 1.2).ToString()).Replace(".", ",");
+                               // string price = uc.ArrangePrice(((priceInterval2 - 12 * sizeOption) + 12 * sizeOption).ToString()).Replace(".", ",") + " - " + uc.ArrangePrice(((priceInterval2 - 12 * sizeOption) + 13 * sizeOption).ToString()).Replace(".", ",");
+                                //string priceDecimal = price.Split('.')[1]; string priceBase = price.Split('.')[0];
+                            }
+                            <label style="font-size:20px; line-height:22px; float:right; padding:0px 10px; font-weight:600; padding-right:0px; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight:400;"> TL</label>
+                            <label id="designPrice" style="font-size:40px; line-height:40px; float:right; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; font-weight:400;">@price</label>
+                        </div>
+                    </div>
+
+                    @*<h3 style="float:left; width:100%; text-align:left; font-size:14px; color:gray; padding-top:7px; margin-bottom:10px;">@design["SizeOptions"] kişilik</h3>*@
+                    <label style="float:left; width:100%; text-align:right; font-size:12px; color:gray; padding-top:30px; margin-bottom:10px;">Hesaplanan fiyat tahmini rakamdır ve pastaneden pastaneye değişebilir.</label>
+                    <label style="float:left; width:100%; text-align:right; font-size:12px; color:gray; margin-bottom:20px;">Tasarım pastaların gerçek fiyatları pastane seçiminden sonra hesaplanır.</label>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; padding:0px; margin-top:30px;">
+                        <div style="float:right; margin-left:10px;">
+                            <a onclick="AddDesignChecker('@design["MadeID"]')" id="add-to-cart-btn" class="black-gradient" style="float:right;"><img alt="sepete ekle" src="~/Images/Site/cart_icon_white.png" style="float:left; width:20px; margin-right:8px; " />Sepete Ekle</a>
+                        </div>
+                        <div style="float:right;">
+                            <a href="/Editor?designID=@design["MadeID"]" id="add-to-cart-btn" class="white-gradient" style="float:right;">Editörde Aç</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; margin-bottom:30px;">
+                @*<div style="margin-top:15px; float:left; background:#f0f0f0; padding:10px; border-radius:5px;">
+                <img alt="24 saat içinde teslimat" src="~/Images/Site/delivery_icon.png" style="width:30px; float:left; margin-top:2px;" />
+                <label style="float:left; margin-left:10px; font-size:14px;">24 saat içinde teslimat</label>
+            </div>*@
+                <div class="addthis_inline_share_toolbox" style="float:right; margin-top:20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="float:left; width:100%; min-height:350px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" id="product-comments-div" style="float:left;">
+            <div style="width:100%; float:left;   font-size:20px; border-bottom:1px solid #e6e6e6; padding-bottom:10px; margin-bottom:20px;">
+                <button style="float:right; margin-top:0px; border:1px solid #d6d6d6; border-radius:30px; background:none; padding:10px 20px;" id="add-comment-button-design"><span style="float:left; font-size:14px; font-weight:400;">Yorum Yap</span></button>
+                <label style="float:left; font-size:22px; text-align:left; color:#3f2518;">Yorumlar</label>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-12" style="float:right; margin-bottom:30px;">
+            @using (Html.BeginForm("AddProductComment", "Order"))
+            {
+                <div style="float:left; width:100%; display:none;" id="design-comment-div">
+                    <div style="width:100%; float:left;">
+                        <input type="text" onkeyup='$(this).css("border-color","#cccccc")' id="design-comment-name" autocomplete="off" name="design-comment-name" maxlength="1000" class="add-product-comment" placeholder="İsim Soyisim" style="text-transform:capitalize;" />
+                    </div>
+                    <div style="width:100%; float:left;">
+                        <textarea onkeyup='$(this).css("border-color","#cccccc")' id="design-comment-content" autocomplete="off" name="design-comment-content" maxlength="1000" class="add-product-comment" placeholder="Yorum" style="height:100px;"></textarea>
+                    </div>
+                    <div style="width:100%; float:right; margin-bottom:10px; display:none;" id="design-comment-validation-div">
+                        <label style="float:right; font-weight:400; font-size:12px; color:red;">Başlık ve yorum doldurulmalıdır.</label>
+                    </div>
+                    <div style="width:100%; float:right;">
+                        <div style="width:300px; float:right;">
+                            <div id="rateDesign" style="float:left;  padding-top:7px;"></div>
+                            <input onclick="validateDesignComment()" type="submit" class="black-gradient" style="float:right; margin-top:0px; padding:5px 10px; font-size:14px; font-weight:400;" value="Gönder" />
+                        </div>
+                    </div>
+                    <input type="hidden" value="0" id="design-comment-rating" name="design-comment-rating" />
+                    <input type="hidden" name="MadeID" value="@design["MadeID"]" />
+                    <input type="hidden" name="isDesign" value="yes" />
+                </div>
+            }
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-12" style="float:left; margin-bottom:50px;">
+            @{
+                if (comments.Rows.Count == 0)
+                {
+                    <div style="width:100%; float:left;">
+                        <label style="float:left; width:100%; text-align:left; font-weight:400;"> Bu ürüne henüz yorum yapılmamış.</label>
+                    </div>
+                }
+                else
+                {
+                    for (int i = 0; i < comments.Rows.Count; i++)
+                    {
+                        DataRow comment = comments.Rows[i];
+                        String content = comment["Comment"].ToString().Substring(0, 1).ToUpper() + comment["Comment"].ToString().Substring(1, comment["Comment"].ToString().Length - 1);
+                        String nameSurname = comment["NameSurname"].ToString();
+
+                        <div style="width:100%; float:left; border-bottom:1px solid #f0f0f0; padding-bottom:20px;">
+                            <div style="float:left; width:100%; padding:15px 0px;">
+                                <label style="font-weight:500; font-size:15px; float:left; margin-right:7px; text-transform:capitalize;"> @nameSurname </label>
+                                <div class="commentRating" style="float:left; margin-top:4px; pointer-events:none;" data-rating="@comment["Point"].ToString().Replace(",",".")"></div>
+                                <label style="font-weight:500; font-size:15px; float:right;"> @Convert.ToDateTime(comment["DateTime"]).Date.ToString("dd.MM.yyyy") </label>
+                            </div>
+                            <div style="float:left; width:100%; padding:20px; background:#f9f9f9;">
+                                <label style="font-weight:400; font-size:14px; float:left;">@content</label>
+                            </div>
+                            @*<div style="float:left; width:100%; margin-top:20px; margin-bottom:10px;">
+                                @{
+                                    if (Session["userinfo"] != null)
+                                    {
+                                        <div style="float:right; margin-left:20px;">
+                                            <a href="@Url.Action("GiveLike","Order", new { CommentID = comments.Rows[i]["ID"] })" style="float:left; text-decoration:none;">
+                                                <img alt="yorumu beğen" src="~/Images/Site/thumbsup_icon.png" style="float:left; width:15px;" />
+                                                <label style="float:left; margin-left:5px; cursor:pointer; font-size:12px; font-weight:400; color:gray;">(@comments.Rows[i]["Likes"])</label>
+                                            </a>
+                                            <a href="@Url.Action("GiveDislike","Order", new { CommentID = comments.Rows[i]["ID"] })" style="float:left; text-decoration:none;">
+                                                <img alt="yorumu beğenme" src="~/Images/Site/thumbsdown_icon.png" style="float:left; width:15px; margin-left:20px; padding-top:2px;;" />
+                                                <label style="float:left; margin-left:5px; cursor:pointer; font-size:12px; font-weight:400; color:gray;">(@comments.Rows[i]["Dislikes"])</label>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            </div>*@
+                        </div>
+                    }
+                }
+            }
+        </div>
+    </div>
+
+    <div style="width:100%; float:left; margin-bottom:150px;">
+        <label style="width:100%; float:left; font-size:22px; padding-bottom:15px; margin-bottom:25px !important; color:#3f2518; text-align:center;">Beğenebileceğiniz Tasarımlar</label>
+
+        <div style="width:100%; float:left;">
+            <div class="owl-carousel owl-theme" id="design-recommended-slider" style="float:left;">
+                @{
+                    for (int i = 0; i < recommended.Rows.Count; i++)
+                    {
+                        DataRow rdesign = recommended.Rows[i];
+                        String rimg = "/Images/MadeCakes/" + rdesign["MadeID"] + "/designImg-275x275.png";
+
+                        String designType = uc.cleanseUrlString(rdesign["Type"].ToString().Replace("\r\n", ""));
+                        String designName = uc.cleanseUrlString(rdesign["Name"].ToString()) + "-" + rdesign["MadeID"].ToString().Split('-')[0];
+                        String rprice = uc.ArrangePrice(rdesign["PriceInterval"].ToString());
+
+                        <div class="col-md-12 col-sm-12 col-xs-12 item" style="padding:1.5%; float:left;">
+                            <a  href="@Url.Action("Tasarim", "Home", new { type = designType, designName = designName })">
+                                <div class="new-product-wrapper" style="padding:1%;">
+                                    <img class="new-product-img" alt="ürün tasarım pasta" src="@rimg" onclick="$(this).parent().parent().submit()" />
+                                    <div class="new-product-div">
+                                        <span class="new-product-name">@rdesign["Name"]</span>
+                                        <span class="new-product-description">@rdesign["SizeOptions"] kişilik</span>
+                                        <span class="new-product-price"> @rprice.Split('.')[0] <span style="font-size:16px; margin-left:-7px;">.@rprice.Split('.')[1] TL</span></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script type="application/ld+json">
+    {
+    "@@context": "http://schema.org/",
+    "@@type": "Product",
+    "name": "@design["Name"]",
+    "image": "@photoImg",
+    "description": "@design["Name"] - @design["SizeOptions"] kişilik tasarım pasta",
+    "brand": {
+    "@@type": "Thing",
+    "name": "iCaked"
+    },
+    "aggregateRating": {
+    "@@type": "AggregateRating",
+    "bestRating": "5",
+    "worstRating": "0",
+    "ratingValue": "@rating",
+    "reviewCount": "@review"
+    },
+    "offers": {
+    "@@type": "Offer",
+    "priceCurrency": "TRY",
+    "price": "@design["PriceInterval"]",
+    "priceValidUntil": "2020-11-05",
+    "availability": "InStock",
+    "seller": {
+    "@@type": "Organization",
+    "name": "iCaked"
+    }
+    }
+    }
+</script>
+
+<script type="application/ld+json">
+    {
+    "@@context": "http://schema.org",
+    "@@type": "BreadcrumbList",
+    "itemListElement": [{
+    "@@type": "ListItem",
+    "position": 1,
+    "item": {
+    "@@id": "https://www.icaked.com/tasarim-pasta/",
+    "name": "Tasarım Pastalar",
+    "image": "https://www.icaked.com/Images/Site/sapka_icon.png"
+    }
+    }]
+    }
+</script>
+
+<script src="jquery.js"></script>
+<script src="jquery.lazyload.js"></script>

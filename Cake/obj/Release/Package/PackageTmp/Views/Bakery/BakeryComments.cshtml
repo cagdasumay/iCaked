@@ -1,0 +1,50 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow bakery = (DataRow)ViewData["bakeryinfo"];
+    DataTable comments = dc.DBQueryGetter("select * from ProductComments where BakeryID = '" + bakery["BakeryID"] + "'");
+}
+
+<div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left; padding:0px;">
+
+    <label style="float:left; font-size:18px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px dashed #3f2518; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">Ürün Yorumları</label>
+
+    @using (Html.BeginForm("EditComment", "Account"))
+    {
+        <table style="float:left; width:100%; margin-top:20px; font-size:12px; font-family:'Open Sans'; color:gray;" id="bakery-comments-table" class="row-border">
+            <thead style="color:black;">
+                <tr>
+                    <td style="font-weight:600;">Ürün</td>
+                    <td style="font-weight:600;">İsim</td>
+                    <td style="font-weight:600;">Başlık</td>
+                    <td style="font-weight:600;">Yorum</td>
+                    <td style="font-weight:600;">Like</td>
+                    <td style="font-weight:600;">Dislike</td>
+                    <td style="font-weight:600;">Onay</td>
+                    <td style="font-weight:600;">Tarih</td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < comments.Rows.Count; i++)
+                    {
+                        String approved = "Onaysız"; String check = "";
+                        if (comments.Rows[i]["Approved"].ToString() == "yes") { approved = "Onaylı"; check = "checked"; }
+                        <tr>
+                            <td><label>@dc.getProductNameByID(new Guid(comments.Rows[i]["ProductID"].ToString()))</label></td>
+                            <td><label>@comments.Rows[i]["NameSurname"]</label></td>
+                            <td><label>@comments.Rows[i]["Title"]</label></td>
+                            <td><label style="max-width:200px; overflow:auto;">@comments.Rows[i]["Comment"]</label></td>
+                            <td><label>@comments.Rows[i]["Likes"]</label></td>
+                            <td><label>@comments.Rows[i]["Dislikes"]</label></td>
+                            <td><input onclick="approveBakeryComment('@comments.Rows[i]["ID"]')" type="checkbox" style="margin-top:0px; vertical-align:middle; margin-right:5px; cursor:pointer;" @check /><label>@approved</label></td>
+                            <td><label>@comments.Rows[i]["DateTime"]</label></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+                    }
+</div>

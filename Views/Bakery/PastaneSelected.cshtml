@@ -1,0 +1,262 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    DatabaseController dc = new DatabaseController();
+    AccountController ac = new AccountController();
+    UtilityController uc = new UtilityController();
+
+    DataRow bakery = (DataRow)ViewData["bakeryinfo"];
+    String whois = (String)ViewData["whatIsThePermission"];
+
+    bool bakeryFound = true;
+
+    if (ViewData["bakeryFound"] != null)
+    {
+        if ((bool)ViewData["bakeryFound"] == false) { bakeryFound = false; }
+    }
+
+    if (bakeryFound)
+    {
+        string category = "";
+        if(ViewData["category"] != null) { category = uc.categoryCorrector((string)ViewData["category"]); }
+
+        if(String.IsNullOrEmpty(category) == false)
+        {
+            ViewBag.Title = "Online " + category + " Siparişi – " + bakery["Name"] + " Pastanesi - " + category + " Ürünleri";
+            ViewBag.description = bakery["Name"] + " pastanesinden anında online " + category + " siparişi verebilirsiniz. " + bakery["Name"] + " pastanesinden online " + category + " siparişi verin.";
+            ViewBag.Keywords = "Ankara " + category + " siparişi," + bakery["Name"] + " pastanesi, Ankara " + bakery["Name"] + " pastanesi, online " + category + " siparişi, butik pasta siparişi, tasarım pasta, butik pasta";
+        }
+        else
+        {
+            ViewBag.Title = "Pasta Siparişi – " + bakery["Name"] + " Pastanesi";
+            ViewBag.description = "iCaked’in anlaşmalı olduğu " + bakery["Name"] + " pastanesi ile anında online pasta siparişi verebilirsiniz. " + bakery["Name"] + " pastanesinden online pasta siparişi verin.";
+            ViewBag.Keywords = "Ankara pasta siparişi," + bakery["Name"] + " pastanesi, Ankara " + bakery["Name"] + " pastanesi, online pasta siparişi, butik pastalar, özel pasta siparişi, tasarım pasta siparişi, butik pasta siparişi";
+        }
+    }
+}
+
+<script src="~/scripts/UtilityScripts/jscolor.min.js"></script>
+<script type="text/javascript" src="~/scripts/UtilityScripts/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="~/Content/jquery.dataTables.min.css" />
+
+<style>
+        input[type=search] {
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+        }
+
+        table.dataTable tbody th, table.dataTable tbody td {
+            padding: 5px 10px;
+        }
+
+        #bakery-objects-table_length {
+            float: left;
+        }
+
+        .navbar-inverse {
+            background:white;
+            border-color:#f0f0f0;
+        }
+
+        .navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus {
+            background:#fcfcfc;
+        }
+
+        .navbar-inverse .navbar-nav > li > a {
+            color: gray;
+        }
+
+        .navbar-collapse {
+            padding:0px;
+        }
+
+        .navbar-default .navbar-toggle .icon-bar {
+        background-color: #cccccc !important;
+    }
+
+        .navbar-inverse .navbar-toggle {
+        border-color: #dddddd;
+    }
+
+        .active-bakery {
+            background:#e0e0e0;
+        }
+
+        #bakeryNavbar .nav > li, #profileNavbar .nav > li {
+            height: 68px;
+        }
+
+        #bakeryNavbar .navbar-nav, #profileNavbar .navbar-nav {
+            margin: 0px;
+        }
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#bakery-objects-table').DataTable();
+        $("#bakery-comments-table").DataTable({
+            "order": [[6, "desc"]],
+            responsive: true
+        });
+
+        $(".nav li").on("click", function () {
+            $(".nav").find(".active-bakery").removeClass("active-bakery");
+            $(this).addClass("active-bakery");
+        });
+
+        $("#bakery-orders-table").DataTable({
+            responsive : true,
+            "order": [[0, "desc"]]
+        });
+
+        $("#bakery-network-table").DataTable({
+        });
+    });
+</script>
+
+<div class="container" style="padding:0px;">
+    @{
+        if (bakeryFound == true)
+        {
+            if (whois == "own" | whois == "admin")
+            {
+                <div class="row" style="padding:0px;">
+
+                    <nav class="navbar navbar-default" style="background:none; margin-bottom:0px;">
+                        <div class="container-fluid">
+                            <div class="navbar-header">
+                                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bakeryNavbar" aria-expanded="false">
+                                    <span class="sr-only">Toggle navigation</span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                            </div>
+                            <div class="collapse navbar-collapse" id="bakeryNavbar">
+                                <ul class="nav navbar-nav">
+                                    <li class="block-wrapper active-bakery" onclick="toggleBakeryDivs('bakery-market-div', 'market', 'bakery-market-link')">
+                                        <img alt="pastane marketi" src="~/Images/Site/step2.png" />
+                                        <label id="bakery-market-link">Market</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleBakeryDivs('bakery-info-div', 'info', 'bakery-info-link')">
+                                        <img alt="pastane bilgileri" src="~/Images/Site/edit_icon_gray.png" />
+                                        <label id="bakery-info-link">Bilgiler</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleBakeryDivs('bakery-order-div', 'order', 'bakery-order-link')">
+                                        <img alt="pastane siparişleri" src="~/Images/Site/delivery_icon_gray.png" />
+                                        <label id="bakery-order-link">Siparişler</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleBakeryDivs('bakery-product-div', 'product', 'bakery-product-link')">
+                                        <img alt="pastane ürünleri" src="~/Images/Site/editor_cake_icon_gray.png" />
+                                        <label id="bakery-order-link">Ürünler</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleBakeryDivs('bakery-content-div', 'content', 'bakery-content-link')">
+                                        <img alt="pastane ürün içerikleri" src="~/Images/Site/step3.png" />
+                                        <label id="bakery-order-link">İçerik</label>
+                                    </li>
+                                    @*<li class="block-wrapper" onclick="toggleBakeryDivs('bakery-message-div', 'message', 'bakery-message-link')">
+                                        <img alt="pastane ürün yorumları" src="~/Images/Site/editor_text_icon_gray.png" />
+                                        <label id="bakery-order-link">Yorumlar</label>
+                                    </li>*@
+                                    <li class="block-wrapper" onclick="toggleBakeryDivs('bakery-network-div', 'network', 'bakery-network-link')">
+                                        <img alt="pastane dağıtım ağı" src="~/Images/Site/network_icon.png" />
+                                        <label id="bakery-network-link">Dağıtım Ağı</label>
+                                    </li>
+                                    <li class="block-wrapper" onclick="toggleBakeryDivs('bakery-report-div', 'network', 'bakery-report-link')">
+                                        <img alt="pastane raporları" src="~/Images/Site/copy_icon_gray.png" />
+                                        <label id="bakery-report-link">Raporlar</label>
+                                    </li>
+                                    @*<li class="block-wrapper" onclick="toggleBakeryDivs('bakery-object-div', 'object', 'bakery-object-link')">
+                                            <img src="~/Images/Site/object_icon_gray.png" />
+                                            <label id="bakery-order-link">Objeler</label>
+                                        </li>*@
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            }
+            <div class="row" style="padding:0px;">
+                <div id="bakery-main-container" class="col-md-12 col-sm-12 col-xs-12" style="float:left; margin-top:30px; padding:0px;">
+
+                        <div class="row bakery-menu-div" id="bakery-market-div" style="display:inline-block;">
+                            <div class="col-md-12" style="padding:0px;">
+                                @Html.Partial("BakeryMarket", ViewData)
+                            </div>
+                        </div>
+
+                            @{
+                                if (whois == "own" | whois == "admin")
+                                {
+                                    <div style="float:left; margin-top:30px; width:100%; background:white;">
+                                        <div class="row bakery-menu-div" id="bakery-order-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryOrder", ViewData)
+                                            </div>
+                                        </div>
+
+                                        <div class="row bakery-menu-div" id="bakery-product-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryProduct", ViewData)
+                                            </div>
+                                        </div>
+
+                                        <div class="row bakery-menu-div" id="bakery-object-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryObject", ViewData)
+                                            </div>
+                                        </div>
+
+                                        <div class="row bakery-menu-div" id="bakery-info-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryInfo", ViewData)
+                                            </div>
+                                        </div>
+
+                                        <div class="row bakery-menu-div" id="bakery-content-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryContent", ViewData)
+                                            </div>
+                                        </div>
+
+                                        @*<div class="row bakery-menu-div" id="bakery-message-div">
+                                                <div class="col-md-12" style="padding:0px;">
+                                                    @Html.Partial("BakeryComments", ViewData)
+                                                </div>
+                                            </div>*@
+
+                                        <div class="row bakery-menu-div" id="bakery-network-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryNetwork", ViewData)
+                                            </div>
+                                        </div>
+
+                                        <div class="row bakery-menu-div" id="bakery-report-div">
+                                            <div class="col-md-12" style="padding:0px;">
+                                                @Html.Partial("BakeryReports", ViewData)
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                </div>
+            </div>
+                            }
+                            else
+                            {
+                                ViewBag.Title = "Pastane Bulunamadı";
+                                <div style="width:100%; float:left; text-align:center;">
+                                    <img alt="pastane bulunamadı" src="~/Images/Site/sapka_icon.png" style="width:50px; margin-bottom:30px; margin-top:150px; -webkit-filter: drop-shadow(1px 3px 1px #cccccc);" />
+                                </div>
+                                <div style="width:100%; float:left; height:300px; text-align:center;">
+                                    <label style="font-size:18px; font-weight:400;">Böyle bir pastane bulunamadı.</label>
+                                    <a style="font-size:18px; color:black !important; font-weight:400;" href="@Url.Action("Editor","Home")">İsterseniz sizi <b>editöre</b> alalım.</a>
+                                </div>
+                            }
+
+    }
+</div>

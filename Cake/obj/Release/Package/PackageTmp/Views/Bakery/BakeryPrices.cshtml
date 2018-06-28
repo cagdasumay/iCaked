@@ -1,0 +1,224 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow bakery = (DataRow)Session["bakeryinfo"];
+
+    DataTable cakePrices = dc.DBQueryGetter("select * from BakeryPrices where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cake'");
+    DataTable cupcakePrices = dc.DBQueryGetter("select * from BakeryPrices where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cupcake'");
+    DataTable cookiePrices = dc.DBQueryGetter("select * from BakeryPrices where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cookie'");
+}
+
+<div id="cakePriceDialog">
+    @using (Html.BeginForm("AddEditBakeryPrice", "Bakery", FormMethod.Post, new { id = "addCakePriceForm", onsubmit = "validateAddPrice(this)" }))
+    {
+        <div style="width:100%; float:left; text-align:center;">
+            <img src="~/Images/Site/cake_vector_icon.png" style="width:50px; margin:10px 0px; -webkit-filter: drop-shadow(0px 1px 2px gray);" />
+        </div>
+        <div style="width:100%; float:left;">
+            <label style="float:left; width:50%; text-align:center; font-size:14px;">Kaç Kişilik</label>
+            <label style="float:left; width:50%; text-align:center; font-size:14px;">Fiyat</label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input autocomplete="off" name="size" type="number" style="border:1px solid #cccccc; border-radius:3px; background:white; width:50px; padding:3px 5px;" value="0" min="0" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <input autocomplete="off" name="price" type="text" placeholder="Örn. 29.99" style="border:1px solid #cccccc; border-radius:3px; background:white; width:80px; padding:3px 5px;" />
+            </div>
+        </div>
+        <div style="width:100%; float:left; margin-top:20px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input type="submit" class="cart_gradient" value="Tamam" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <label onclick="clearBakeryPrice('cake')" class="yukle_gradient" style="font-size:16px; font-weight:400; padding:5px 10px;">İptal</label>
+            </div>
+        </div>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="what" value="add" />
+        <input type="hidden" name="type" value="cake" />
+        <input type="hidden" name="bakeryID" value="@bakery["BakeryID"]" />
+    }
+</div>
+
+<div id="cupcakePriceDialog">
+    @using (Html.BeginForm("AddEditBakeryPrice", "Bakery", FormMethod.Post, new { id = "addCupcakePriceForm", onsubmit = "validateAddPrice(this)" }))
+    {
+        <div style="width:100%; float:left; text-align:center;">
+            <img src="~/Images/Site/cupcake_vector_icon.png" style="width:50px; margin:10px 0px; -webkit-filter: drop-shadow(0px 1px 2px gray);" />
+        </div>
+        <div style="width:100%; float:left;">
+            <label style="float:left; width:50%; text-align:center; font-size:14px;">Kaç Adet</label>
+            <label style="float:left; width:50%; text-align:center; font-size:14px;">Fiyat</label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input autocomplete="off" name="size" type="number" style="border:1px solid #cccccc; border-radius:3px; background:white; width:50px; padding:3px 5px;" value="0" min="0" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <input autocomplete="off" name="price" type="text" placeholder="Örn. 29.99" style="border:1px solid #cccccc; border-radius:3px; background:white; width:80px; padding:3px 5px;" />
+            </div>
+        </div>
+        <div style="width:100%; float:left; margin-top:20px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input type="submit" class="cart_gradient" value="Tamam" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <label onclick="clearBakeryPrice('cupcake')" class="yukle_gradient" style="font-size:16px; font-weight:400; padding:5px 10px;">İptal</label>
+            </div>
+        </div>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="what" value="add" />
+        <input type="hidden" name="type" value="cupcake" />
+        <input type="hidden" name="bakeryID" value="@bakery["BakeryID"]" />
+    }
+</div>
+
+<div id="cookiePriceDialog">
+    @using (Html.BeginForm("AddEditBakeryPrice", "Bakery", FormMethod.Post, new { id = "addCookiePriceForm", onsubmit = "validateAddPrice(this)" }))
+    {
+        <div style="width:100%; float:left; text-align:center;">
+            <img src="~/Images/Site/cookie_vector_icon.png" style="width:50px; margin:10px 0px; -webkit-filter: drop-shadow(0px 1px 2px gray);" />
+        </div>
+        <div style="width:100%; float:left;">
+            <label style="float:left; width:50%; text-align:center; font-size:14px;">Kaç Adet</label>
+            <label style="float:left; width:50%; text-align:center; font-size:14px;">Fiyat</label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input autocomplete="off" name="size" type="number" style="border:1px solid #cccccc; border-radius:3px; background:white; width:50px; padding:3px 5px;" value="0" min="0" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <input autocomplete="off" name="price" type="text" placeholder="Örn. 29.99" style="border:1px solid #cccccc; border-radius:3px; background:white; width:80px; padding:3px 5px;" />
+            </div>
+        </div>
+        <div style="width:100%; float:left; margin-top:20px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input type="submit" class="cart_gradient" value="Tamam" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <label onclick="clearBakeryPrice('cookie')" class="yukle_gradient" style="font-size:16px; font-weight:400; padding:5px 10px;">İptal</label>
+            </div>
+        </div>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="what" value="add" />
+        <input type="hidden" name="type" value="cookie" />
+        <input type="hidden" name="bakeryID" value="@bakery["BakeryID"]" />
+    }
+</div>
+
+<div class="row" style="padding:0px;">
+    <div class="col-md-4 col-sm-4 col-xs-12" style="padding:0px 10px; margin-bottom:30px; float:left;">
+        <div style="width:100%; float:left; padding:20px 10px; padding-bottom:10px; border:3px solid #f0f0f0;">
+            <div class="bakeryPrices-vectorImg">
+                <img src="~/Images/Site/cake_vector_icon.png" />
+                <label style="color:#d89d5b;">Pasta</label>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;">
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Kaç kişilik</label>
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Fiyat</label>
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Eylem</label>
+                @{
+                    for (int i = 0; i < cakePrices.Rows.Count; i++)
+                    {
+                        DataRow price = cakePrices.Rows[i];
+                        <div style="width:100%; float:left;">
+                            <div style="width:66.6%; float:left; padding:12px 0px; padding-bottom:13px; border-bottom:1px solid #e6e6e6;">
+                                <label class="priceNumber" style="float:left; width:50%; text-align:center; font-size:14px; color:gray; ">@price["Number"]</label>
+                                <label class="pricePrice" style="float:left; width:50%; text-align:center; font-size:14px; color:gray; ">@price["Price"] @price["Currency"]</label>
+                            </div>
+                            <div style="width:33.3%; float:left; padding:10px 0px; border-bottom:1px solid #e6e6e6; text-align:center;">
+                                <img onclick="editBakeryPrice('@price["Number"]','@price["Price"]','cake','@price["ID"]')" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                                <a onclick="confirmAction('Seçtiğiniz fiyat bilgisi silinecektir. Onaylıyor musunuz?')" style="color:black; text-decoration:none;" href="@Url.Action("DeleteBakeryPrice","Bakery", new { priceID = price["ID"] })">
+                                    <img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; cursor:pointer; padding:5px; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" />
+                                </a>
+                            </div>
+                        </div>
+                        }
+                }
+            </div>
+            <div style="width:100%; float:left; text-align:center; margin-top:15px;">
+                <div onclick="$('#cakePriceDialog').fadeToggle(300); $('#addCakePriceForm').find('input[name=what]').val('add');" class="cart_gradient" style="cursor:pointer;">
+                    <img src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Ekle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-12" style="padding:0px 10px; margin-bottom:30px; float:left;">
+        <div style="width:100%; float:left; padding:20px 10px; padding-bottom:10px; border:3px solid #f0f0f0;">
+            <div class="bakeryPrices-vectorImg">
+                <img src="~/Images/Site/cupcake_vector_icon.png" />
+                <label style="color:#a95356;">Cupcake</label>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;">
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Kaç Adet</label>
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Fiyat</label>
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Eylem</label>
+                @{
+                    for (int i = 0; i < cupcakePrices.Rows.Count; i++)
+                    {
+                        DataRow price = cupcakePrices.Rows[i];
+                        <div style="width:100%; float:left;">
+                            <div style="width:66%; float:left; padding:12px 0px; padding-bottom:13px; border-bottom:1px solid #e6e6e6;">
+                                <label class="priceNumber" style="float:left; width:50%; text-align:center; font-size:14px; color:gray; ">@price["Number"]</label>
+                                <label class="pricePrice" style="float:left; width:50%; text-align:center; font-size:14px; color:gray; ">@price["Price"] @price["Currency"]</label>
+                            </div>
+                            <div style="width:33.3%; float:left; padding:10px 0px; border-bottom:1px solid #e6e6e6; text-align:center;">
+                                <img onclick="editBakeryPrice('@price["Number"]','@price["Price"]','cupcake','@price["ID"]')" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                                <a onclick="confirmAction('Seçtiğiniz fiyat bilgisi silinecektir. Onaylıyor musunuz?')" style="color:black; text-decoration:none;" href="@Url.Action("DeleteBakeryPrice","Bakery", new { priceID = price["ID"] })">
+                                    <img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; cursor:pointer; padding:5px; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" />
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div style="width:100%; float:left; text-align:center; margin-top:15px;">
+                <div onclick="$('#cupcakePriceDialog').fadeToggle(300); $('#addCupcakePriceForm').find('input[name=what]').val('add');" class="cart_gradient" style="cursor:pointer;">
+                    <img src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Ekle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-12" style="padding:0px 10px; margin-bottom:30px; float:left;">
+        <div style="width:100%; float:left; padding:20px 10px; padding-bottom:10px; border:3px solid #f0f0f0;">
+            <div class="bakeryPrices-vectorImg">
+                <img src="~/Images/Site/cookie_vector_icon.png" />
+                <label style="color:#3f2518;">Kurabiye</label>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;">
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Kaç Adet</label>
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Fiyat</label>
+                <label style="float:left; width:33.3%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px dotted #cccccc;">Eylem</label>
+                @{
+                    for (int i = 0; i < cookiePrices.Rows.Count; i++)
+                    {
+                        DataRow price = cookiePrices.Rows[i];
+                        <div style="width:100%; float:left;">
+                            <div style="width:66%; float:left; padding:12px 0px; padding-bottom:13px; border-bottom:1px solid #e6e6e6;">
+                                <label class="priceNumber" style="float:left; width:50%; text-align:center; font-size:14px; color:gray; ">@price["Number"]</label>
+                                <label class="pricePrice" style="float:left; width:50%; text-align:center; font-size:14px; color:gray; ">@price["Price"] @price["Currency"]</label>
+                            </div>
+                            <div style="width:33.3%; float:left; padding:10px 0px; border-bottom:1px solid #e6e6e6; text-align:center;">
+                                <img onclick="editBakeryPrice('@price["Number"]','@price["Price"]','cookie','@price["ID"]')" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                                <a onclick="confirmAction('Seçtiğiniz fiyat bilgisi silinecektir. Onaylıyor musunuz?')" style="color:black; text-decoration:none;" href="@Url.Action("DeleteBakeryPrice","Bakery", new { priceID = price["ID"] })">
+                                    <img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; cursor:pointer; padding:5px; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" />
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div style="width:100%; float:left; text-align:center; margin-top:15px;">
+                <div onclick="$('#cookiePriceDialog').fadeToggle(300); $('#addCookiePriceForm').find('input[name=what]').val('add');" class="cart_gradient" style="cursor:pointer;">
+                    <img  src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Ekle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,43 @@
+newmtl client_oven_texture_2SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd client_oven_texture.jpg
+Ni 1.00
+newmtl file_562445491_1SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd 562445491.jpg
+Ni 1.00
+newmtl floor_texture_1SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd floor_texture.jpg
+Ni 1.00
+newmtl lambert2SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd set_texture.jpg
+bump set_normal.jpg -bm 1
+Ni 1.00
+newmtl seat_texture_1SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd seat_texture.jpg
+Ni 1.00
+newmtl table_texture_1SG
+illum 4
+Kd 1.00 1.00 1.00
+Ka 0.00 0.00 0.00
+Tf 1.00 1.00 1.00
+map_Kd table_texture.jpg
+Ni 1.00

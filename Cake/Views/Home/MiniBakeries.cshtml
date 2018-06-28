@@ -1,0 +1,96 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{ 
+    DatabaseController dc = new DatabaseController();
+    DataTable miniBakeries = dc.DBQueryGetter("select * from MiniBakeries");
+
+    ViewBag.Title = "iCaked - Mini Bakeries";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "Choose the bakery you like and click get price button to get a special offer just for you.";
+    ViewBag.keywords = "Cake Distribution, Cake, Cake Order, Cake Delivery Areas, San Francisco Cake Order";
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $(".getPriceButton").click(function () {
+            var elem = this;
+            var emailElem = $(elem).parent().children(".getPriceEmail");
+            if (emailElem.val().length != 0) {
+                $.ajax({
+                    url: "/Home/GetPriceFromMiniBakery?bakeryid=" + $(this).attr("bakeryid") + "&email=" + emailElem.val(),
+                    type: 'GET',
+                    cache: false,
+                    success: function (result) {
+                    }
+                });
+                $(elem).slideUp(200);
+                $(emailElem).slideUp(200);
+                setTimeout(function () { $(elem).parent().children(".getPriceThanks").slideDown(200); }, 201);
+            }
+            else {
+                emailElem.css("border-color","red");
+            }
+        });
+
+        var ratingElems = $(".miniBakeryRating");
+
+        for (i = 0; i < ratingElems.length; i++) {
+            var rating = $(ratingElems[i]).attr("data-rating");
+            $(ratingElems[i]).rateYo({
+                rating: rating,
+                starWidth: "15px"
+            });
+        }
+
+    });
+</script>
+
+<link rel="stylesheet" href="~/Content/jquery.rateyo.min.css">
+<script src="~/scripts/UtilityScripts/jquery.rateyo.min.js"></script>
+
+<div class="container">
+
+    <label style="width:100%; text-align:center; float:left; font-size:40px; padding-bottom:20px; color:dimgray; margin-top:50px;">Welcome to bakery section of iCaked</label>
+    <label style="width:100%; text-align:center; float:left; font-size:16px; padding-bottom:20px; color:dimgray;">To make a price call enter your e-mail to one of the inputs below and click get price.</label>
+
+    <div style="width:100%; float:left; margin:50px 0px; padding:0px 20px; border:5px solid #f5f5f5;">
+
+        @{ 
+            for (int i = 0; i < miniBakeries.Rows.Count; i++)
+            {
+                DataRow bakery = miniBakeries.Rows[i];
+                String ratingID = bakery["Name"] + "_rating";
+                String rating = "";
+                if (String.IsNullOrEmpty(bakery["Points"].ToString()) == false) { rating = bakery["Points"].ToString().Substring(0, 3); }
+                string productImg = "/Images/MiniProducts/" + (i + 1).ToString() + "/0.jpg";
+
+                <div class="col-md-4 col-sm-4 col-xs-6" style="padding:20px 10px; float:left; border-bottom:1px solid #f0f0f0;">
+
+                    <div style="width:100%; float:left; text-align:left;">
+                        <label style="float:left; width:100%; font-size:18px; padding-bottom:7px; min-height:32px;">@bakery["Name"]</label>
+                        <div style="width:100%; float:left; text-align:center; padding-bottom:10px;">
+                            <div id="@ratingID" data-rating="@rating" class="miniBakeryRating" style="pointer-events:none; text-align:center;"></div>
+                        </div>
+                        <div style="width:100%; float:left; padding-bottom:10px;">
+                            <img src="@productImg" style="width:120px; float:left; border-radius:20px; box-shadow:0px 1px 5px -1px gray;" />
+                        </div>
+                        <label style="float:left; width:100%; font-size:12px; padding-bottom:5px; color:dimgray; min-height:25px;">@bakery["Phone"]</label>
+                        <label style="float:left; width:100%; font-size:14px; padding-bottom:5px; color:dimgray; min-height:25px;">@bakery["Address"]</label>
+                        <label style="float:left; width:100%; font-size:14px; padding-bottom:5px; color:dimgray; min-height:25px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@bakery["WorkHours"]</label>
+                        <a href="@bakery["Link"]" target="_blank" style="float:left; width:100%; font-size:12px; padding-bottom:5px; min-height:22px;">Website</a>
+                    </div>
+                    <div style="width:100%; float:left; text-align:left;">
+                        <input onkeyup="validateKeyup(this)" class="getPriceEmail" style="padding:5px 10px; border:1px solid #e0e0e0; border-radius:10px; width:100%; float:left; margin-bottom:10px;" type="text" placeholder="E-Mail" />
+                        <label class="black-gradient getPriceButton" style="padding:5px 20px;" bakeryid="@bakery["BakeryID"]">Get Price</label>
+                        <label class="getPriceThanks" style="width:100%; float:left; color:green; display:none; line-height:74px;">Your call has been received. Thank you. ✓</label>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+
+</div>

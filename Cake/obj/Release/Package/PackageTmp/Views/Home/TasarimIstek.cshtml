@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Design Raws - Special Pie Order";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "If you do not have time to design our cake in our online design editor, let us know as soon as iCaked gives you the design you want.";
+    ViewBag.Keywords = "Design cake order, boutique cake order, special cake order, design cake, boutique cake, pastry basket, online cake order, birthday cake";
+
+    bool istekTasarimTaken = false;
+
+    if (TempData["istekTasarimTaken"] != null) { istekTasarimTaken = true; } else { istekTasarimTaken = false; }
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+}
+
+<div class="container-fluid" >
+    <div class="container" style="background:white; padding:3%; padding-bottom:150px; padding-top:100px;">
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:70px; text-align:center; padding:0px;">
+
+                @{
+                    if (istekTasarimTaken == false)
+                    {
+                        <img alt="istek tasarım" src="~/Images/Site/thanks_icon.png" style="width:50px; margin-bottom:10px;" />
+
+                        <h1 style="width:100%; float:left; font-size:22px; text-align:center;">You Cake It, We Bake It</h1>
+                        <h2 style="width:100%; float:left; padding:10px 0px; font-size:16px; text-align:center; padding-bottom:0px;">In the lower form you can describe your pastry in detail.</h2>
+                        <h3 style="width:100%; float:left; padding:10px 0px; font-size:14px; text-align:center; padding-bottom:30px;">Your design pastry will be communicated to you as soon as possible.</h3>
+
+                        using (Html.BeginForm("IstekTasarimForm", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "istekTasarimForm" }))
+                        {
+                                <div style="width:100%; float:left;">
+                                    <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="100" id="istekTasarimName" name="istekTasarimName" type="text" placeholder="Name Surname" />
+                                    <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="istekTasarimMail" name="istekTasarimMail" type="text" placeholder="E-Mail" />
+                                    <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="istekTasarimTel" name="istekTasarimTel" type="text" placeholder="Tel" />
+                                    <select id="istekTasarimSehir" name="istekTasarimSehir">
+                                        @{
+                                            for (int i = 0; i < cities.Length; i++)
+                                            {
+                                                if (cities[i] == "Ankara") { <option selected value="@cities[i]">@cities[i]</option> }
+                                                else { <option value="@cities[i]">@cities[i]</option> }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div style="width:100%; float:left; position:relative;">
+                                    <textarea onkeyup="validateKeyup(this)" autocomplete="off" maxlength="1500" id="istekTasarimMessage" name="istekTasarimMessage" placeholder="How do you want your cake ?"></textarea>
+                                    <input id="istekTasarimImg" name="istekTasarimImg" type="file" style="display:none;" multiple />
+                                    <label for="istekTasarimImg" class="gray-gradient" style="font-size:16px; font-weight:400; position:absolute; bottom:12px; right:5px;">Add Picture</label>
+                                </div>
+
+                                <div style="float:right; width:100%; margin-top:10px; text-align:center; display:none;" id="istekTasarimThumbnailWrapper">
+                                </div>
+
+                                <div style="width:100%; float:left;">
+                                    <input id="istekTasarimSubmit" class="black-gradient" style="border:none; border-radius:30px;" type="submit" onclick="validateIstekForm()" value="Send" />
+                                    <img alt="istek tasarım yükleniyor" id="istekTasarimLoading" src="~/Images/Site/loading_mini.gif" style="width:25px; border-radius:50px; margin-top:20px; display:none;" />
+                                </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="width:100%; float:left; padding:150px 0px;">
+                            <div style="width:100%; float:left; text-align:center; padding-bottom:40px;">
+                                <img alt="tasarım isteğiniz alınmıştır" src="~/Images/Site/success_icon.png" style="width:50px; border-radius:50px; box-shadow: 0px 1px 5px 0px #909090;" />
+                            </div>
+                            <label style="width:100%; float:left; text-align:center; font-size:18px;">We Thank You.</label>
+                            <label style="width:100%; float:left; text-align:center; font-size:14px; padding-top:15px;">Your design request has been received. We will contact you as soon as possible.</label>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

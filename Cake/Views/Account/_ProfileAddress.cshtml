@@ -1,0 +1,108 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow user = (DataRow)ViewData["userinfo"];
+    DataTable addresses = dc.DBQueryGetter("select * from UserAddresses where UserId = '" + user["UserID"] + "'");
+
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul(asya)", "İstanbul(avr)", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+    String[] cityIds = new String[] { "81", "80", "79", "78", "14", "77", "76", "75", "7", "74", "73", "72", "8", "10", "13", "71", "70", "69", "68", "67", "66", "65", "64", "63", "62", "61", "1", "60", "59", "58", "57", "56", "55", "54", "53", "52", "51", "6", "50", "83", "48", "47", "36", "4", "12", "46", "45", "44", "3", "11", "43", "42", "41", "40", "39", "38", "37", "35", "49", "34", "33", "32", "31", "30", "2", "29", "28", "27", "19", "26", "25", "9", "24", "23", "22", "21", "20", "18", "17", "5", "16", "15", };
+}
+
+<div class="container" style="padding:0px; width:100%; float:left;">
+    <div class="row" style="padding:0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+            <div style="width:100%; float:left; border-bottom:1px solid #3f2518; padding:15px 0px;">
+                <label style="float:left; font-size:20px; padding-top:5px; color:#3f2518;">Registered Addresses</label>
+                <div onclick="$('#add_address_div').toggle(200)" class="cart_gradient" style="float:right; cursor:pointer;">
+                    <img src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Add Address</label>
+                </div>
+            </div>
+
+            <div id="add_address_div" style="width:100%; float:left; padding:20px 0px; border-bottom:1px solid #d6d6d6; display:none;">
+                @using (Html.BeginForm("AddAddress", "Account", FormMethod.Post, new { id = "addAddressForm" }))
+                {
+                    <div style="width:100%; float:left;">
+                        <select id="provinceAddress" name="provinceAddress" onchange="appendDistricts('#districtAddress',$(this).val())" style="float:left; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px; width:100px;">
+                            @{
+                                for (int i = 0; i < cities.Length; i++)
+                                {
+                                    <option value="@cityIds[i]">@cities[i]</option>
+                                }
+                            }
+                        </select>
+                        <select onchange="appendNeighborhoods('#neighborhoodAddress', $(this).val())" id="districtAddress" name="districtAddress" style="margin-left:10px; float:left; border:1px solid #cccccc; background:white; width:100px; border-radius:3px; padding:5px;"></select>
+                        <select id="neighborhoodAddress" name="neighborhoodAddress" style="margin-left:10px; float:left; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px; width:100px;"></select>
+                    </div>
+                    <div style="width:100%; float:left; margin-top:20px;">
+                        <label style="width:100%; float:left;">Detailed Address : </label>
+                        <textarea id="openAddress" name="openAddress" maxlength="1000" style="width:100%; height:60px; font-size:14px; padding:5px; border:1px solid #cccccc; border-radius:3px; outline:none; float:left; margin-top:5px; resize:none;" placeholder="max. 1000"></textarea>
+                    </div>
+                    <div style="width:100%; float:left; margin-top:20px;">
+                        <label style="width:100%; float:left;">Description : </label>
+                        <textarea id="addressDescription" name="addressDescription" maxlength="1000" style="width:100%; height:60px; font-size:14px; padding:5px; border:1px solid #cccccc; border-radius:3px; outline:none; float:left; margin-top:5px; resize:none;" placeholder="max. 1000"></textarea>
+                    </div>
+                    <div style="width:100%; float:left; margin-top:20px;">
+                        <input type="submit" class="cart_gradient" value="Ekle" style="float:right;" />
+                    </div>
+                                }
+            </div>
+
+            <div id="edit-address-div" style="position:absolute; width:340px; top:0; left:0; right:0; bottom:0; margin:auto; display:none;">
+                <img onclick="$(this).parent().fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+                <div style="width:100%; float:left; background:white; padding:10px; border:1px solid #d6d6d6; box-shadow: 0 5px 10px rgba(0,0,0,.2);">
+                    @using (Html.BeginForm("EditAddress", "Account", FormMethod.Post, new { id = "editAddressForm" }))
+                    {
+                        <div style="width:100%; float:left;">
+                            <select id="editProvinceAddress" name="editProvinceAddress" onchange="appendDistricts('#editDistrictAddress',$(this).val())" style="float:left; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px; width:97px;">
+                                @{
+                                    for (int i = 0; i < cities.Length; i++)
+                                    {
+                                        <option value="@cityIds[i]">@cities[i]</option>
+                                    }
+                                }
+                            </select>
+                            <select onchange="appendNeighborhoods('#editNeighborhoodAddress', $(this).val())" id="editDistrictAddress" name="editDistrictAddress" style="margin-left:10px; float:left; border:1px solid #cccccc; background:white; width:97px; border-radius:3px; padding:5px;"></select>
+                            <select id="editNeighborhoodAddress" name="editNeighborhoodAddress" style="margin-left:10px; float:left; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px; width:97px;"></select>
+                        </div>
+                        <div style="width:100%; float:left; margin-top:10px;">
+                            <label style="width:100%; float:left;">Detailed Address  : </label>
+                            <textarea id="editOpenAddress" name="editOpenAddress" maxlength="1000" style="width:100%; height:60px; font-size:14px; padding:5px; border:1px solid #cccccc; border-radius:3px; outline:none; float:left; margin-top:5px; resize:none;" placeholder="max. 1000"></textarea>
+                        </div>
+                        <div style="width:100%; float:left; margin-top:10px;">
+                            <label style="width:100%; float:left;">Description : </label>
+                            <textarea id="editAddressDescription" name="editAddressDescription" maxlength="1000" style="width:100%; height:60px; font-size:14px; padding:5px; border:1px solid #cccccc; border-radius:3px; outline:none; float:left; margin-top:5px; resize:none;" placeholder="max. 1000"></textarea>
+                        </div>
+                        <div style="width:100%; float:left; margin-top:10px;">
+                            <input type="hidden" value="" name="AddressId" id="AddressId" />
+                            <input type="submit" class="cart_gradient" value="Change" style="float:right;" />
+                        </div>
+                                    }
+                </div>
+            </div>
+
+            <div style="width:100%; float:left;">
+
+                @{
+                    for(int i = 0; i < addresses.Rows.Count; i++)
+                    {
+                        DataRow adres = addresses.Rows[i];
+                        <div style="width:100%; float:left; padding:20px 0px; border-bottom:1px dashed #d6d6d6;">
+                            <div style="width:100%; float:left;">
+                                <label style="float:left; font-size:14px;">@adres["ProvinceName"], @adres["DistrictName"], @adres["TownName"], @adres["NeighborhoodName"]</label>
+                                <a href="@Url.Action("DeleteAddress","Account", new { AddressID = adres["ID"] })" onclick="deleteAddress()"><img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); cursor:pointer; width:25px; padding:5px; float:right; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" /></a>
+                                <img onclick="editAddress(this)" data-addressId="@adres["ID"]" data-openAddress="@adres["SpecificAddress"]" data-description="@adres["Description"]" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; float:right; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                            </div>
+
+                            <label style="padding-top:5px; float:left; width:100%; font-size:13px;">@adres["SpecificAddress"]</label>
+                            <label style="padding-top:15px; font-weight:600; float:left; width:100%; font-size:14px;">Description:</label>
+                            <label style="padding-top:5px; float:left; width:100%; font-size:13px;">@adres["Description"]</label>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

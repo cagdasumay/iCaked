@@ -1,0 +1,137 @@
+﻿@using EventApp.Models
+@model EventApp.Models.Partner
+@using System.Globalization;
+@{
+    ViewBag.Title = "Sponsorlar";
+    List<PartnerEventCategory> Categories = (List<PartnerEventCategory>)ViewData["PartnerCategoryList"];
+    int count = Categories.Count;
+    List<Partner> PartnerList = (List<Partner>)ViewData["PartnerList"];
+    List<PartnerEvent> PartnerEventList = (List<PartnerEvent>)ViewData["PartnerEventList"];
+    string EventName = (string)ViewData["EventName"];
+    List<bool> IsValid = (List<bool>)ViewData["IsValid"];
+    List<PartnerEventCategory> CategoryTypes = (List<PartnerEventCategory>)ViewData["CategoryTypes"];
+}
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("List", "Partners")">Sponsorlar</a>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title">
+            @EventName
+            <small>Sponsor Listelesi</small>
+        </h1>
+
+        <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet-body">
+                        <div class="mt-element-list">
+                            <div class="mt-list-head list-todo red">
+                                <div class="list-head-title-container">
+                                    <h3 class="list-title">@EventName</h3>
+                                    <div class="list-head-count">
+                                        <div class="list-head-count-item">
+                                            <i class="fa fa-check"></i> Sponsorlar
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-count pull-right red-mint">
+                                    @count
+                                    </div>
+                                </div>
+
+                               @{
+                                   for (int p = 0; p < IsValid.Count; p++)
+                                   {
+                                       if (IsValid[p] == true)
+                                       {
+                                        <div class="mt-list-container list-todo">
+                                            <div class="list-todo-line"></div>
+                                            <ul>
+                                                <li class="mt-list-item">
+                                                    <div class="list-todo-icon bg-white">
+                                                        <i class="fa fa-hand-rock-o"></i>
+                                                    </div>
+                                                    <div class="list-todo-item grey">
+                                                        <div class="list-toggle-container font-white" data-toggle="collapse" aria-expanded="false">
+                                                            <div class="list-toggle done uppercase">
+                                                                <div class="list-toggle-title bold">@CategoryTypes[p].Name</div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="mt-list-container list-news ext-1">
+                                                            <ul>
+                                                                @{
+                                                                    for (int i = 0; i < PartnerList.Count; i++)
+                                                                    {
+                                                                        if (Categories[i].Id == CategoryTypes[p].Id)
+                                                                        {
+                                                                            String photo = "../PartnerLogo/" + PartnerList[i].Id + ".jpg";
+                                                                            <li class="mt-list-item" style="padding-bottom: 55px; background-color: white;">
+                                                                                <div class="list-icon-container">
+                                                                                    <a href="@Url.Action("PartnerDetails","Partners",new { IDofPartner = PartnerList[i].Id, IDofPartnerEventCategory = Categories[i].Id })">
+                                                                                        <i class="fa fa-angle-right"></i>
+                                                                                    </a>
+                                                                                </div>
+                                                                                <div class="list-thumb">
+                                                                                    <a href="@Url.Action("PartnerDetails","Partners",new { IDofPartner = PartnerList[i].Id, IDofPartnerEventCategory = Categories[i].Id })">
+                                                                                        <img alt="" src="@photo" />
+                                                                                    </a>
+                                                                                </div>
+                                                                                <div class="list-item-content" style="padding-top: 15px;">
+                                                                                    <h3 class="bold font-red">
+                                                                                        <a href="@Url.Action("PartnerDetails","Partners",new { IDofPartner = PartnerList[i].Id, IDofPartnerEventCategory = Categories[i].Id })">@PartnerList[i].Name</a>
+                                                                                    </h3>
+                                                                                </div>
+                                                                            </li>
+
+                                                                        }
+                                                                    }
+                                                                }        
+                                                            </ul>
+                                                            <div class="task-footer bg-grey">
+                                                                <div class="row">
+                                                                    <div class="col-xs-12">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                       }
+                                   }
+                            } 
+                                
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+    <script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+    <script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+    <!-- END THEME LAYOUT SCRIPTS -->

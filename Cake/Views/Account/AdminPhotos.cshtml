@@ -1,0 +1,89 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataTable orders = dc.DBQueryGetter("  select * from OrderLogs except select * from OrderLogs where PaymentType = 'POS' and PaymentApproved = 'no'");
+    DataTable bakeries = dc.DBQueryGetter("select * from ForeignBakeries");
+}
+
+<div class="container" style="padding:0px;">
+    <div class="row" style="padding:0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+
+            <label style="float:left; font-size:18px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px dashed #3f2518; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">İçinde Tasarım Pasta İçeren Siparişler Sergileniyor</label>
+
+            <table id="admin-photos-table" style="width:100%; float:left; text-align:center; margin-top:30px; font-size:13px; font-family:'Open Sans';" class="row-border">
+                <thead>
+                    <tr>
+                        <td style="background:#f0f0f0; font-weight:600;">Sipariş Numarası</td>
+                        <td style="background:#f0f0f0; font-weight:600;">Detaylar</td>
+                        <td style="background:#f0f0f0; font-weight:600;">Fotolar</td>
+                        <td style="background:#f0f0f0; font-weight:600;">Eylem</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        for (int i = 0; i < orders.Rows.Count; i++)
+                        {
+                            DataRow order = orders.Rows[i];
+
+                            if (String.IsNullOrEmpty(order["MadeID"].ToString()) == false)
+                            {
+
+                                <tr>
+                                    <td>
+                                        <label>@order["OrderNumber"]</label>
+                                    </td>
+                                    <td style="min-width:125px;">
+                                        @Html.ActionLink("Detaylar", "BakeryOrderSub", "Bakery", new { orderID = order["OrderID"].ToString() }, new { target = "_blank", @class = "cart_gradient", style = "color:white; font-size:12px;" })
+                                    </td>
+                                    <td style="min-width:125px;">
+                                        @{
+                                            bool realPhotoExists = false; List<string> photos = new List<string>(); string madeID = "";
+
+                                            if (String.IsNullOrEmpty(order["MadeID"].ToString()) == false)
+                                            {
+                                                madeID = order["MadeID"].ToString();
+                                                DataTable dt_design = dc.DBQueryGetter("select * from MadeCakes where MadeID = '" + new Guid(madeID.ToUpper()) + "'");
+                                                if (dt_design.Rows.Count > 0)
+                                                {
+                                                    if (String.IsNullOrEmpty(dt_design.Rows[0]["RealImagePath"].ToString()) == false) { realPhotoExists = true; photos = dt_design.Rows[0]["RealImagePath"].ToString().Split(' ').ToList(); }
+                                                }
+                                            }
+
+                                            if (realPhotoExists)
+                                            {
+                                                <div style="width:100%; float:left;">
+                                                    @{
+                                                        for (int i2 = 0; i2 < photos.Count; i2++)
+                                                        {
+                                                            string photo_link = "/Images/MadeCakes/" + madeID + "/" + photos[i2];
+                                                            <img onclick="$('#admin-big-photo-img').attr('src', $(this).attr('src')); $('#admin-big-photo').fadeIn(300);" src="@photo_link" style="width:40px; float:left; margin-right:3px; cursor:pointer;" />
+                                                        }
+                                                    }
+                                                </div>
+
+                                                <div id="admin-big-photo" style="position:fixed; display:none; width:500px; height:500px; left:0; right:0; top:0; bottom:0; margin:auto; padding:5px; background:white; border:1px solid #e6e6e6; box-shadow: 0 5px 10px rgba(0,0,0,.2);">
+                                                    <img onclick="$(this).parent().fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+                                                    <img id="admin-big-photo-img" src="" style="width:100%; float:left; " />
+                                                </div>
+                                                        }
+                                        }
+                                    </td>
+                                    <td>
+
+                                        <div style="width:100%; float:left; text-align:center;">
+                                            <a href="@Url.Action("ApprovePhotos", "Home", new { designId = order["MadeID"].ToString() })" class="go_gradient" style="font-size:12px; padding:6px 10px;">Onayla</a>
+                                            <a href="@Url.Action("DeletePhotos", "Home", new { designId = order["MadeID"].ToString() })" class="delete_gradient" style="margin-left:10px; margin-top:0px; ">Sil</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                                            }
+                                                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

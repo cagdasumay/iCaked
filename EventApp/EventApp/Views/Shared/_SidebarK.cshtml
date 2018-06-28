@@ -1,0 +1,368 @@
+﻿<div class="page-sidebar-wrapper">
+    <div class="page-sidebar navbar-collapse collapse">
+        <ul class="page-sidebar-menu  page-header-fixed " data-keep-expanded="false" data-auto-scroll="true" data-slide-speed="200" style="padding-top: 20px">
+            <li class="sidebar-toggler-wrapper hide">
+                <div class="sidebar-toggler">
+                    <span></span>
+                </div>
+            </li>
+            <li class="sidebar-search-wrapper">
+                <form class="sidebar-search  sidebar-search-bordered" action="page_general_search_3.html" method="POST">
+                    <a href="javascript:;" class="remove">
+                        <i class="icon-close"></i>
+                    </a>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search...">
+                        <span class="input-group-btn">
+                            <a href="javascript:;" class="btn submit">
+                                <i class="icon-magnifier"></i>
+                            </a>
+                        </span>
+                    </div>
+                </form>
+            </li>
+            <li class="heading" style="background: rgb(128, 128, 135);">
+                <h3 class="uppercase" style="color: white">INFINIA Engineering</h3>
+                <span class="selected"></span>
+            </li>
+
+            @{
+                if (ViewBag.Title == "Ana Sayfa")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Home","Home")" class="nav-link">
+                            <i class="icon-home"></i>
+                            <span class="title">Ana Sayfa</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start">
+                        <a href="@Url.Action("Home","Home")" class="nav-link">
+                            <i class="icon-home"></i>
+                            <span class="title">Ana Sayfa</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Oturumlar")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("List","AgendaEventActivities")" class="nav-link">
+                            <i class="icon-calendar"></i>
+                            <span class="title">Ajanda</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("List","AgendaEventActivities")" class="nav-link">
+                            <i class="icon-calendar"></i>
+                            <span class="title">Ajanda</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Katılımcılar")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Attenders","Users")" class="nav-link">
+                            <i class="icon-users"></i>
+                            <span class="title">Katılımcılar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Attenders","Users")" class="nav-link">
+                            <i class="icon-users"></i>
+                            <span class="title">Katılımcılar</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Konuşmacılar")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Speakers","Users")" class="nav-link">
+                            <i class="icon-user-following"></i>
+                            <span class="title">Konuşmacılar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Speakers","Users")" class="nav-link">
+                            <i class="icon-user-following"></i>
+                            <span class="title">Konuşmacılar</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Anketler")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Index","Event")" class="nav-link">
+                            <i class="icon-paper-plane"></i>
+                            <span class="title">Anketler</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Index","Event")" class="nav-link">
+                            <i class="icon-paper-plane"></i>
+                            <span class="title">Anketler</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Sohbetler")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Index","ChatDiscussions")" class="nav-link">
+                            <i class="icon-speech"></i>
+                            <span class="title">Sohbetler</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Index","ChatDiscussions")" class="nav-link">
+                            <i class="icon-speech"></i>
+                            <span class="title">Sohbetler</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Bildirimler")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Index","Agenda")" class="nav-link">
+                            <i class="icon-bell"></i>
+                            <span class="title">Bildirimler</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Index","Agenda")" class="nav-link">
+                            <i class="icon-bell"></i>
+                            <span class="title">Bildirimler</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Dokümanlar")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("List","Documents")" class="nav-link">
+                            <i class="icon-docs"></i>
+                            <span class="title">Dokümanlar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("List","Documents")" class="nav-link">
+                            <i class="icon-docs"></i>
+                            <span class="title">Dokümanlar</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Haritalar")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("List","Maps")" class="nav-link">
+                            <i class="icon-map"></i>
+                            <span class="title">Haritalar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("List","Maps")" class="nav-link">
+                            <i class="icon-map"></i>
+                            <span class="title">Haritalar</span>
+                        </a>
+                    </li>
+                }
+            }
+
+
+            @{
+                if (ViewBag.Title == "Sponsorlar")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("List","Partners")" class="nav-link">
+                            <i class="icon-energy"></i>
+                            <span class="title">Sponsorlar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("List","Partners")" class="nav-link">
+                            <i class="icon-energy"></i>
+                            <span class="title">Sponsorlar</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Sosyal Medya")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("SocialMedia","Events")" class="nav-link">
+                            <i class="icon-social-twitter"></i>
+                            <span class="title">Sosyal Medya</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("SocialMedia", "Events")" class="nav-link">
+                            <i class="icon-social-twitter"></i>
+                            <span class="title">Sosyal Medya</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Bilgi Standı")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Index","InfoBooth")" class="nav-link">
+                            <i class="icon-info"></i>
+                            <span class="title">Bilgi Standı</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Index","InfoBooth")" class="nav-link">
+                            <i class="icon-info"></i>
+                            <span class="title">Bilgi Standı</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Galeri")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("","")" class="nav-link">
+                            <i class="icon-camera"></i>
+                            <span class="title">Galeri</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("","")" class="nav-link">
+                            <i class="icon-camera"></i>
+                            <span class="title">Galeri</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Yorum Duvarı")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("","")" class="nav-link">
+                            <i class="fa fa-comment-o"></i>
+                            <span class="title">Yorumlar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("","")" class="nav-link">
+                            <i class="fa fa-comment-o"></i>
+                            <span class="title">Yorumlar</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Etkinlik Sonrası Anket")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Index","Event")" class="nav-link">
+                            <i class="icon-paper-clip"></i>
+                            <span class="title">Etkinlik Sonrası Anket</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Index","Event")" class="nav-link">
+                            <i class="icon-paper-clip"></i>
+                            <span class="title">Etkinlik Sonrası Anket</span>
+                        </a>
+                    </li>
+                }
+            }
+
+            @{
+                if (ViewBag.Title == "Yardım")
+                {
+                    <li class="nav-item  active open">
+                        <a href="@Url.Action("Index","Home")" class="nav-link">
+                            <i class="icon-question"></i>
+                            <span class="title">Yardım</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item start ">
+                        <a href="@Url.Action("Index","Home")" class="nav-link">
+                            <i class="icon-question"></i>
+                            <span class="title">Yardım</span>
+                        </a>
+                    </li>
+                }
+            }
+            <br></br>
+        </ul>
+    </div>
+</div>

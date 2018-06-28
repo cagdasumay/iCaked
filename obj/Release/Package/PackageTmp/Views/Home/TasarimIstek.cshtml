@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Tasarım Pastalar – Özel Pasta Siparişi ";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "Aklınızdaki pastayı online tasarım editörümüzde tasarlamak için zamanınız yok ise bize anlatın iCaked olarak istediğiniz tasarımı en kısa sürede size sunalım.";
+    ViewBag.Keywords = "Tasarım pasta siparişi, butik pasta siparişi, özel pasta siparişi, tasarım pasta, butik pasta, pastane sepeti, online pasta siparişi, doğum günü pastası";
+
+    bool istekTasarimTaken = false;
+
+    if (TempData["istekTasarimTaken"] != null) { istekTasarimTaken = true; } else { istekTasarimTaken = false; }
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+}
+
+<div class="container-fluid" >
+    <div class="container" style="background:white; padding:3%; padding-bottom:150px; padding-top:100px;">
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:70px; text-align:center; padding:0px;">
+
+                @{
+                    if (istekTasarimTaken == false)
+                    {
+                        <img alt="istek tasarım" src="~/Images/Site/thanks_icon.png" style="width:50px; margin-bottom:10px;" />
+
+                        <h1 style="width:100%; float:left; font-size:22px; text-align:center;">Siz isteyin biz yapalım</h1>
+                        <h2 style="width:100%; float:left; padding:10px 0px; font-size:16px; text-align:center; padding-bottom:0px;">Alttaki formda pastanızı detaylı bir şekilde anlatabilirsiniz.</h2>
+                        <h3 style="width:100%; float:left; padding:10px 0px; font-size:14px; text-align:center; padding-bottom:30px;">Tasarım pastanız ile ilgili sizinle en kısa sürede iletişime geçilecektir.</h3>
+
+                        using (Html.BeginForm("IstekTasarimForm", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "istekTasarimForm" }))
+                        {
+                                <div style="width:100%; float:left;">
+                                    <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="100" id="istekTasarimName" name="istekTasarimName" type="text" placeholder="İsim Soyisim" />
+                                    <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="istekTasarimMail" name="istekTasarimMail" type="text" placeholder="E-Posta" />
+                                    <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="istekTasarimTel" name="istekTasarimTel" type="text" placeholder="Telefon" />
+                                    <select id="istekTasarimSehir" name="istekTasarimSehir">
+                                        @{
+                                            for (int i = 0; i < cities.Length; i++)
+                                            {
+                                                if (cities[i] == "Ankara") { <option selected value="@cities[i]">@cities[i]</option> }
+                                                else { <option value="@cities[i]">@cities[i]</option> }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+
+                                <div style="width:100%; float:left; position:relative;">
+                                    <textarea onkeyup="validateKeyup(this)" autocomplete="off" maxlength="1500" id="istekTasarimMessage" name="istekTasarimMessage" placeholder="Nasıl bir pasta istiyorsunuz ?"></textarea>
+                                    <input id="istekTasarimImg" name="istekTasarimImg" type="file" style="display:none;" multiple />
+                                    <label for="istekTasarimImg" class="gray-gradient" style="font-size:16px; font-weight:400; position:absolute; bottom:12px; right:5px;">Resim Yükle</label>
+                                </div>
+
+                                <div style="float:right; width:100%; margin-top:10px; text-align:center; display:none;" id="istekTasarimThumbnailWrapper">
+                                </div>
+
+                                <div style="width:100%; float:left;">
+                                    <input id="istekTasarimSubmit" class="black-gradient" style="border:none; border-radius:30px;" type="submit" onclick="validateIstekForm()" value="Gönder" />
+                                    <img alt="istek tasarım yükleniyor" id="istekTasarimLoading" src="~/Images/Site/loading_mini.gif" style="width:25px; border-radius:50px; margin-top:20px; display:none;" />
+                                </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="width:100%; float:left; padding:150px 0px;">
+                            <div style="width:100%; float:left; text-align:center; padding-bottom:40px;">
+                                <img alt="tasarım isteğiniz alınmıştır" src="~/Images/Site/success_icon.png" style="width:50px; border-radius:50px; box-shadow: 0px 1px 5px 0px #909090;" />
+                            </div>
+                            <label style="width:100%; float:left; text-align:center; font-size:18px;">Teşekkür ederiz.</label>
+                            <label style="width:100%; float:left; text-align:center; font-size:14px; padding-top:15px;">Tasarım isteğiniz alınmıştır. En kısa zamanda sizinle iletişime geçeceğiz.</label>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,643 @@
+﻿@using System.Data
+@using System.Drawing
+@using Cake.Controllers
+
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    DatabaseController dc = new DatabaseController();
+    ObjectController oc = new ObjectController();
+
+    bool cartDesignExists = false;
+    bool cartBakeryExists = false;
+
+    if (Session["cart"] != null)
+    {
+        List<DataRow> cart = (List<DataRow>)Session["cart"];
+        for (int i = 0; i < cart.Count; i++)
+        {
+            if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()) == false) { cartDesignExists = true; }
+            if (String.IsNullOrEmpty(cart[i]["BakeryID"].ToString()) == false) { cartBakeryExists = true; }
+        }
+    }
+
+    ViewBag.Title = "Pasta Tasarla – 3 Boyutlu Tasarım Pasta Siparişi";
+    ViewBag.Description = "iCaked’in 3 boyutlu editörü ile kendi pastanızı tasarlayın. Binlerce butik pasta figürü arasından dilediğinizi seçerek tamamen size özel bir doğum günü pastası tasarlayabilirsiniz.";
+    ViewBag.Keywords = "butik pasta, online pasta siparişi, online pasta tasarlama, pasta yapma oyunu, pasta tasarlama oyunu, butik pasta, pasta tasarlama oyunu, online pasta yapma";
+
+    String combinator = (String)ViewData["combinator"];
+
+    bool isLogin = (Session["userinfo"] != null);
+
+    string[] colors = new string[] { "#edf1f5", "#f3e3d3", "#e6d4ca", "#ede9e2", "#b6b1a4", "#f4f1d5", "#f8e65e", "#f1dbcd", "#fd7e46", "#f2d3d7", "#ed91c2", "#fb0620", "#bd0f21", "#a3aded", "#6356a4", "#9d426a", "#9adeeb", "#87d3df", "#04a8e7", "#025da2", "#035198", "#bfe8c6", "#61cab2", "#8ed392", "#64c363", "#234a2a", "#939a9e", "#a46b54", "#4d2b19", "#1c1d1d", "#C0C0C0", "#D4AF37" };
+
+    String saveWarning = ""; String warningHeight = "";
+    if (cartDesignExists & cartBakeryExists)
+    {
+        saveWarning = "Bu tasarımı kaydederseniz sepetteki tasarım silinecek ve kaydedilen tasarımın sipariş edileceği pastane sepetteki diğer ürünler ile aynı pastane olarak belirlenecektir. Devam etmek istiyor musunuz?"; warningHeight = "215px";
+    }
+    else if (cartDesignExists & !cartBakeryExists)
+    {
+        saveWarning = "Bu tasarımı kaydederseniz sepetteki tasarım silinecektir. Devam etmek istiyor musunuz?"; warningHeight = "150px";
+    }
+    else if (!cartDesignExists & cartBakeryExists)
+    {
+        saveWarning = "Bu tasarımı kaydederseniz tasarımın sipariş edileceği pastane sepetteki diğer ürünler ile aynı pastane olarak belirlenecektir. Devam etmek istiyor musunuz?"; warningHeight = "195px";
+    }
+
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+    String[] cityIds = new String[] { "81", "80", "79", "78", "14", "77", "76", "75", "7", "74", "73", "72", "8", "10", "13", "71", "70", "69", "68", "67", "66", "65", "64", "63", "62", "61", "1", "60", "59", "58", "57", "56", "55", "54", "53", "52", "51", "6", "50", "48", "47", "36", "4", "12", "46", "45", "44", "3", "11", "43", "42", "41", "40", "39", "38", "37", "35", "49", "34", "33", "32", "31", "30", "2", "29", "28", "27", "19", "26", "25", "9", "24", "23", "22", "21", "20", "18", "17", "5", "16", "15", };
+
+    string[] prefixes = new string[] { "Özel Pasta", "Tasarım Pasta", "Butik Pasta" };
+    Random rnd = new Random();
+    string prefix = prefixes[rnd.Next(prefixes.Length)];
+
+    String citycode = ""; String dispCity = "display:inline;"; String dispSize = "display:none;";
+    if (Session["city"] != null) { citycode = dc.getIdFromName((string)Session["city"], "Province"); dispCity = "display:none;"; dispSize = "display:inline;"; }
+}
+
+<script src="~/scripts/UtilityScripts/jscolor.js"></script>
+<script src="~/scripts/UtilityScripts/nouislider.min.js"></script>
+
+<script src="/scripts/SiteScripts/ResimliPasta.js?ver@(DateTime.Now.Ticks.ToString())" type="text/javascript"></script>
+
+<script src="~/scripts/UtilityScripts/Tween.js"></script>
+<script src="~/scripts/UtilityScripts/hammer.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css?family=Montez&subset=latin-ext" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Kaushan+Script&subset=latin-ext" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Sofadi+One&subset=latin-ext" rel="stylesheet">
+
+<link rel="stylesheet" href="~/Content/nouislider.min.css" />
+
+<style>
+    @@font-face {
+        font-family: 'GrandHotel';
+        src: url('../../fonts/GrandHotel-Regular.otf');
+    }
+
+    @@font-face {
+        font-family: 'Antonio';
+        src: url('../../fonts/Antonio-Regular.ttf');
+    }
+
+    @@font-face {
+        font-family: 'FamiliarPro';
+        src: url('../../fonts/Familiar_Pro-Bold.otf');
+    }
+
+    .owl-theme .owl-controls {
+        margin-top: 0px;
+    }
+
+    html::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    .col-xs-15,
+    .col-sm-15,
+    .col-md-15,
+    .col-lg-15 {
+        position: relative;
+        min-height: 1px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .col-xs-15 {
+        width: 20%;
+        float: left;
+    }
+
+    @@media (min-width: 768px) {
+        .col-sm-15 {
+            width: 20%;
+            float: left;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .col-md-15 {
+            width: 20%;
+            float: left;
+        }
+    }
+
+    @@media (min-width: 1200px) {
+        .col-lg-15 {
+            width: 20%;
+            float: left;
+        }
+    }
+
+    .scroll::-webkit-scrollbar, ul.ui-autocomplete.ui-menu::-webkit-scrollbar {
+        width:3px !important;
+    }
+</style>
+
+<script type="text/javascript">
+
+    var cartDesignExists;
+    var cartBakeryExists;
+
+    $(document).ready(function () {
+        $("#editor-sub-wrapper").show();
+        $(window).on("load", function () { $("#canvas-loader").fadeOut(300); $("#editor-description-div").show(); });
+        isLogin = @isLogin.ToString().ToLower();
+
+        if("@combinator" != ""){ changeEditorLanguage("eng", $("#engFlag")); } else { changeEditorLanguage("tr", $("#trFlag")); }
+
+        cartDesignExists = @cartDesignExists.ToString().ToLower();
+        cartBakeryExists = @cartBakeryExists.ToString().ToLower();
+
+        $('#add-relief-input,#design-name-input').keypress(function(e){ console.log(e);
+            var turkishChars = ["ç","Ç","ı","İ","ğ","Ğ","ü","Ü","ö","Ö","ş","Ş" ];
+            if ((e.which < 65 || e.which > 122) && (e.which < 48 || e.which > 57) & e.which != 32)
+            {
+                if(turkishChars.indexOf(e.key) > -1){} else { e.preventDefault(); }
+            }
+        });
+
+        if("@citycode" != ""){
+            $('#editorCitySelect').val("@citycode"); $('#editorCitySelect').trigger("change");
+        }
+    });
+
+    $(window).bind("beforeunload",function(event) {
+        return "You have some unsaved changes";
+    });
+</script>
+
+<div id="editor-warning-dialog" style="height:@warningHeight;">
+    <div style="width:100%; float:left; text-align:center; padding:10px;">
+        <div style="width:100%; float:left; text-align:center; padding:10px 0px;">
+            <label style="width:100%; float:left; text-align:center;">@saveWarning</label>
+        </div>
+
+        <div style="width:100%; float:left;">
+            <button onclick="$('#editor-warning-dialog').fadeOut(300); saveCake('@isLogin.ToString()')" class="go_gradient" style="margin-top:10px;">Kaydet</button>
+            <button class="yukle_gradient" style="margin-top:5px; margin-left:34px; padding:7px 10px; font-weight:400; font-size:14px;" onclick="$('#editor-warning-dialog').fadeOut(300);">İptal</button>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" class="webkitForceHardwareAcceleration" />
+
+<div id="editor-main-container" class="container" style="padding-top:50px; padding-bottom:100px;">
+
+    <div id="canvas-sizer" class="main-floating col-md-12 col-sm-12 col-xs-12" style="padding:0px; border:1px solid #f0f0f0;">
+
+        <div id="canvas-upper" class="disabled-link" style="opacity:1;">
+            <div class="container" style="padding:0px;">
+                <div class="col-md-4 col-sm-4 col-xs-4" onclick="editorStep(1);">
+                    <div class="col-md-3 hidden-sm hidden-xs">
+                        <img alt="editor 1. step pasta tabanı" id="canvas-upper-img1" src="~/Images/Site/canvas-upper1-active.png" style="width:30px; margin-top:6px; margin-left:0px;" />
+                    </div>
+                    <div class="col-md-9 col-sm-12 col-xs-12 canvas-upper-label">
+                        <h3 class="editor-active-step">1. Pasta Seç</h3>
+                        <label class="editor-active-step">PASTA ŞEKLİNİ SEÇİN</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4" onclick="editorStep(2);">
+                    <div class="col-md-3 hidden-sm hidden-xs">
+                        <img alt="editor 4. step yazı ve resim ekle" id="canvas-upper-img3" src="~/Images/Site/canvas-upper3.png" style="width:25px; margin-top:3px; " />
+                    </div>
+                    <div class="col-md-9 col-sm-12 col-xs-12 canvas-upper-label">
+                        <h3>2. Resim Ekle</h3>
+                        <label>RESİM SEÇİN</label>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-4" style="background:none;" onclick="editorStep(3);">
+                    <div class="col-md-3 hidden-sm hidden-xs">
+                        <img alt="editor 5. step" id="canvas-upper-img5" src="~/Images/Site/canvas-upper5.png" style="width:28px; margin-top:3px;" />
+                    </div>
+                    <div class="col-md-9 col-sm-12 col-xs-12 canvas-upper-label">
+                        <h3>3. Sipariş Ver !</h3>
+                        <label>PASTALAYIN</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 col-sm-3 col-xs-3" id="canvas-left-side">
+
+            <div class="editor-objectbar-utilitydiv row scroll" style="z-index:99999; overflow-y:scroll; overflow-x:hidden; -webkit-overflow-scrolling: touch; padding:0px; position:absolute; top:0; bottom:0; left:0; right:0; padding:10%; width:100%; background:rgba(255,255,255,0.6); border:none; box-shadow:none; display:none;">
+
+                <div style="width:100%; float:left; background:white; box-shadow: 0 5px 10px rgba(0,0,0,.2); border: 1px solid rgba(0,0,0,.2); padding-bottom:10%;">
+
+                    <div id="utilitydiv-wrapper" class="scroll" style="float:left; width:100%; padding:0px 10%; overflow-y:scroll; -webkit-overflow-scrolling: touch; overflow-x:hidden;">
+                        <img alt="obje özelliklerini kapat" src="~/Images/Site/close_icon.png" id="close-utilitydiv" style="position:absolute; width:30px; padding:8px; right:10%; z-index:99999; background:white; border:1px solid #d6d6d6; border-top:none; border-bottom-left-radius:5px;" onclick="$('.editor-objectbar-utilitydiv').slideUp(400)" />
+
+                        <label class="canvas-category-header" style="color:black; margin-top:10%;">Obje Özellikleri</label>
+
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; float:left; margin-bottom:10px;" id="objImageDiv">
+                            <div style="width:100%; float:left; text-align:center;">
+                                <img alt="ana obje resmi" id="mainObjectImg" src="" style="width:75px; display:none; background:none; margin-top:10px;" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; float:left; margin-bottom:10px;">
+
+                            <div id="deleteCopyObject-div" style="width:100%; float:left; margin-bottom:20px;">
+                                <div id="paste" style="border:1px solid #e6e6e6; background:white; border-radius:3px; padding:2%; width:45%; margin-right:10%; float:left; text-align:center; cursor:pointer; box-shadow: 0px 1px 5px -2px grey;">
+                                    <label style="color:black; font-size:14px; cursor:pointer;">Kopyala</label>
+                                </div>
+                                <div id="delete" style="border:1px solid #e6e6e6; background:white; border-radius:3px; padding:2%; width:45%; float:left; text-align:center; cursor:pointer; box-shadow: 0px 1px 5px -2px grey;">
+                                    <label style="color:black; font-size:14px; cursor:pointer;">Sil</label>
+                                </div>
+                            </div>
+
+                            <div id="size-slider-row" style="text-align:center; width:100%; float:left;">
+                                <div class="col-md-12" style="padding:0px;">
+                                    <label data-tr="Boyut : " data-eng="Size : " style="font-size:12px;"></label>
+                                    <label class="all-lang" id="size-slider-label" style="margin-bottom:10px !important; text-align:center; font-size:12px;"></label>
+                                    <div id="size-slider" style="height:7px;"></div>
+                                </div>
+                            </div>
+                            <div id="rotation-slider-row" style="margin-top:10px; text-align:center; width:100%; float:left;">
+                                <div class="col-md-12" style="padding:0px;">
+                                    <label data-tr="Açı : " data-eng="Angle : " style="font-size:12px;"></label>
+                                    <label class="all-lang" id="rotation-slider-label" style="margin-bottom:10px !important; text-align:center; font-size:12px;"></label>
+                                    <div id="rotation-slider" style="height:7px;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;" id="color-wrapper">
+                            <div class="row-fluid" style="padding:0px;">
+                                <div style="width:100%; float:left;">
+
+                                    <div id="mainObjectColor" style="width:100%; float:left; text-align:center; margin-top:5px;">
+                                        <label data-tr="Renkler" data-eng="Colors" style="width:100%; text-align:center; font-size:12px; margin-bottom:5px;"></label>
+                                        <input onclick="$('#color-picker-div').toggle(300);" type="button" id="object-color-input" style="width:100%; height:30px; border:1px solid #e6e6e6; margin-bottom:5px;" />
+                                    </div>
+                                    <div style="width:100%; float:left; text-align:center; display:none;" id="object-color-inputs">
+                                    </div>
+                                    <div id="color-picker-div" style="width:100%; float:left; padding:0px; border-radius:3px; margin-top:5px;">
+                                        <div style="width:100%; float:left;">
+                                            <div style="float:left; width:100%;">
+                                                @{
+                                                    for (int i = 0; i < colors.Length; i++)
+                                                    {
+                                                        <div onclick="objColorUpdate('@colors[i]',null)" style="width:25px; float:left; height:25px; background:@colors[i]; border:1px solid #e6e6e6; cursor:pointer; margin:1px;"></div>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div id="last-used-colors-label" style="width:100%; float:left; padding:5px 0px; text-align:center;">
+                                            <label style="font-size:12px; float:left; width:100%; text-align:center;">Son kullanılan</label>
+                                        </div>
+                                        <div style="width:100%; float:left;" id="last-used-colors">
+                                            @{
+                                                for (int i = 0; i < 8; i++)
+                                                {
+                                                    <div onclick="objColorUpdate($(this).attr('data-bg'),'no')" data-bg="#ffffff" style="width:25px; background:white; float:left; height:25px; border:1px solid #e0e0e0; border-radius:2px; cursor:pointer; margin:1px;"></div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="editor-platebar" style="display:none; width:100%; float:left; margin-top:15px;">
+                            <label data-tr="Şekil" data-eng="Shape" style="width:100%; text-align:center; margin-bottom:5px !important; font-size:12px;"></label>
+                            <div style="width:22.75%; margin-right:3%; float:left; text-align:center;">
+                                <img alt="pasta altlığı seçeneği 1" onclick="changePlate(1)" src="~/Images/Site/round_icon.png" style="width:70%; padding:3px; background:white;" />
+                            </div>
+                            <div style="width:22.75%; margin-right:3%; float:left; text-align:center;">
+                                <img alt="pasta altlığı seçeneği 2" onclick="changePlate(2)" src="~/Images/Site/square_icon.png" style="width:70%; padding:3px; background:white;" />
+                            </div>
+                            <div style="width:22.75%; margin-right:3%; float:left; text-align:center;">
+                                <img alt="pasta altlığı seçeneği 3" onclick="changePlate(3)" src="~/Images/Site/rectangle_icon.png" style="width:70%; padding:3px; background:white;" />
+                            </div>
+                            <div style="width:22.75%; float:left;  text-align:center;">
+                                <img alt="pasta altlığı seçeneği 4" onclick="changePlate(4)" src="~/Images/Site/ellipse_icon.png" style="width:70%; padding:3px; background:white;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="editor-sub-wrapper" style="display:none; float:left; width:100%;">
+                <div id="editor-sub-main" style="width:100%; float:left; margin-top:10%;">
+
+                    <div style="width:100%; float:left; text-align:center;">
+                        <div style="width:100%; float:left; text-align:center;" id="resimli-logo-div2">
+                            <img alt="artık başlayabilirsiniz" src="~/Images/Site/thanks_icon.png" style="width:50px;" />
+                        </div>
+
+                        <div id="editor-thanks-div" style="display:none; width:100%; float:left;">
+                            <div style="width:100%; float:left; text-align:center;">
+                                <label style="width:100%; float:left; text-align:center; padding-bottom:10px; padding-top:40px; font-weight:500; font-size:16px;">Teşekkürler <br /> Artık başlayabilirsiniz. !</label>
+                            </div>
+                        </div>
+
+                        <div id="editor-page3">
+                            <h1 style="float:left; width:100%; padding-top:20px; font-size:16px; font-weight:500;" id="resimli-hosgeldiniz">Resimli Pastaya Hoşgeldiniz</h1>
+                            <h2 style="width:100%; float:left; text-align:center; padding:5%; font-size:13px;" class="hidden-xs">Pastanızı yapmak için yukarıdaki aşamaları izleyebilirsiniz.</h2>
+
+                                    <div id="selectCakeCityDiv" style="width:100%; float:left; @dispCity">
+                                        <label style="width:100%; float:left; text-align:center; height:100%;">Pastanız nereye gidecek</label>
+                                        <select onchange="editorLocationSelect($(this).val()); TutorialManualCall('S2');" id="editorCitySelect" style="border:1px solid #e6e6e6; border-radius:20px; padding:8px 10px; margin:10px 0px; transition:none;">
+                                            <option selected disabled>Seçiniz</option>
+                                            @{
+                                                for (int i = 0; i < cities.Length; i++)
+                                                {
+                                                    if (cityIds[i] == "76")
+                                                    {
+                                                        <option value="@cityIds[i]">@cities[i]</option> }
+                                                    else if (cityIds[i] == "48")
+                                                    {
+                                                        <option value="@cityIds[i]">@cities[i]</option> }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+
+                            <div id="selectCakeSizeDiv" style="width:100%; float:left; @dispSize">
+                                <label style="width:100%; float:left; text-align:center;">Pastanız kaç kişilik olsun</label>
+                                <div style="width:100%; float:left; padding:10px; display:none; text-align:center;" id="page3-cake">
+                                    <select onchange="$('#editor-gramaj').text('Yaklaşık ' + parseInt($(this).val())*175 + ' gr - ' + parseInt($(this).val())*200 + ' gr gelecektir.')" id="editor-cakeSize-1" style="border:1px solid #e6e6e6; border-radius:20px; padding:7px 10px; width:100px;"></select>
+                                    <label id="editor-gramaj" style="padding-top:10px; padding-bottom:10px; float:left; width:100%; text-align:center; font-size:14px; font-family:'Open Sans';"></label>
+                                    <div style="width:100%; float:left; text-align:center;">
+                                        <button id="editor-start-button" onclick="editorCakeSelect()" class="black-gradient" style="border:none; font-size:16px;">Tamam</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-cake-step" style="display:none;">
+
+                <div class="editorStep" id="cake-categories-wrapper" style="width:100%; float:left; display:none;">
+
+                    <div style="width:100%; float:left; padding-top:0px; background:#f5f5f5; padding-bottom:10px; border-bottom: 1px solid #e6e6e6;">
+                        <label class="canvas-category-header" style="width:100%; float:left; text-align:center; font-size:20px;">Pastanı Seç</label>
+                    </div>
+
+                    <div style="width:96%; float:left; margin-left:2%; margin-top:20px; max-height:180px !important;" class="draggable-div2 scroll">
+                        <img src="~/Images/CakeStyle/cakeStyle22.png" class="cakeStyle" onclick="LoadDesign('0B2B6F2D-DAAC-4641-B81E-12F0154B12BC')" />
+                        <img src="~/Images/CakeStyle/cakeStyle23.png" class="cakeStyle" onclick="LoadDesign('F45FFE30-DA8D-4AD8-A97E-C9270D64C565')" />
+                        <img src="~/Images/CakeStyle/cakeStyle24.png" class="cakeStyle" onclick="LoadDesign('99953454-C045-462A-8863-3324D7AAAECA')" />
+                        <img src="~/Images/CakeStyle/cakeStyle25.png" class="cakeStyle" onclick="LoadDesign('2623483B-80BE-4728-80CF-63083EA2122E')" />
+                        <img src="~/Images/CakeStyle/cakeStyle26.png" class="cakeStyle" onclick="LoadDesign('EBD3BA97-7A3A-48DF-B14D-6255FE8001B5')" />
+                        <img src="~/Images/CakeStyle/cakeStyle27.png" class="cakeStyle" onclick="LoadDesign('332BCF43-2F78-4E35-B960-C4A106793BEE')" />
+                        <img src="~/Images/CakeStyle/cakeStyle28.png" class="cakeStyle" onclick="LoadDesign('6891A335-98F5-41CE-B312-9A0DB0392F1D')" />
+                        <img src="~/Images/CakeStyle/cakeStyle29.png" class="cakeStyle" onclick="LoadDesign('CB36216E-6993-4555-ABC5-48463185E0DD')" />
+                        <img src="~/Images/CakeStyle/cakeStyle30.png" class="cakeStyle" onclick="LoadDesign('779F9347-216B-4128-B111-C990A23DA55B')" />
+                        <img src="~/Images/CakeStyle/cakeStyle31.png" class="cakeStyle" onclick="LoadDesign('DEC04E3C-0DAA-4C4B-BCEB-7B8E03970C1F')" />
+
+
+                        <img src="~/Images/CakeStyle/cakeStyle4.png"  class="cakeStyle" onclick="LoadDesign('26D37034-B226-4DF7-B9D8-CAC3CB3EB125')" />
+                        <img src="~/Images/CakeStyle/cakeStyle7.png"  class="cakeStyle" onclick="LoadDesign('1586E1A1-77CC-4E4E-804C-3F60576817CB')" />
+                        <img src="~/Images/CakeStyle/cakeStyle13.png" class="cakeStyle" onclick="LoadDesign('BC992F53-B582-4C3E-878A-4A186A072C5D')" />
+                        <img src="~/Images/CakeStyle/cakeStyle14.png" class="cakeStyle" onclick="LoadDesign('871702EC-B86E-4207-825D-10492D1CC73B')" />
+                        <img src="~/Images/CakeStyle/cakeStyle15.png" class="cakeStyle" onclick="LoadDesign('36FD6F93-7C67-44F7-B27A-C30A8DD3D9B2')" />
+                        <img src="~/Images/CakeStyle/cakeStyle16.png" class="cakeStyle" onclick="LoadDesign('8EC52B5E-7BC6-4C9F-A8F1-F1B22147885F')" />
+                        <img src="~/Images/CakeStyle/cakeStyle17.png" class="cakeStyle" onclick="LoadDesign('9BA783F1-810E-4E6A-AED5-0969C8153B25')" />
+                        <img src="~/Images/CakeStyle/cakeStyle18.png" class="cakeStyle" onclick="LoadDesign('3029333D-79A1-4EA1-BB2A-3D51FADC48BF')" />
+                        <img src="~/Images/CakeStyle/cakeStyle19.png" class="cakeStyle" onclick="LoadDesign('AB002CE0-1631-4833-A669-370DFED46483')" />
+                        <img src="~/Images/CakeStyle/cakeStyle20.png" class="cakeStyle" onclick="LoadDesign('CDCC1F05-5E38-4C80-845A-6C59DD94F5B0')" />
+                        <img src="~/Images/CakeStyle/cakeStyle21.png" class="cakeStyle" onclick="LoadDesign('F742ADBC-207E-44E2-8470-DB639239E9FD')" />
+                    </div>
+                </div>
+
+                <div class="editorStep" id="decal-categories-wrapper" style="width:100%; float:left; display:none;">
+
+                    <div style="width:100%; float:left; padding-top:0px; background:#f5f5f5; padding-bottom:10px; border-bottom: 1px solid #e6e6e6;">
+                        <label class="canvas-category-header" style="width:100%; float:left; text-align:center; font-size:20px;">Resim Ekle</label>
+                    </div>
+
+                    <input type="file" id="userDecal" onchange="uploadUserDecal()" name="userDecal" style="display:none;" />
+                    <div style="width:100%; float:left; text-align:center;">
+                        <img onclick="$('#userDecal').trigger('click')"  id="userDecalLabel" for="userDecal" src="~/Images/Site/decal_upload3.png" style="width:50%; margin-top:10%; cursor:pointer; box-shadow: 0px 1px 5px 0px #ccc; border-radius:5px;" />
+                @*        <label  class="uploadYourPicButton" data-tr="Kendi Resimini Yükle" data-eng="Upload"></label>*@
+                    </div>
+
+                    <div style="width:90%; float:left; margin-left:5%; max-height:180px !important;" class="draggable-div2 scroll">
+
+                        <div id="userDecalWrapper" style="width:100%; float:left; padding:1%; display:none; position:relative;">
+                            <form id="userDecalForm">
+                                <div style='width:100%; float:left; margin-bottom:10px; text-align:center;'>
+                                    <img alt="resim ekleme" class='objectTextures' src='' style='width:80%; margin-left:10%; border:none; margin-top:5%; float:left; box-shadow: 0px 1px 5px 0px #ccc; border-radius:5px;' />
+                                    <input type="file" id="decalCopy" style="display:none;" />
+                                    <img alt="resim eklemeyi kapat" onclick="$('#userDecalWrapper').hide(); $('#textureCarouselWrapper').show(200);" src="~/Images/Site/close_icon.png" style="width:20px; right:10%; top:5%; position:absolute; cursor:pointer; background:white; border:1px solid gray; padding:2px; border-radius:10px;" />
+                                </div>
+                            </form>
+                        </div>
+
+                        @*@{
+                            for (int i = 0; i < decals.Count; i++)
+                            {
+                                for (int i2 = 0; i2 < decals[i].Length; i2++)
+                                {
+                                    <img alt="resim ikonu" onmouseover="$('#textureSource').attr('src',$(this).attr('src'))" class="objectTextures category-decal-draggable" style="height:80px !important;" src="@decals[i][i2]" />
+                                }
+                            }
+                        }*@
+                    </div>
+                </div>
+
+                <div class="editorStep scroll" id="editor-order-wrapper" style="width:100%; float:left; overflow-y:scroll; -webkit-overflow-scrolling: touch; overflow-x:hidden; display:none;">
+
+                    <div style="width:100%; float:left;">
+                        <div class="pastaSecimi" style="width:100%; cursor:pointer; float:left; padding:4%; background:#f5f5f5; border-bottom:1px solid #e6e6e6;" onclick="orderDropdowns(1);">
+                            <label style="float:left; font-size:18px; font-weight:500; cursor:pointer;">1- Pasta Notları</label>
+                            <img alt="pasta notları menü ikon" src="~/Images/Site/down.png" style="width:15px; float:right; margin-top:5px; cursor:pointer;" />
+                        </div>
+                        <div id="pasta-notlari-dropdown" style="width:100%; float:left; border-bottom:1px solid #e6e6e6; padding-top:3%; padding-bottom:3%;">
+
+                            @{
+                                <div style="width:90%; margin-left:5%; float:left; text-align:center;">
+                                    <label style="color:red; font-size:30px; vertical-align:top; margin-left:-10px; float:left;">*</label><input onkeyup="validatePastaNotlari()" autocomplete="off" id="design-name-input" type="text" placeholder="İsim Verin !" style="padding:5px; float:left; margin-bottom:10px; width:50%; font-size:14px; border:1px solid #e6e6e6; padding:3%; border-radius:20px;" />
+                                    <label id="design-name-prefix" style="float:left; line-height:35px; margin-left:10px;">@prefix</label>
+                                </div>
+                                <div style="width:100%; float:left; text-align:center;">
+                                    <label style="color:red; font-size:30px; vertical-align:top; margin-left:-10px; margin-right:-4px; ">*</label>
+                                    <select onchange="validatePastaNotlari()" autocomplete="off" id="design-category-input" type="text" placeholder="İsim" style="padding:5px; margin-bottom:10px; width:90%; font-size:14px; border:1px solid #e6e6e6; padding:3%; border-radius:20px;">
+                                        <option disabled selected>Kategori Seçin</option>
+                                    </select>
+                                </div>
+
+                                    <div style="width:100%; float:left; text-align:center; text-align:center; display:none;">
+                                        <label class="hidden-xs" style="width:100%; float:left; padding-bottom:10px; font-size:12px; display:none;">Notlar ve resimler pastanızı anlatmak amacıyla pastaneye gönderilecektir. Zorunlu değildir.</label>
+                                        <textarea autocomplete="off" id="design-note-input" type="text" placeholder="Pasta ve figürlerle ilgili tüm notlarınızı buraya yazabilir, pastaneye örnek olması için resim yükleyebilirsiniz." style="padding:5px; height:80px; resize:none; width:90%; font-size:14px; padding:3%; border:1px solid #e6e6e6; border-radius:20px;"></textarea>
+                                        <input type="file" accept="image/*" id="design-photos-input" name="design-photos-input" style="display:none;" multiple />
+                                        <label for="design-photos-input" id="design-photos-label" class="white-gradient" style="margin-top:5px; margin-bottom:5px; font-size:16px; color:black !important; padding:5px 10px;">Örnek Resim Yükle</label>
+                                        <label id="design-photos-thanks" style="display:none; padding-top:5px; font-size:14px; width:100%; float:left; text-align:center;"></label>
+                                    </div>
+                            }
+
+                            @{
+                                if (Session["userinfo"] != null)
+                                {
+                                    <div id="designVisible-wrapper" style="width:100%; float:left; text-align:center; margin-top:10px;">
+                                        <label id="designVisible-label" style="margin-right:10px; font-size:13px; color:gray;">pastam profilimde gözüksün</label><input type="checkbox" checked name="designVisible" id="designVisible" style="width:15px; height:15px; vertical-align:middle;" />
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div id="pastaneSecimi" class="pastaSecimi disabled-link2" style="width:100%; background:#f5f5f5; cursor:pointer; float:left; padding:4%; border-bottom:1px solid #e6e6e6;" onclick="orderDropdowns(2);">
+                            <label style="float:left; font-size:18px; font-weight:500; cursor:pointer; ">2- Pastane Seçimi</label>
+                            <img alt="pastane seçimi menü ikon" src="~/Images/Site/down.png" style="width:15px; float:right; margin-top:5px; cursor:pointer;" />
+                        </div>
+                        <div id="pastane-sec-dropdown" style="width:100%; float:left; border-bottom:1px solid #e6e6e6; display:none;">
+                            <div id="pastane-sec-append" style="width:100%; float:left; ">
+                                <div class="pastaneAppend" style="background:#fafafa; padding:10px; width:100%; float:left; border-bottom:1px solid #e6e6e6; display:none;">
+                                    <label style="float:left; font-weight:300; font-size:15px; padding-left:7%;">İl Seçimi - </label>
+                                    <label style="float:left; font-weight:500; font-size:15px; margin-left:3px;"></label>
+                                </div>
+                                <div class="pastaneAppend" style="background:#fafafa; padding:10px; width:100%; float:left; border-bottom:1px solid #e6e6e6; display:none;" onclick="backToPastaneSec()">
+                                    <label style="float:left; font-weight:300; font-size:15px; padding-left:7%;">Pastane Seçimi - </label>
+                                    <label style="float:left; font-weight:500; font-size:15px; margin-left:3px;"></label>
+                                </div>
+                            </div>
+                            <div id="pastane-sec-step1" style="width:100%; float:left; padding:5% 0px;">
+                                <div class="hidden-xs" style="width:100%; float:left; text-align:center; padding:10px 0px;">
+                                    <img alt="hizmet verdiğimiz iller" src="~/Images/Site/thanks_icon.png" style="width:50px;" />
+                                </div>
+                                <label style="width:100%; float:left; text-align:center; font-size:13px;">Şimdilik sadece <b>Ankara</b> ve <b>İstanbul</b> için hizmet veriyoruz. <br /> Diğer illerimiz çok yakında eklenecektir.</label>
+                                <div style="width:100%; float:left; text-align:center; padding:10px 0px;">
+                                    <select id="editorCitySelect" style="border:1px solid #e6e6e6; border-radius:3px; padding:8px 10px; margin:10px 0px;">
+                                        @{
+                                            for (int i = 0; i < cities.Length; i++)
+                                            {
+                                                if (cityIds[i] == "76")
+                                                {
+                                        <option value="@cityIds[i]" selected>@cities[i]</option> }
+                                                else if (cityIds[i] == "48")
+                                                {
+                                        <option value="@cityIds[i]" selected>@cities[i]</option> }
+                                                else
+                                                { }
+                                            }
+                                        }
+                                    </select>
+                                    <label id="pastaneleri-bul" class="go_gradient" style="padding:7px 27px;" onclick="editorBakeryAppend($('#editorCitySelect').val(), $('#editorCitySelect option:selected').text())">Pastaneleri Bul</label>
+                                </div>
+                            </div>
+                            <div id="pastane-sec-step2" style="width:100%; float:left; padding:5% 0px; display:none;">
+                                <label style="width:100%; float:left; text-align:center; padding-bottom:10px; font-weight:500; font-size:16px;">Pastane Seçiniz</label>
+                            </div>
+                            <div id="pastane-sec-step3" style="width:100%; float:left; padding:5% 0px; text-align:center; display:none;">
+                                <label style="width:100%; float:left; text-align:center; padding-bottom:10px; font-weight:500; font-size:16px;">Pastanızın içeriği nasıl olsun</label>
+                                <select id="editor-bakery-content" onchange="GetDesignPrice();" style="width:90%; border:1px solid #e6e6e6; padding:5px; font-size:15px; border-radius:20px;"></select>
+                                <div id="design-price-loading" style="width:100%; float:left; text-align:center; display:none; padding-top:10px;">
+                                    <label style="font-size:13px; margin-right:10px;">Tasarımınızın fiyatı hesaplanıyor...</label>
+                                    <img alt="tasarımın fiyatı hesaplanıyor" src="~/Images/Site/loading_mini.gif" />
+                                </div>
+                                <div id="pastane-sec-last" style="width:100%; float:left;">
+                                    <div style="width:100%; float:left; text-align:center;">
+                                        <label id="editorDesignPrice" style="width:100%; float:left; text-align:center; padding:15px 0px; font-weight:500; font-size:18px; display:none;"></label>
+                                        <a id="order-design" class="disabled-link" style="display:none;">
+                                            @{
+                                                if (!cartDesignExists & !cartBakeryExists)
+                                                {
+                                                    <label class="order-design black-gradient" onclick='saveCake("@isLogin.ToString()","order"); addToCart = true;' data-tr="Sipariş Ver" data-eng="Save" style="font-size:16px; padding:10px 20px;"></label>
+                                                }
+                                                else
+                                                {
+                                                    <label class="order-design black-gradient" onclick='setTimeout(function(){ $("#editor-warning-dialog").fadeIn(200); },210); addToCart = true;' data-tr="Sipariş Ver" data-eng="Order Now" style="font-size:16px; padding:10px 20px;"></label>
+                                                }
+                                            }
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <label style="width:100%; float:left; text-align:center; font-size:16px; margin-top:20px;">Bu aşamada ödeme alınmaz.</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="canvas-left-lower" style="display:none;">
+
+                <div id="cakeBaseWarning" style="float:left; width:100%; padding:10px 0px; background:#b34141; color:white; margin-bottom:2%; display:none;">
+                    <label style="width:100%; float:left; text-align:center;">Lütfen önce pastanızı seçiniz.</label>
+                </div>
+
+                <div id="pastaneSecWarning" style="float:left; width:100%; padding:10px 0px; background:#b34141; color:white; margin-bottom:2%; display:none;">
+                    <label style="width:100%; float:left; text-align:center;">Önce 1- Pasta Notları bölümünden pasta ismi girip kategori seçmeniz gerekmektedir.</label>
+                </div>
+
+                <div id="canvas-prev">
+                    <button onclick="editorStepPrev()">Önceki Adım</button>
+                </div>
+                <div id="canvas-next">
+                    <button id="canvasNextStep" onclick="editorStepNext()" style="border:1px solid black;">Sonraki Adım</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="dragBall-wrapper">
+            <div id="dragBall-container">
+                <div style="width:100%; float:left; text-align:center;">
+                    <img alt="yukarı sürükle" id="rotate-y-2" src="~/Images/Site/up.png" style="margin-top:-8px; margin-left:23px;" />
+                </div>
+                <div style="width:100%; float:left;">
+                    <img alt="sola sürükle" id="rotate-x-1" src="~/Images/Site/left.png" style="margin-top:3px; margin-left:-8px;" />
+                    <img alt="sağa sürükle" id="rotate-x-2" src="~/Images/Site/right.png" style="margin-top:3px; margin-right:-8px; float:right;" />
+                </div>
+                <div style="width:100%; float:left; text-align:center;">
+                    <img alt="aşağı sürükle" id="rotate-y-1" src="~/Images/Site/down.png" style="margin-top:3px; margin-left:23px;" />
+                </div>
+                <div class="dragBall"></div>
+            </div>
+            <div class="zoom-widget" style="float:right;  margin-top:15px; width:100%; padding-right:13px;">
+                <a id="zoom-in"><img alt="yakınlaş" src="~/Images/Site/plus.png" style="border-bottom-right-radius:3px; border-top-right-radius:3px; border-right:1px solid #d6d6d6;" /></a>
+                <a id="zoom-out"><img alt="uzaklaş" src="~/Images/Site/minus.png" style="border-bottom-left-radius:3px; border-top-left-radius:3px; " /></a>
+            </div>
+        </div>
+
+        @{
+            if (ViewData["saved"] != null)
+            {
+                <div id="design-saved-div" style="z-index:10000; position:absolute; background:rgba(0,0,0,0.7); width:100%; height:100%;">
+                    <div style="position: relative; width:100%; height:100%; ">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align:center;">
+                            <img alt="tasarımı kaydet" src="~/Images/Site/thanks_icon.png" style="width:60px; margin-bottom:20px;" />
+                            <label data-tr="Tasarımınız Kaydedildi" data-eng="Your Design Saved" style="font-size:20px; padding-bottom:20px; width:100%; color:white; margin-right:10px; vertical-align:middle;"></label>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div id="saving-div" style="z-index:10000; position:absolute; background:rgba(0,0,0,0.7); width:100%; height:100%; display:none;">
+                <div style="position: relative; width:100%; height:100%; ">
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align:center;">
+                        <img alt="tasarım kaydediliyor" src="~/Images/Site/thanks_icon.png" style="width:60px; margin-bottom:20px;" />
+                        <label data-tr="Tasarımınız Kaydediliyor" data-eng="Saving Your Design" style="font-size:20px; padding-bottom:20px; width:100%; color:white; margin-right:10px; vertical-align:middle;"></label>
+                        <img alt="yükleniyor" src="~/Images/Site/canvas_loader.gif" style="width:30px;" />
+                    </div>
+                </div>
+            </div>
+
+        }
+
+        <div id="editor-autosave-div" style="display:none;">
+        </div>
+
+        <div style="float:right; cursor:pointer; right:2px; position:absolute; bottom:2px; z-index:9999; width:100%; display:none;" id="editor-media-div">
+        </div>
+
+        <div id="canvas-loader" style="z-index:10000; position:absolute; background:rgba(0,0,0,0.7); width:100%; height:100%; display:none;">
+            <div style="position: relative; width:100%; height:100%;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                    <label data-tr="Yükleniyor... " data-eng="Loading... " style="font-size:30px !important; color:white; margin-right:10px; vertical-align:middle;"></label>
+                    <img alt="yükleniyor resmi" src="~/Images/Site/canvas_loader.gif" style="width:35px;" />
+                </div>
+            </div>
+        </div>
+
+        <div id="canvas-container2" class="col-md-9 col-sm-9 col-xs-9" style="padding:0px; float:right; width:75% !important;">
+            <div id="canvas-container" style="float:left; width:100%;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/scripts/cakeScripts/Cake3D/pasta.js"></script>

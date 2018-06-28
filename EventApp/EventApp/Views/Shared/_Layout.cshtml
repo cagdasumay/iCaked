@@ -1,0 +1,59 @@
+﻿@{ 
+    string UserType = (string)Session["UserType"];
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    @Html.Partial("_Head")
+</head>
+
+<body class="page-header-fixed page-sidebar-closed-hide-logo page-content-white page-sidebar-fixed">
+    <div class="page-wrapper">
+
+        <header>
+            @{
+                if (UserType == "Acente")
+                {
+                    @Html.Partial("_HeaderS")
+                }
+                else if (UserType == "Katılımcı")
+                {
+                    @Html.Partial("_Header")
+                }
+                else if (UserType == "Konuşmacı")
+                {
+                    @Html.Partial("_HeaderK")
+                }
+            }
+        </header>
+
+        <div class="clearfix"> </div>
+
+        <div class="page-container">
+            @{
+                if (UserType == "Acente")
+                {
+                    @Html.Partial("_SidebarS")
+                }
+                else if (UserType == "Katılımcı")
+                {
+                    @Html.Partial("_Sidebar")
+                }
+                else if (UserType == "Konuşmacı")
+                {
+                    @Html.Partial("_SidebarK")
+                }
+            }
+            
+            @RenderBody()
+            @Html.Partial("_QuickSidebar")
+        </div>
+
+        <footer>@Html.Partial("_Footer")</footer>
+
+    </div>
+</body>
+</html>

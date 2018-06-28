@@ -1,0 +1,48 @@
+﻿@using System.Data
+
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    String whoseProfileIsThis  = (String)ViewData["whoseProfileIsThis"];
+    String whatIsThePermission = (String)ViewData["whatIsThePermission"];
+    bool profileExists = true;
+
+    if(ViewData["profileExists"] != null)
+    {
+        if((bool)ViewData["profileExists"] == false) { profileExists = false; } else { profileExists = true; }
+    }
+}
+
+<div class="container" style="padding:0px;">
+    <div class="row" style="padding:0px;">
+        <div class="col-md-12" style="padding:0px;">
+            @{
+                if (profileExists)
+                {
+                    if (whoseProfileIsThis == "user")
+                    {
+                        @Html.Partial("UserProfile", ViewData)
+                    }
+                    else if (whoseProfileIsThis == "bakery")
+                    {
+                        @Html.Partial("BakeryProfile", ViewData)
+                    }
+                    else if (whoseProfileIsThis == "admin")
+                    {
+                        @Html.Partial("AdminPanel", ViewData);
+                    }
+                }
+                else
+                {
+                    <div style="width:100%; float:left; text-align:center;">
+                        <img src="~/Images/Site/sapka_icon.png" style="width:50px; margin-bottom:30px; margin-top:150px; -webkit-filter: drop-shadow(1px 3px 1px #cccccc);" />
+                    </div>
+                    <div style="width:100%; float:left; height:300px; text-align:center;">
+                        <label style="font-size:18px; font-weight:400;">Böyle bir sayfa bulunamadı.</label>
+                        <a style="font-size:18px; color:black !important; font-weight:400;" href="@Url.Action("Editor","Home")">İsterseniz sizi <b>editöre</b> alalım.</a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

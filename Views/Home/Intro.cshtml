@@ -1,0 +1,74 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using Cake.Models
+
+@{
+    ViewBag.Title = "Pasta Siparişi – Pastanı 3 Boyutlu Tasarla Sipariş Ver";
+    ViewBag.Description = "Tasarım pastalar ve pasta siparişi için en doğru adres.Hayalinizdeki pastayı 3 boyutlu pasta tasarım editörüyle tasarlayın ve hemen online pasta siparişi verin";
+    ViewBag.Keywords = "pasta, ankara pasta siparişi, istanbul pasta siparişi, pasta tasarım, doğum günü pastası, parti sepetleri, tasarım pasta siparişi, butik pasta siparişi";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    DatabaseController dc = new DatabaseController();
+}
+
+<script>
+
+    $(document).ready(function () {
+        setTimeout(function () { $(".introBG:nth-child(1)").slideUp(1500, "easeOutQuart"); }, 10000);
+
+        $(".introCitySelectButton").click(function () {
+            $(this).fadeOut(400);
+            var elem = this;
+            setTimeout(function () {
+                console.log($(this).parent());
+                $(elem).parent().find(".cs-loader").fadeIn(400);
+            }, 510);
+        });
+    });
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="col-md-12 col-sm-12 hidden-xs introBG" style="background:url('/Images/Site/intro_header.png'); height:550px; background-position:center center;"></div>
+
+
+    <div class="col-md-6 col-sm-6 col-xs-12 introBG" style="background:url('/Images/Site/intro_ank.png'); background-size:cover; background-position:top center;">
+        <a style="width:100%; float:left;" href="/ankara" onclick="$(this).find('.introCitySelectButton').trigger('click')">
+            <div class="introCitySelect">
+                <h2 class="introCityLabel" style="margin-top:150px; color:white;">Ankara</h2>
+                <h3 class="introCityLabel2" style="color:white;">
+                    Ankara'nın ünlü Liva,Ferlife ve Karameli pastanelerinin sunduğu sınırsız seçenek arasından seçiminizi yapın.
+                </h3>
+                <div style="width:100%; float:left; text-align:center; margin-top:7%; transition:all 0.1s;">
+                    <label class="introCitySelectButton">DEVAM ET</label>
+                    <div class="cs-loader" style="display:none;">
+                        <div class="cssload-container" style="width:100%;">
+                            <div class="cssload-loading"><i></i><i></i><i></i><i></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+
+    <div class="col-md-6 col-sm-6 col-xs-12 introBG" style="background:url('/Images/Site/intro_ist.png'); background-size:cover; background-position:top center;">
+        <a style="width:100%; float:left;" href="/istanbul" onclick="$(this).find('.introCitySelectButton').trigger('click')">
+            <div class="introCitySelect">
+                <h2 class="introCityLabel" style="margin-top:150px; color:white;">İstanbul</h2>
+                <h3 class="introCityLabel2" style="color:white;">
+                    Pasta Sanatı pastanesi özellikle butik pasta kategorisinde hayalinizdeki pastayı gerçekleştirme imkanı sunuyor.
+                </h3>
+                <div style="width:100%; float:left; text-align:center; margin-top:7%; transition:all 0.1s;">
+                    <label class="introCitySelectButton">DEVAM ET</label>
+                    <div class="cs-loader" style="display:none;">
+                        <div class="cssload-container" style="width:100%;">
+                            <div class="cssload-loading"><i></i><i></i><i></i><i></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </div>
+
+</div>

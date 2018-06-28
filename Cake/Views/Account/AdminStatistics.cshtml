@@ -1,0 +1,194 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+<style>
+
+    .stat_left {
+        width:100%; float:left; font-size:14px; font-family:'Open Sans';
+    }
+
+    html, body {
+    -webkit-user-select: initial; /* Chrome/Safari */
+    -moz-user-select: initial; /* Firefox */
+    -ms-user-select: initial; /* IE10+ */
+    -o-user-select: initial;
+    user-select: initial;
+}
+
+</style>
+
+<script type="text/javascript">
+
+    function getStatistics() {
+        $("#stats-btn").fadeOut(300);
+        setTimeout(function () { $("#stats-loading-div").fadeIn(300); },201);
+        
+        $.ajax({
+            url: "/Database/GetStatistics",
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+                console.log(result);
+                $("#stats-loading-div").fadeOut(300);
+
+                var str = "<div style='width:250px; float:left;'>" +
+
+                          "<label class='stat_left' style='font-size:18px; padding-bottom:30px; color:#268ECE;'>Site İstatistikleri</label>" +
+
+                          "<label class='stat_left'>Toplam Üye :              </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Toplam Yorum :              </label>" +
+
+                          "<label class='stat_left' style='font-size:18px; padding-bottom:30px; color:#268ECE;'>Ürünler</label>" +
+
+                          "<label class='stat_left'>Toplam Ürün :              </label>" +
+                          "<label class='stat_left'>Toplam Hazır Ürün :              </label>" +
+                          "<label class='stat_left'>Toplam Tasarım Pasta :              </label>" +
+                          "<label class='stat_left'>Toplam Tasarım Pasta (editör) :              </label>" +
+                          "<label class='stat_left'>Liva Ürünleri :              </label>" +
+                          "<label class='stat_left'>Ferlife Ürünleri :              </label>" +
+                          "<label class='stat_left'>Karameli Ürünleri :              </label>" +
+                          "<label class='stat_left'>Pasta Sanatı Ürünleri :              </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Parti Sepetleri :              </label>" +
+
+                          "<label class='stat_left'>Hazır Doğum Günü Pastası :    </label>" +
+                          "<label class='stat_left'>Hazır Sevgili Pastası :       </label>" +
+                          "<label class='stat_left'>Hazır Kutlama Pastası :       </label>" +
+                          "<label class='stat_left'>Hazır Çizgi Film Pastası :    </label>" +
+                          "<label class='stat_left'>Hazır 1 Yaş Pastası :         </label>" +
+                          "<label class='stat_left'>Hazır Bebek Pastası :         </label>" +
+                          "<label class='stat_left'>Hazır Yaş Pasta :             </label>" +
+                          "<label class='stat_left'>Hazır Parti Sepeti :          </label>" +
+                          "<label class='stat_left'>Hazır Kek/Kurabiye :          </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Hazır Çikolata :              </label>" +
+
+                          "<label class='stat_left'>Doğum Günü Pastaları (editör) : </label>" +
+                          "<label class='stat_left'>Sevgili Pastaları (editör) : </label>" +
+                          "<label class='stat_left'>Kutlama Pastaları (editör) : </label>" +
+                          "<label class='stat_left'>1 Yaş Pastaları (editör) : </label>" +
+                          "<label class='stat_left'>Bebek Pastaları (editör) : </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Çizgi Film Pastaları (editör) : </label>" +
+
+                          "<label class='stat_left' style='font-size:18px; padding-bottom:30px; color:#268ECE;'>Sipariş</label>" +
+
+                          "<label class='stat_left'>Toplam Sipariş :              </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Toplam Sipariş Verilen Ürün : </label>" +
+
+                          "<label class='stat_left'>Liva Sipariş Ürün Sayısı :                               </label>" +
+                          "<label class='stat_left'>Ferlife Sipariş Ürün Sayısı :                            </label>" +
+                          "<label class='stat_left'>Karameli Sipariş Ürün Sayısı :                           </label>" +
+                          "<label class='stat_left'>Pasta Sanatı Sipariş Ürün Sayısı :                       </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Parti Sipariş Ürün Sayısı : </label>" +
+
+                          "<label class='stat_left'>Hazır Doğum Günü Pastası :    </label>" +
+                          "<label class='stat_left'>Hazır Sevgili Pastası :       </label>" +
+                          "<label class='stat_left'>Hazır Kutlama Pastası :       </label>" +
+                          "<label class='stat_left'>Hazır Çizgi Film Pastası :    </label>" +
+                          "<label class='stat_left'>Hazır 1 Yaş Pastası :         </label>" +
+                          "<label class='stat_left'>Hazır Bebek Pastası :         </label>" +
+                          "<label class='stat_left'>Hazır Yaş Pasta :             </label>" +
+                          "<label class='stat_left'>Hazır Parti Sepeti :          </label>" +
+                          "<label class='stat_left'>Hazır Kek/Kurabiye :          </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>Hazır Çikolata :              </label>" +
+
+                          "<label class='stat_left'>Editör Doğum Günü Pastası :   </label>" +
+                          "<label class='stat_left'>Editör Sevgili Pastası :      </label>" +
+                          "<label class='stat_left'>Editör Kutlama Pastası :      </label>" +
+                          "<label class='stat_left'>Editör Çizgi Film Pastası :   </label>" +
+                          "<label class='stat_left'>Editör 1 Yaş Pastası :        </label>" +
+                          "<label class='stat_left'>Editör Bebek Pastası :        </label>" +
+                          "</div>" +
+
+                          "<div style='width:100px; float:left;'>" +
+
+                          "<label class='stat_left' style='height:55px;'></label>" +
+
+                          "<label class='stat_left'>" + result.totalMember + "              </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.totalComment + "              </label>" +
+
+                          "<label class='stat_left' style='height:55px;'></label>" +
+
+                          "<label class='stat_left'>" + result.totalDBProduct + "              </label>" +
+                          "<label class='stat_left'>" + result.hazirUrun + "              </label>" +
+                          "<label class='stat_left'>" + result.tasarimPastaHazir + "              </label>" +
+                          "<label class='stat_left'>" + result.tasarimPastaEditor + "              </label>" +
+                          "<label class='stat_left'>" + result.livaProduct + "              </label>" +
+                          "<label class='stat_left'>" + result.ferlifeProduct + "             </label>" +
+                          "<label class='stat_left'>" + result.karameliProduct + "              </label>" +
+                          "<label class='stat_left'>" + result.pastasanatiProduct + "              </label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.partiProduct + "              </label>" +
+
+                          "<label class='stat_left'>" + result.hhDGP + "</label>" +
+                          "<label class='stat_left'>" + result.hhSP + "</label>" +
+                          "<label class='stat_left'>" + result.hhKP + "</label>" +
+                          "<label class='stat_left'>" + result.hhCFP + "</label>" +
+                          "<label class='stat_left'>" + result.hh1YP + "</label>" +
+                          "<label class='stat_left'>" + result.hhBP + "</label>" +
+                          "<label class='stat_left'>" + result.hhYAS + "</label>" +
+                          "<label class='stat_left'>" + result.hhP + "</label>" +
+                          "<label class='stat_left'>" + result.hhKK + "</label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.hhC + "</label>" +
+
+                          "<label class='stat_left'>" + result.tDGP + "</label>" +
+                          "<label class='stat_left'>" + result.tSP + "</label>" +
+                          "<label class='stat_left'>" + result.tKP + "</label>" +
+                          "<label class='stat_left'>" + result.tCFP + "</label>" +
+                          "<label class='stat_left'>" + result.t1YP + "</label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.tBP + "</label>" +
+
+                          "<label class='stat_left' style='height:55px;'></label>" +
+
+                          "<label class='stat_left'>" + result.totalOrder + "</label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.totalProduct + "</label>" +
+
+                          "<label class='stat_left'>                             " + result.liva + "</label>" +
+                          "<label class='stat_left'>                             " + result.ferlife + "</label>" +
+                          "<label class='stat_left'>                             " + result.karameli + "</label>" +
+                          "<label class='stat_left'>                             " + result.pastasanati + "</label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.parti + "</label>" +
+
+                          "<label class='stat_left'>" + result.hDGP + "</label>" +
+                          "<label class='stat_left'>" + result.hSP + "</label>" +
+                          "<label class='stat_left'>" + result.hKP + "</label>" +
+                          "<label class='stat_left'>" + result.hCFP + "</label>" +
+                          "<label class='stat_left'>" + result.h1YP + "</label>" +
+                          "<label class='stat_left'>" + result.hBP + "</label>" +
+                          "<label class='stat_left'>" + result.hYAS + "</label>" +
+                          "<label class='stat_left'>" + result.hP + "</label>" +
+                          "<label class='stat_left'>" + result.hKK + "</label>" +
+                          "<label class='stat_left' style='padding-bottom:30px;'>" + result.hC + "</label>" +
+         
+                          "<label class='stat_left'>" + result.eDGP + "</label>" +
+                          "<label class='stat_left'>" + result.eSP + "</label>" +
+                          "<label class='stat_left'>" + result.eKP + "</label>" +
+                          "<label class='stat_left'>" + result.eCFP + "</label>" +
+                          "<label class='stat_left'>" + result.e1YP + "</label>" +
+                          "<label class='stat_left'>" + result.eBP + "</label>" +
+                          "</div>";
+
+
+                $("#stat-results-div").append(str);
+            }
+        });
+    }
+
+</script>
+
+<div class="container" style="min-height:50vh;">
+
+    <div style="width:100%; float:left; border-bottom:1px dashed #3f2518; margin-bottom:30px !important; padding:15px 0px; padding-top:0px;">
+        <label style="float:left; font-size:18px;   text-align:left; color:#3f2518; line-height:initial;">Sipariş İstatistikleri</label>
+    </div>
+
+    <div style="width:100%; float:left; text-align:center;">
+        <label onclick="getStatistics()" id="stats-btn" class="black-gradient" style="margin-bottom:30px !important;">İstatistikleri Al</label>
+        <div id="stats-loading-div" style="width:100%; float:left; text-align:center; display:none;">
+            <label id="stats-loading" style="text-align:center; font-size:14px; width:100%; float:left;">İstatistikler Alınıyor... <br /><br /> Bu işlem birkaç dakika sürebilir.</label>
+            <img src="~/Images/Site/loading_mini.gif" style="width:20px; margin-top:20px;" />
+        </div>
+    </div>
+
+    <div style="width:100%; float:left;" id="stat-results-div">
+
+    </div>
+</div>
+

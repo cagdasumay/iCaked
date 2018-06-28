@@ -1,0 +1,112 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataTable productComments = dc.DBQueryGetter("select * from ProductComments");
+    DataTable designComments = dc.DBQueryGetter("select * from DesignComments");
+}
+
+<div style="width:100%; float:left; border-bottom:1px solid #cccccc; margin-bottom:30px !important;">
+    <label id="admin-product-comment-label" onclick="toggleCommentDivs('product')" class="admin-comment-active admin-comment-default">Ürün Yorumları</label>
+    <label id="admin-design-comment-label" onclick="toggleCommentDivs('design')" class="admin-comment-default">Tasarım Yorumları</label>
+</div>
+
+<div id="admin-product-comment-div" class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left;">
+
+    @using (Html.BeginForm("EditComment", "Account"))
+    {
+    <table style="float:left; width:100%; margin-top:20px; font-size:12px; font-family:'Open Sans'; color:gray;" id="admin-product-comments-table" class="row-border">
+        <thead style="color:black;">
+            <tr>
+                <td style="font-weight:600;">Pastane</td>
+                <td style="font-weight:600;">Ürün</td>
+                <td style="font-weight:600;">İsim</td>
+                <td style="font-weight:600;">Başlık</td>
+                <td style="font-weight:600;">Yorum</td>
+                <td style="font-weight:600;">Like</td>
+                <td style="font-weight:600;">Dislike</td>
+                <td style="font-weight:600;">Onay</td>
+                <td style="font-weight:600;">Tarih</td>
+                <td style="font-weight:600;">Eylem</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                for (int i = 0; i < productComments.Rows.Count; i++)
+                {
+                    String approved = "Onaysız";
+                    if(productComments.Rows[i]["Approved"].ToString() == "yes") { approved = "Onaylı"; }
+                    <tr>
+                        <td><label>@dc.getBakeryNameFromProduct(new Guid(productComments.Rows[i]["ProductID"].ToString()))</label></td>
+                        <td><label>@dc.getProductNameByID(new Guid(productComments.Rows[i]["ProductID"].ToString()))</label></td>
+                        <td><label>@productComments.Rows[i]["NameSurname"]</label></td>
+                        <td><label>@productComments.Rows[i]["Title"]</label></td>
+                        <td><label style="max-width:200px; overflow:auto;">@productComments.Rows[i]["Comment"]</label></td>
+                        <td><label>@productComments.Rows[i]["Likes"]</label></td>
+                        <td><label>@productComments.Rows[i]["Dislikes"]</label></td>
+                        <td><label>@approved</label></td>
+                        <td><label>@productComments.Rows[i]["DateTime"]</label></td>
+                        <td style="min-width:70px;">
+                            <input onclick="validateEditComment(this)" type="image" src="~/Images/Site/save_icon_black.png" style="width:20px; float:left; height:20px; padding:3px; margin-right:5px; display:none;" class="yukle_gradient" />
+                            <img onclick="editAdminComment(this,'@productComments.Rows[i]["ID"]')" class="yukle_gradient" style="margin-bottom:0px !important; padding:3px; width:20px; cursor:pointer;" src="~/Images/Site/edit_icon.png" />
+                            <a onclick="deleteAdminComment()" href="@Url.Action("DeleteComment","Account", new { CommentID = productComments.Rows[i]["ID"] })">
+                                <img class="yukle_gradient" src="~/Images/Site/close_icon.png" style="margin-bottom:0px !important; padding:5px; width:20px;  cursor:pointer;" />
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+    </table>
+                }
+</div>
+
+<div id="admin-design-comment-div" class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left; display:none;">
+
+    @using (Html.BeginForm("EditComment", "Account"))
+    {
+        <table style="float:left; width:100%; margin-top:20px; font-size:12px; font-family:'Open Sans'; color:gray;" id="admin-design-comments-table" class="row-border">
+            <thead style="color:black;">
+                <tr>
+                    <td style="font-weight:600;">Tasarım</td>
+                    <td style="font-weight:600;">İsim</td>
+                    <td style="font-weight:600;">Başlık</td>
+                    <td style="font-weight:600;">Yorum</td>
+                    <td style="font-weight:600;">Like</td>
+                    <td style="font-weight:600;">Dislike</td>
+                    <td style="font-weight:600;">Onay</td>
+                    <td style="font-weight:600;">Tarih</td>
+                    <td style="font-weight:600;">Eylem</td>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (int i = 0; i < designComments.Rows.Count; i++)
+                    {
+                        String approved = "Onaysız";
+                        if (designComments.Rows[i]["Approved"].ToString() == "yes") { approved = "Onaylı"; }
+                        <tr>
+                            <td><label>@dc.getDesignNameByID(new Guid(designComments.Rows[i]["MadeID"].ToString()))</label></td>
+                            <td><label>@designComments.Rows[i]["NameSurname"]</label></td>
+                            <td><label>@designComments.Rows[i]["Title"]</label></td>
+                            <td><label style="max-width:200px; overflow:auto;">@designComments.Rows[i]["Comment"]</label></td>
+                            <td><label>@designComments.Rows[i]["Likes"]</label></td>
+                            <td><label>@designComments.Rows[i]["Dislikes"]</label></td>
+                            <td><label>@approved</label></td>
+                            <td><label>@designComments.Rows[i]["DateTime"]</label></td>
+                            <td style="min-width:70px;">
+                                <input onclick="validateEditComment(this)" type="image" src="~/Images/Site/save_icon_black.png" style="width:20px; float:left; height:20px; padding:3px; margin-right:5px; display:none;" class="yukle_gradient" />
+                                <img onclick="editAdminComment(this,'@designComments.Rows[i]["ID"]')" class="yukle_gradient" style="margin-bottom:0px !important; padding:3px; width:20px; cursor:pointer;" src="~/Images/Site/edit_icon.png" />
+                                <a onclick="deleteAdminComment()" href="@Url.Action("DeleteComment","Account", new { CommentID = designComments.Rows[i]["ID"] })">
+                                    <img class="yukle_gradient" src="~/Images/Site/close_icon.png" style="margin-bottom:0px !important; padding:5px; width:20px;  cursor:pointer;" />
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <input type="hidden" name="isDesign" value="yes" />
+                    }
+</div>

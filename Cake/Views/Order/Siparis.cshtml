@@ -1,0 +1,382 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    ViewBag.Title = "iCaked Order - Order your patron immediately!";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.Keywords = "cake order, ankara cake order, istanbul cake order, party basket order, online payment, pay at the door, fast delivery, easy order";
+    ViewBag.description = "Easily order your poultry in just a few steps, be at your door at least 48 hours, you design it, we send it!";
+    List<DataRow> cart = (List<DataRow>)ViewData["cart"];
+    List<DataRow> bakeries = (List<DataRow>)ViewData["bakeries"];
+
+    UtilityController uc = new UtilityController();
+
+    bool contentRequired = false; bool bakeryRequired = false; bool contentExists = false; bool isPartyOnly = true;
+
+    if (Session["contentRequired"] != null) { contentRequired = (bool)Session["contentRequired"]; }
+    if (Session["bakeryRequired"] != null) { bakeryRequired = (bool)Session["bakeryRequired"]; }
+    if (Session["orderContent"] != null) { contentExists = true; }
+
+    Double total = 0;
+    if ((bool)ViewData["empty"] == false)
+    {
+        for (int i = 0; i < cart.Count; i++)
+        {
+            if (cart[i]["PagePrice"] != null)
+            {
+                if (String.IsNullOrEmpty(cart[i]["PagePrice"].ToString()) == false)
+                {
+                    total = total + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","));
+                }
+            }
+            if (cart[i]["Category"].ToString() != "Parti Malzemeleri") { isPartyOnly = false; }
+        }
+    }
+
+    String bakeryName = "Pastane Seçilmedi"; String bakeryImg = "";
+    if (!String.IsNullOrEmpty(cart[0]["BakeryID"].ToString())) { bakeryName = bakeries[0]["Name"].ToString(); bakeryImg = "Images/Bakery/" + bakeries[0]["Thumbnail"]; }
+
+    String kdv = uc.CalculateCartKDV(cart);
+    String kdvsiz = uc.CalculateCartWithoutKDV(cart);
+
+    String step = (String)Session["orderStep"];
+
+    if ((bool)ViewData["empty"] == false)
+    {
+        <div class="container-fluid" style="background:white; padding-top:50px; padding-bottom:50px;">
+            <div class="container">
+
+                <div style="width:100%; float:left;">
+                    @Html.Partial("_OrderBar")
+                </div>
+
+                <div style="width:100%; padding:0px; float:left; margin-bottom:20px;">
+
+                    @{
+                        if (step == "1")
+                        {
+                            @Html.Partial("_OrderCart");
+                        }
+                        else if (step == "2")
+                        {
+                            @Html.Partial("_OrderAddressSelect");
+                        }
+                        else if (step == "3")
+                        {
+                            @Html.Partial("_OrderBakerySelect");
+                        }
+                        else if (step == "4")
+                        {
+                            @Html.Partial("_OrderContentSelect");
+                        }
+                        else if (step == "5")
+                        {
+                            @Html.Partial("_OrderInfo");
+                        }
+                        else if (step == "6")
+                        {
+                            @Html.Partial("_OrderPayment");
+                        }
+                    }
+                </div>
+
+            </div>
+        </div>
+
+                        if (step != "1")
+                        {
+                            <div style="width:100%; float:left; text-align:center; margin-top:-21px;">
+                                <label style="border:1px solid #d6d6d6; border-radius:30px; padding:10px 40px; background:White; font-weight:600; letter-spacing:1px;">ORDER DETAILS</label>
+                            </div>
+
+                            <div class="container-fluid" style="background:#f7f7f7; border-top:1px solid #e6e6e6; padding-bottom:100px; padding-top:50px;">
+                                <div class="container">
+
+                                    @{
+                                        if (Session["orderBakery"] != null & isPartyOnly == false)
+                                        {
+                                            DataRow bakery = (DataRow)Session["orderBakery"];
+
+                                            String calismaGunleri = "";
+                                            if (bakery["workDays"].ToString()[0] == '1') { calismaGunleri = calismaGunleri + " Pzt"; }
+                                            if (bakery["workDays"].ToString()[1] == '1') { calismaGunleri = calismaGunleri + " Sal"; }
+                                            if (bakery["workDays"].ToString()[2] == '1') { calismaGunleri = calismaGunleri + " Çar"; }
+                                            if (bakery["workDays"].ToString()[3] == '1') { calismaGunleri = calismaGunleri + " Per"; }
+                                            if (bakery["workDays"].ToString()[4] == '1') { calismaGunleri = calismaGunleri + " Cum"; }
+                                            if (bakery["workDays"].ToString()[5] == '1') { calismaGunleri = calismaGunleri + " Cmt"; }
+                                            if (bakery["workDays"].ToString()[6] == '1') { calismaGunleri = calismaGunleri + " Paz"; }
+
+                                            String imgBakery = "Images/Bakery/" + bakery["Thumbnail"].ToString();
+
+                                            <div id="pastane_secimi_div" class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                                    Bakery Selection (@bakery["Name"])
+                                                </label>
+                                                <div class="bakeryInfos" style="width:100%; float:left; padding:15px;">
+                                                    <div class="col-md-2 col-sm-3 col-xs-12 bakeryImg" style="float:left; text-align:center; ">
+                                                        <img src="@imgBakery" style="width:120px; margin-top:5px;" />
+                                                    </div>
+                                                    <div class="col-md-2 col-sm-3 col-xs-4" style="float:left; padding:0px;">
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Work Hours : </label>
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Work Days : </label>
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Tel : </label>
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px; font-weight:500;">Address : </label>
+                                                    </div>
+                                                    <div class="col-md-8 col-sm-6 col-xs-8" style="float:left; padding:0px 5px;">
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@bakery["workHours"]</label>
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@calismaGunleri</label>
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@bakery["Phone"]</label>
+                                                        <label style="width:100%; padding-bottom:5px; float:left; text-align:left; font-size:13px;">@bakery["SpecificAddress"]</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+
+                                        if (Session["orderAddress"] != null)
+                                        {
+                                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; padding-left:15px; font-weight:600; border-bottom:1px solid #e6e6e6; ">
+                                                    Address Selection
+                                                </label>
+                                                <div style="width:100%; float:left; padding:15px;">
+                                                    @{
+                                                        if (Session["subeTeslim"] != null)
+                                                        {
+                                                            <label style="width:100%; float:left;">I'm going to get it from the pastry.</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            DataRow adres = (DataRow)Session["orderAddress"];
+                                                            <div>
+                                                                <div style="width:100%; float:left;">
+                                                                    <label style="float:left; font-size:13px;">@adres["ProvinceName"], @adres["DistrictName"], @adres["TownName"], @adres["NeighborhoodName"]</label>
+                                                                </div>
+                                                                <label style="padding-top:5px; float:left; width:100%; font-size:13px;">@adres["SpecificAddress"]</label>
+                                                                <label style="padding-top:10px; font-weight:600; float:left; width:100%; font-size:13px;">Detailed Address:</label>
+                                                                <label style="padding-top:5px; float:left; width:100%; font-size:13px;">@adres["Description"]</label>
+                                                            </div>
+
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                                        }
+
+                                                        if (Session["orderDeliveryInfo"] != null)
+                                                        {
+                                                            FormCollection infoForm = (FormCollection)Session["orderDeliveryInfo"];
+                                                            string carrySecondHour = "";
+                                                            if (infoForm["bakerySecondHourCopy"] != null) { carrySecondHour = infoForm["bakerySecondHourCopy"]; }
+
+                                                            string deliveryDateTime = "";
+                                                            if (infoForm["selectedHour"] == "normal") { deliveryDateTime = infoForm["deliveryDatePicker"] + " " + infoForm["deliveryTimePicker"] + " " + carrySecondHour; }
+                                                            else { deliveryDateTime = infoForm["deliveryDatePicker"] + " " + infoForm["deliveryTimePickerClean"] + " " + carrySecondHour; }
+
+                                                            FormCollection info = (FormCollection)Session["orderDeliveryInfo"];
+                                                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                                <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                                                    Contact Info
+                                                                </label>
+                                                                <div style="float:left; padding:15px;">
+                                                                    <label style="width:100%; float:left; text-align:left; font-size:16px; font-family:'Open Sans';">@info["contactName"] @info["contactSurname"] - @info["contactMail"] - @info["contactTel"]</label>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                                <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                                                    Delivery Date
+                                                                </label>
+                                                                <div style="float:left; padding:15px;">
+                                                                    <label style="width:100%; float:left; text-align:left; font-size:16px; font-family:'Open Sans';">@deliveryDateTime</label>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        if (Session["orderContent"] != null)
+                                                        {
+                                                            DataRow content = (DataRow)Session["orderContent"];
+                                                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                                <label style="width:100%; float:left; padding:15px; color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6;">
+                                                                    Design / Boutique Cake Content Selection
+                                                                </label>
+                                                                <div style="float:left; padding:15px;">
+                                                                    <label style="width:100%; float:left; text-align:left; font-size:16px;">@content["Inside"]</label>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                    }
+
+                                    <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; float:left; margin-top:10px;">
+                                        <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; padding:0px; text-align:right;">
+                                            <div class="col-md-6 col-sm-6 col-xs-12" style="float:left; background:white; padding:0px; border:1px solid #e6e6e6;">
+                                                <div style="float:left; width:100%;">
+                                                    <div style="float:left; width:100%;">
+                                                        <label style="float:right; font-size:14px; padding:15px; font-weight:600; width:100%; color:#3f2518; text-align:left; border-bottom:1px solid #e6e6e6;">Products</label>
+                                                        <label style="float:right; width:100%; font-size:14px; padding-left:15px; padding-top:10px; text-align:left;">@cart.Count product</label>
+                                                    </div>
+                                                </div>
+
+                                                @{
+                                                    for (int i = 0; i < cart.Count; i++)
+                                                    {
+                                                        bool isMade = !String.IsNullOrEmpty(cart[i]["isMade"].ToString()); String partyrule = "";
+                                                        DataRow urun = cart[i]; String img = "";
+
+                                                        if (isMade) { img = "/Images/MadeCakes/" + urun["MadeID"] + "/" + urun["ImagePath"].ToString().Split(' ')[0]; }
+                                                        else { img = "/Images/Products/" + urun["ProductID"] + "/" + urun["Thumbnail"].ToString().Trim().Split(' ')[0]; }
+
+                                                        String priceStrLeft = ""; String priceStrRight = "";
+                                                        if (urun["PagePrice"] != null)
+                                                        {
+                                                            if (String.IsNullOrEmpty(urun["PagePrice"].ToString()) == false)
+                                                            {
+                                                                if (urun["PagePrice"].ToString().Contains(".")) { priceStrLeft = urun["PagePrice"].ToString().Split('.')[0]; priceStrRight = "," + urun["PagePrice"].ToString().Split('.')[1] + " TL"; }
+                                                                else if (urun["PagePrice"].ToString().Contains(",")) { priceStrLeft = urun["PagePrice"].ToString().Split(',')[0]; priceStrRight = "," + urun["PagePrice"].ToString().Split(',')[1] + " TL"; }
+                                                                else { priceStrLeft = urun["PagePrice"].ToString(); priceStrRight = ",00 TL"; }
+                                                            }
+                                                            else { priceStrRight = "-"; }
+                                                        }
+
+                                                        if (urun["Category"].ToString() == "Parti Malzemeleri") { partyrule = "background:url('/Images/Site/party_bg.jpg'); background-size:contain;"; }
+
+                                                        <div class="row cart-product-div">
+                                                            <div class="col-md-2 col-sm-3 col-xs-4" style="padding:0px;">
+                                                                <img src="@img" class="siparis-product-img" style="width:100%; float:left; @partyrule" />
+                                                            </div>
+                                                            <div class="col-md-10 col-sm-9 col-xs-8" style="padding-right:0px;">
+                                                                <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; float:left;">
+                                                                    <div style="float:left; width:100%;">
+
+                                                                        <label style="float:left; width:100%; text-align:left; font-weight:600; font-size:14px;">@urun["Name"]</label>
+                                                                        <label style="float:left; text-align:left; font-size:14px; font-weight:400; width:100%;">@uc.productCatCorrector(urun)</label>
+                                                                    </div>
+                                                                    <div style="float:right;">
+                                                                        <label class="" style="float:right; font-size:24px; font-family:'Open Sans'; line-height:24px;">@priceStrLeft <span style="float:right; font-size:14px; line-height:18px;">@priceStrRight</span></label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="col-md-6 col-sm-6 col-xs-12" id="sepet_ozeti_div" style="padding:0px 10px; padding-right:0px; float:left;">
+                                                <div style="width:100%; float:left; background:white; border:1px solid #e6e6e6;">
+                                                    <div style="width:100%; float:left;">
+                                                        <label style="float:right; font-size:14px; font-weight:600; width:100%; color:#3f2518; text-align:left; padding:15px; border-bottom:1px solid #e6e6e6;">Cart Sum</label>
+                                                    </div>
+                                                    <div style="width:100%; float:left; padding:15px;">
+                                                        <div style="width:100%; float:left; margin-bottom:5px;">
+                                                            <label style="float:left; font-size:12px; line-height:22px;">Tax : </label>
+                                                            <label style="float:right; font-size:16px; font-family:'Open Sans';">@kdv TL</label>
+                                                        </div>
+                                                        <div style="width:100%; float:left; margin-bottom:15px;">
+                                                            <label style="float:left; font-size:12px; line-height:22px;">Without Tax : </label>
+                                                            <label style="float:right; font-size:16px; font-family:'Open Sans';">@kdvsiz TL</label>
+                                                        </div>
+                                                        <div style="width:100%; float:left;">
+                                                            <label style="float:left; font-size:14px; line-height:40px;">Total : </label>
+                                                            <label style="float:right; font-family:'Open Sans';">
+                                                                <span style="font-size:16px; float:right; padding-top:15px; padding-left:5px;">TL</span>
+                                                                <span style="float:right; font-size:28px;">@total</span>
+                                                            </label>
+                                                        </div>
+                                                        <div style="width:100%; float:left; display:none;" id="toplamAppend">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @{
+
+                                        if (Session["designNotes"] != null | Session["designImages"] != null)
+                                        {
+                                            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; float:left; margin-top:10px; background:white;">
+                                                <label style="width:100%; float:left; padding:15px; color:#3f2518;font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6; margin-bottom:15px !important;">
+                                                    Design Notes
+                                                </label>
+                                                @{
+                                                    if (Session["designNotes"] != null)
+                                                    {
+                                                        String note = (String)Session["designNotes"];
+                                                        <div style="float:left; width:100%; padding:15px; ">
+                                                            <label style="width:100%; float:left; text-align:left; font-size:16px;">@note</label>
+                                                        </div>
+                                                    }
+                                                    if (Session["designImages"] != null)
+                                                    {
+                                                        List<string> images = (List<string>)Session["designImages"];
+                                                        <div style="width:100%; float:left; padding:0px 15px; ">
+                                                            @{
+                                                                for (int i = 0; i < images.Count; i++)
+                                                                {
+                                                                    <img src="@images[i]" style="width:200px; float:left; margin:5px; border:1px solid #e6e6e6; border-radius:3px;" />
+                                                                }
+                                                            }
+                                                        </div>
+                                                                }
+                                                }
+                                            </div>
+                                                                }
+
+                                                                if (Session["editorText"] != null | Session["editorImg"] != null)
+                                                                {
+                                                                    <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; float:left; background:white; margin-top:10px;">
+                                                                        <label style="width:100%; float:left; padding:15px;  color:#3f2518; font-size:14px; font-weight:600; border-bottom:1px solid #e6e6e6; margin-bottom:15px !important;">
+                                                                            Images and Texts
+                                                                        </label>
+                                                                        @{
+                                                                            if (Session["editorText"] != null)
+                                                                            {
+                                                                                List<string> texts = (List<string>)Session["editorText"];
+                                                                                <div style="float:left; width:100%; padding:15px; ">
+                                                                                    <label style="width:100%; float:left; padding:10px; padding-left:0px; font-size:18px; font-weight:500;">Texts</label>
+                                                                                    @{
+                                                                                        for (int i = 0; i < texts.Count; i++)
+                                                                                        {
+                                                                                            <label style="width:100%; float:left; text-align:left; padding-left:10px; font-size:16px;">@texts[i]</label>
+                                                                                        }
+                                                                                    }
+                                                                                </div>
+                                                                                        }
+                                                                                        if (Session["editorImg"] != null)
+                                                                                        {
+                                                                                            List<string> images = (List<string>)Session["editorImg"];
+                                                                                            <div style="width:100%; float:left; padding:0px 15px; ">
+                                                                                                <label style="width:100%; float:left; padding:10px; padding-left:0px;  font-size:16px; font-weight:500;">Images</label>
+                                                                                                @{
+                                                                                                    for (int i = 0; i < images.Count; i++)
+                                                                                                    {
+                                                                                                        <img src="@images[i]" style="width:200px; float:left; padding-left:10px; margin:5px; margin-left:0px; border:1px solid #e6e6e6; border-radius:3px;" />
+                                                                                                    }
+                                                                                                }
+                                                                                            </div>
+                                                                                                    }
+                                                                        }
+                                                                    </div>
+                                                                                                    }
+                                    }
+                                </div>
+                            </div>
+                                                                                                        }
+
+
+                                                                                                    }
+                                                                                                    else
+                                                                                                    {
+                                                                                                        <div class="container">
+                                                                                                            <div class="row">
+                                                                                                                <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center; margin-top:125px; margin-bottom:20px;">
+                                                                                                                    <img src="~/Images/Site/empty_cart_icon.png" style="margin:auto; width:100px; " />
+                                                                                                                </div>
+                                                                                                                <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center;">
+                                                                                                                    <label style="width:100%; float:left; text-align:center; font-weight:400; font-size:20px; margin-bottom:20px;">Your cart is empty yet</label>
+                                                                                                                </div>
+                                                                                                                <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center; margin-bottom:200px;">
+                                                                                                                    <a href="@Url.Action("Market","Order")" style="text-decoration:none; margin-top:20px; color:white !important;" class="cart_gradient">Continue Shopping</a>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    }
+}

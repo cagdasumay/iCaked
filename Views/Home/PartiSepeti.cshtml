@@ -1,0 +1,110 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using System.Globalization
+
+@functions {
+
+    public DataTable swapDTRows(DataTable dt,String name)
+    {
+        DataRow[] dr = dt.Select("Name ='" + name + "'");
+        DataRow newRow = dt.NewRow();
+        // We "clone" the row
+        newRow.ItemArray = dr[0].ItemArray;
+        // We remove the old and insert the new
+        dt.Rows.Remove(dr[0]);
+        dt.Rows.InsertAt(newRow, dt.Rows.Count);
+        return dt;
+    }
+
+}
+
+@{
+    DatabaseController dc = new DatabaseController();
+    BakeryController bc = new BakeryController();
+    UtilityController uc = new UtilityController();
+
+    DataTable partyProducts = dc.MemoryCacheByQuery("select * from Products where Category = N'Parti Malzemeleri'");
+    DataRow bakery = dc.MemoryCacheByQuery("select * from Bakeries where BakeryID = '98E94E0A-C764-4F99-A2F1-F4915631A891'").Rows[0];
+
+    DataView dv = partyProducts.DefaultView;
+    dv.Sort = "Name";
+    partyProducts = dv.ToTable();
+
+    swapDTRows(partyProducts,"Erkek Bebek Ekonomik Set"); swapDTRows(partyProducts, "Erkek Bebek Süper Set");
+    swapDTRows(partyProducts, "Kız Bebek Ekonomik Set"); swapDTRows(partyProducts, "Kız Bebek Süper Set");
+
+    ViewBag.Title = "Parti Sepeti Ürünleri ve Siparişi";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "Pasta siparişinizin yanında kutlamanızı renklendirmek için iCaked'in sunduğu renkli parti sepetleri burada.";
+    ViewBag.keywords = "parti sepetleri, parti ürünleri, ankara parti sepeti, istanbul parti sepeti, parti ürünleri, parti setleri, kutlama ürünleri";
+}
+
+<div class="container">
+    <div class="row" style="padding:0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" id="party-market-header-div" style="padding:0px; float:left; margin-bottom:10px;">
+            <div id="party-sapka-wrapper" style="width:100%; float:left; text-align:center; margin-top:17px;">
+                <img src="~/Images/Site/party_icon2.png" style="width:60px;" />
+            </div>
+            <div style="float:left; width:100%; text-align:center;">
+                <h1 style="font-size:36px; color:#3f2518; margin-top:20px;">Parti Sepetleri</h1>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;" class="hidden-xs">
+                <label style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:30px;">
+                    Pasta siparişinizin yanında kutlamanızı renklendirmek için iCaked'in sunduğu renkli parti sepetleri burada. <br />
+                    Kız, Erkek, 1 Yaş ve Çizgi Film temalı parti sepetlerini yakından incelemek için tıklayabilirsiniz. Ürünün sayfasından kaç kişilik olduğunu seçip sipariş verebilirsiniz.
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="padding:0px;">
+
+        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" id="party-main-filter-wrapper" style="padding:0px; float:left;">
+            <div id="party-main-filter-div" style="width:100%; float:left; margin-bottom:30px;">
+                <div style="float:right; margin-bottom:10px;" class="col-md-6 col-sm-6 col-xs-12">
+                    <input onkeyup="searchPartyProducts(this)" type="text" placeholder="Ürün Arama" style="width:100%; float:left; border:1px solid #f0f0f0; border-radius:3px; padding:10px; font-size:18px;" />
+                </div>
+                <div style="float:right;" class="col-md-6 col-sm-6 col-xs-12">
+                    <select id="sortPartyFilter" onchange="sortPartyProducts()" style="width:100%; border:1px solid #f0f0f0; border-radius:3px; padding:11px 10px; font-size:18px;">
+                        <option disabled selected>Sıralama</option>
+                        <option value="newest">En Yeniler</option>
+                        <option value="popular">En Sevilenler</option>
+                        <option value="priceDesc">Fiyata Göre Azalan</option>
+                        <option value="priceAsc">Fiyata Göre Artan</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="party-market-main-div" class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="float:left; padding:0px;">
+            <div class="row" id="sortFilterPartyProductWrapper">
+                @{
+                    for (int i = 0; i < partyProducts.Rows.Count; i++)
+                    {
+                        DataRow urun = partyProducts.Rows[i];
+    String product_thumbnail = "/Images/Products/" + urun["ProductID"] + "/" + (urun["Thumbnail"].ToString().Split(' '))[0];
+    String price = urun["Price"].ToString().Split(' ')[0];
+    price = uc.ArrangePrice(price);
+
+                        String productCategory = uc.cleanseUrlString(urun["Category"].ToString());
+    String productName = uc.cleanseUrlString(urun["Name"].ToString()) + "-" + urun["ProductID"].ToString().Split('-')[0];
+    String productBakery = uc.cleanseUrlString(bakery["Name"].ToString()).ToLower();
+
+                        <div class="col-md-4 col-sm-6 col-xs-6 sortFilterPartyProduct" style="padding:1.5%;" data-name="@urun["Name"]" data-price="@price.Split('.')[0]" data-category="@urun["Category"]" data-date="@Convert.ToDateTime(urun["AddDate"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-favs="@urun["Fav"]">
+                            <a  href="@Url.Action("Product","Bakery", new { category = productCategory.ToLower(), bakeryName = productBakery.ToLower(), productName = productName.ToLower() })">
+                                <div class="new-product-wrapper" style="padding:1%; width:100%; float:left;">
+                                    <img class="new-product-img" alt="ürün tasarım pasta" src="@product_thumbnail" onclick="$(this).parent().parent().submit()" style="background:url('../../Images/Site/party_bg.jpg'); background-size:contain;" />
+                                    <div class="new-product-div">
+                                        <span class="new-product-name">@urun["Name"]</span>
+                                        <span class="new-product-description2">@urun["SizeOptions"].ToString().Replace(" ","-") kişilik</span>
+                                        <span class="new-product-price"> @price.Split('.')[0] <span style="font-size:16px; margin-left:-7px;">.@price.Split('.')[1] TL</span></span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

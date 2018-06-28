@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "Butik Pasta Figürleri – 3 Boyutlu Pasta Tasarım";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "İstediğiniz 3D figürü editörümüzde bulamadıysanız istek formuyla bizimle iletişime geçebilirsiniz. En kısa sürede eklenecektir.";
+    ViewBag.Keywords = "Tasarım pasta figürleri, butik pasta figürleri, tasarım pasta örnekleri, butik pasta örnekleri, şeker hamurlu pasta figürleri, şeker hamurlu pasta modelleri, şeker hamuru pasta";
+
+    bool istekFigurTaken = false;
+
+    if (TempData["istekFigurTaken"] != null) { istekFigurTaken = true; } else { istekFigurTaken = false; }
+}
+
+<div class="container-fluid" >
+    <div class="container" style="background:white; padding:3%; padding-bottom:150px; padding-top:100px;">
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:70px; text-align:center;">
+
+                @{
+                    if (istekFigurTaken == false)
+                    {
+                        <img alt="istek figür" src="~/Images/Site/thanks_icon.png" style="width:50px; margin-bottom:10px;" />
+
+                        <h1 style="width:100%; float:left; font-size:22px; text-align:center;">Siz isteyin biz tasarlayalım</h1>
+                        <h2 style="width:100%; float:left; padding:10px 0px; font-size:16px; text-align:center; padding-bottom:0px;">Alttaki formda istediğiniz figürü detaylı bir şekilde anlatabilirsiniz.</h2>
+                        <h3 style="width:100%; float:left; padding:10px 0px; font-size:14px; text-align:center; padding-bottom:30px;">Figür isteğiniz en kısa sürede tasarım editörümüze eklenecektir.</h3>
+
+                        using (Html.BeginForm("IstekFigurForm", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "istekFigurForm" }))
+                        {
+                            <div style="width:100%; float:left;">
+                                <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="100" id="istekFigurName" name="istekFigurName" type="text" placeholder="İsim Soyisim" />
+                                <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="istekFigurMail" name="istekFigurMail" type="text" placeholder="E-Posta" />
+                            </div>
+
+                                <div style="width:100%; float:left; position:relative;">
+                                    <textarea onkeyup="validateKeyup(this)" autocomplete="off" maxlength="1500" id="istekFigurMessage" name="istekFigurMessage" placeholder="İstediğiniz 3D figürü anlatın"></textarea>
+                                    <input id="istekFigurImg" name="istekFigurImg" type="file" style="display:none;" />
+                                    <label for="istekFigurImg" class="gray-gradient" style="font-size:16px; font-weight:400; position:absolute; bottom:12px; right:5px;">Resim Yükle</label>
+                                </div>
+
+                                <div style="float:right; width:100%; margin-top:10px; text-align:center; display:none;" id="istekFigurThumbnailWrapper">
+                                    <img alt="figürünüzü açıklayın" src="" id="istekFigurThumbnail" style="width:100%; padding:5px; border:1px solid #d6d6d6; box-shadow: 0px 1px 5px -3px grey; border-radius:3px;" />
+                                </div>
+
+                                <div style="width:100%; float:left;">
+                                    <input id="istekFigurSubmit" class="black-gradient" type="submit" style="border-radius:30px; border:none;" onclick="validateFigurForm()" value="Gönder" />
+                                    <img alt="figür isteğiniz alınmıştır" id="istekFigurLoading" src="~/Images/Site/loading_mini.gif" style="width:25px; border-radius:50px; margin-top:20px; display:none;" />
+                                </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="width:100%; float:left; padding:150px 0px;">
+                            <div style="width:100%; float:left; text-align:center; padding-bottom:40px;">
+                                <img alt="iletişime geçeceğiz" src="~/Images/Site/success_icon.png" style="width:50px; border-radius:50px; box-shadow: 0px 1px 5px 0px #909090;" />
+                            </div>
+                            <label style="width:100%; float:left; text-align:center; font-size:18px;">Teşekkür ederiz.</label>
+                            <label style="width:100%; float:left; text-align:center; font-size:14px; padding-top:15px;">Figür isteğiniz alınmıştır. En kısa zamanda sizinle iletişime geçeceğiz.</label>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

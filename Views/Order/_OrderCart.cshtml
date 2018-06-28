@@ -1,0 +1,379 @@
+﻿
+@using System.Data
+@using Cake.Controllers
+
+<!-- Google Code for Sepet Sayfas&#305; Conversion Page -->
+<script type="text/javascript">
+    /* <![CDATA[ */
+    var google_conversion_id = 865847086;
+    var google_conversion_language = "en";
+    var google_conversion_format = "3";
+    var google_conversion_color = "ffffff";
+    var google_conversion_label = "hl-_CL-V3mwQro7vnAM";
+    var google_remarketing_only = false;
+    /* ]]> */
+</script>
+<script type="text/javascript" src="//www.googleadservices.com/pagead/conversion.js"></script>
+<noscript>
+    <div style="display:inline;">
+        <img height="1" width="1" style="border-style:none;" alt="" src="//www.googleadservices.com/pagead/conversion/865847086/?label=hl-_CL-V3mwQro7vnAM&amp;guid=ON&amp;script=0" />
+    </div>
+</noscript>
+
+@{
+    List<DataRow> cart = (List<DataRow>)ViewData["cart"];
+    List<DataRow> bakeries = (List<DataRow>)ViewData["bakeries"];
+    DataRow bakery = null;
+
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+
+    bool bakerySelected = false; bool isPartyOnly = true;
+
+    if (cart != null)
+    {
+        for (int i = 0; i < cart.Count; i++)
+        {
+            if (cart[i]["Category"].ToString() != "Parti Malzemeleri" & String.IsNullOrEmpty(cart[i]["BakeryID"].ToString()) == false)
+            {
+                bakery = dc.MemoryCacheByQuery("select * from Bakeries where BakeryID = '" + cart[i]["BakeryID"] + "'").Rows[0];
+                bakerySelected = true;
+            }
+            if (cart[i]["Category"].ToString() != "Parti Malzemeleri") { isPartyOnly = false; }
+        }
+    }
+
+    if (isPartyOnly)
+    {
+        bakery = dc.MemoryCacheByQuery("select * from Bakeries where BakeryID = '98E94E0A-C764-4F99-A2F1-F4915631A891'").Rows[0]; bakerySelected = true;
+    }
+
+    Double total = 0; String totalStr = "";
+    if ((bool)ViewData["empty"] == false)
+    {
+
+        for (int i = 0; i < cart.Count; i++)
+        {
+            if (cart[i]["PagePrice"] != null)
+            {
+                if (String.IsNullOrEmpty(cart[i]["PagePrice"].ToString()) == false)
+                {
+                    total = total + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","));
+                }
+            }
+        }
+    }
+    totalStr = total.ToString();
+    if (total.ToString().Contains(",") == false) { totalStr = totalStr + ",00"; }
+
+    DataTable recommended = new DataTable(); DataTable recommended2 = new DataTable(); DataTable recommended3 = new DataTable();
+
+    if (isPartyOnly)
+    {
+        recommended3 = dc.MemoryCacheByQuery("select top 2 * from Products where Category = 'Parti Malzemeleri' order by newid()");
+        recommended2 = dc.MemoryCacheByQuery("select top 2 * from Products where Approved = 'yes' and BakeryID = 'CB5EDC14-85FD-40AD-A79A-82D6CA460CD9' order by newid()");
+        recommended = dc.MemoryCacheByQuery("select top 2 * from Products where Approved = 'yes' and BakeryID = 'CB5EDC14-85FD-40AD-A79A-82D6CA460CD9' order by newid()");
+    }
+    else
+    {
+        recommended3 = dc.MemoryCacheByQuery("select top 2 * from Products where Category = 'Parti Malzemeleri' order by newid()");
+        if (bakerySelected)
+        {
+            recommended2 = dc.MemoryCacheByQuery("select top 2 * from Products where Approved = 'yes' and Category = N'Tatlı' and BakeryID = '" + bakery["BakeryID"] + "' order by newid()");
+            recommended = dc.MemoryCacheByQuery("select top " + (4 - recommended2.Rows.Count).ToString() + " * from Products where BakeryID = '" + bakery["BakeryID"] + "' and Approved = 'yes' and Category <> 'Parti Malzemeleri'");
+        }
+        else
+        {
+            recommended2 = dc.MemoryCacheByQuery("select top 2 * from Products where Approved = 'yes' and Category = N'Tatlı' order by newid()");
+            recommended = dc.MemoryCacheByQuery("select top " + (4 - recommended2.Rows.Count).ToString() + " * from Products where Approved = 'yes' and Category <> 'Parti Malzemeleri' order by newid()");
+        }
+    }
+
+}
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#sepetim-recommended-slider").owlCarousel({
+            items: 5,
+            itemsTablet: [600, 3],
+            itemsMobile: [479, 2],
+            pagination: true,
+            navigation: true,
+            navigationText: [
+              "<img src='/Images/Site/nav_left.png'  style='width:30px;' />",
+              "<img src='/Images/Site/nav_right.png' style='width:30px;' />",
+            ]
+        });
+    });
+
+</script>
+
+<style>
+    thead td {
+        font-weight: 600;
+        padding: 10px 0px;
+    }
+
+    tbody td {
+        border-top: 1px solid #e6e6e6;
+    }
+
+    thead td:nth-child(3), thead td:nth-child(4), thead td:nth-child(5) {
+        min-width: 100px;
+    }
+</style>
+
+@{
+    if ((bool)ViewData["empty"] == false)
+    {
+        <div class="container">
+            <div class="row" style="padding:0px; float:left; width:100%; margin-bottom:50px;">
+
+                <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; float:left; margin-bottom:20px; border:1px solid #d6d6d6; border-radius:3px;">
+                    <table style="width:100%; float:left; text-align:center;" id="sepet_table">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td style="float:left;">Ürünler</td>
+                                <td>Fiyat</td>
+                                <td>Adet</td>
+                                <td>Ara Toplam</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+
+                                for (int i = 0; i < cart.Count; i++)
+                                {
+                                    bool isMade = !String.IsNullOrEmpty(cart[i]["isMade"].ToString());
+                                    bool isParty = cart[i]["Category"].ToString() == "Parti Malzemeleri";
+                                    DataRow urun = cart[i]; String img = ""; String bakeryImg = "";
+                                    if (isMade)
+                                    {
+                                        img = "/Images/MadeCakes/" + urun["MadeID"] + "/" + urun["ImagePath"].ToString().Trim().Split(' ')[0];
+                                        if (!String.IsNullOrEmpty(cart[i]["BakeryID"].ToString()))
+                                        {
+                                            bakeryImg = "/Images/Bakery/" + bakery["Thumbnail"];
+                                        }
+                                    }
+                                    else if (isParty)
+                                    {
+                                        img = "/Images/Products/" + urun["ProductID"] + "/" + urun["Thumbnail"].ToString().Trim().Split(' ')[0];
+                                    }
+                                    else
+                                    {
+                                        img = "/Images/Products/" + urun["ProductID"] + "/" + urun["Thumbnail"].ToString().Trim().Split(' ')[0];
+                                    }
+
+                                    String individualPriceStrLeft = ""; String individualPriceStrRight = "";
+                                    String priceStrLeft = ""; String priceStrRight = "";
+                                    if (urun["PagePrice"] != null)
+                                    {
+                                        if (String.IsNullOrEmpty(urun["PagePrice"].ToString()) == false)
+                                        {
+                                            urun["PagePrice"] = uc.ArrangePrice(urun["PagePrice"].ToString());
+                                            if (urun["PagePrice"].ToString().Contains(".")) { priceStrLeft = urun["PagePrice"].ToString().Split('.')[0]; priceStrRight = "," + urun["PagePrice"].ToString().Split('.')[1] + " TL"; }
+                                            else if (urun["PagePrice"].ToString().Contains(",")) { priceStrLeft = urun["PagePrice"].ToString().Split(',')[0]; priceStrRight = "," + urun["PagePrice"].ToString().Split(',')[1] + " TL"; }
+                                            else { priceStrLeft = urun["PagePrice"].ToString(); priceStrRight = ",00 TL"; }
+
+                                            individualPriceStrLeft = (Convert.ToDouble(urun["PagePrice"].ToString().Replace(".", ",").Split(',')[0]) / Convert.ToDouble(urun["Count"].ToString())).ToString();
+                                            String temp = (Convert.ToDouble(urun["PagePrice"].ToString().Replace(".", ",").Split(',')[1]) / Convert.ToDouble(urun["Count"].ToString())).ToString();
+                                            if (temp.Length == 1) { temp = temp + "0"; }
+                                            individualPriceStrRight = "," + temp + " TL";
+                                        }
+                                        else { priceStrRight = "Pastane Seçilmeli"; }
+                                    }
+                                    <tr>
+                                        <td>
+                                            <div style="width:100%; float:left; text-align:center;">
+                                                <a onclick="DeleteChecker('@i')" class="remove-basket" style="cursor:pointer; margin:0px 10px;">
+                                                    <img src="~/Images/Site/delete_product.png" style="width:30px;" />
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="float:left; padding:20px 0px;">
+                                                @{
+                                                    string partyrule = "";
+                                                    if (isParty) { partyrule = "background:url('/Images/Site/party_bg.jpg'); background-size:contain;"; }
+
+                                                    if (isMade)
+                                                    {
+                                                        String designType = uc.cleanseUrlString(urun["Type"].ToString().Replace("\r\n", ""));
+                                                        String designName = uc.cleanseUrlString(urun["Name"].ToString()) + "-" + urun["MadeID"].ToString().Split('-')[0];
+                                                        <a  href="@Url.Action("Tasarim","Home", new { type = designType, designName = designName })" style="text-decoration:none; float:left;"><img src="@img" style="width:100px; border:1px solid #e6e6e6; box-shadow: 0px 3px 8px 0px #cccccc; border-radius:3px;" /></a>
+                                                    }
+                                                    else
+                                                    {
+                                                        String productCategory = uc.cleanseUrlString(urun["Category"].ToString());
+                                                        String productBakery = uc.cleanseUrlString(dc.getBakeryNameByID(new Guid(urun["BakeryID"].ToString())));
+                                                        String productName = uc.cleanseUrlString(urun["Name"].ToString()) + "-" + urun["ProductID"].ToString().Split('-')[0];
+                                                        <a  href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })" style="text-decoration:none; float:left;"><img class="sepetim-product-img" src="@img" style="width:100px; border:1px solid #e6e6e6; box-shadow: 0px 3px 8px 0px #cccccc; border-radius:3px; @partyrule" /></a>
+                                                    }
+                                                }
+
+                                                <div style="padding-left:10px; float:left;">
+                                                    <label style="float:left; width:100%; text-align:left; font-weight:600; font-size:18px; padding-bottom:5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform:uppercase;">@urun["Name"]</label>
+                                                    <label style="float:left; font-size:14px; text-align:left; font-weight:400; width:100%; font-family:'Open Sans';">@uc.productCatCorrector(urun)</label>
+                                                    <div style="float:left; width:100%;">
+                                                        @{
+                                                            String bakeryStr = "Fiyat pastane seçiminden sonra hesaplanacaktır.";
+                                                            String bakeryNameGlobal = ""; String bakeryLocation = "";
+
+                                                            if (bakerySelected == true & !String.IsNullOrEmpty(cart[0]["BakeryID"].ToString()))
+                                                            {
+                                                                bakeryNameGlobal = bakery["Name"].ToString();
+                                                                if (bakery["Province"].ToString() == "48") { bakeryLocation = "İSTANBUL"; }
+                                                                else if (bakery["Province"].ToString() == "76") { bakeryLocation = "ANKARA"; }
+                                                                bakeryStr = bakeryNameGlobal + " - " + bakeryLocation;
+                                                            }
+
+                                                        }
+                                                        <label style="float:left; text-align:left; width:100%; font-size:16px; padding-top:5px;">@bakeryStr</label>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="width:100%; float:left;">
+                                                <div style="float:right; width:100%;">
+                                                    <label style="font-size:24px; font-family:'Open Sans'; line-height:20px;">@individualPriceStrLeft <span style="float:right; font-size:12px; line-height:12px;">@individualPriceStrRight</span></label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            @{
+                                                if (!isMade)
+                                                {
+                                                    <div style="float:left; width:100%; text-align:center; ">
+                                                        <a class="minus-cart-product-a" href="@Url.Action("UpdateCartProduct","Order", new { ProductID = urun["ProductID"], Type = "minus", Position = i })" style="text-decoration:none; float:none;">
+                                                            <img class="minus-cart-product" src="~/Images/Site/minus.png" style="width:20px !important; padding:5px; border-radius:50%; border:1px solid #d6d6d6; float:none; margin-top:0px; margin-bottom:5px;" />
+                                                        </a>
+
+                                                        <input readonly type="text" class="CartProductCount" data-max="@urun["StockAvailable"]" style="width:35px; height:35px; text-align:center; background:white; border-radius:2px; font-size:16px; line-height:35px; border:1px solid #e6e6e6;" value="@urun["Count"]" />
+
+                                                        <a class="plus-cart-product-a" href="@Url.Action("UpdateCartProduct","Order", new { ProductID = urun["ProductID"], Type = "plus", Position = i })" style="text-decoration:none; float:none;">
+                                                            <img class="plus-cart-product" src="~/Images/Site/plus.png" style="width:20px !important; padding:5px; border-radius:50%; border:1px solid #d6d6d6; float:none; margin-top:0px; margin-bottom:5px;" />
+                                                        </a>
+                                                    </div>
+                                                }
+                                            }
+                                        </td>
+                                        <td>
+                                            <div style="width:100%; float:left;">
+                                                <div style="float:right; width:100%;">
+                                                    <label style="font-size:24px; font-family:'Open Sans'; line-height:20px;">@priceStrLeft <span style="float:right; font-size:12px; line-height:12px;">@priceStrRight</span></label>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                @{
+                    String kdv = uc.CalculateCartKDV(cart);
+                    String kdvsiz = uc.CalculateCartWithoutKDV(cart);
+                }
+
+                <div style="padding:0px; float:right; width:300px; text-align:right;">
+                    <div style="width:100%; float:left;">
+                        @*<div style="width:100%; float:left; margin-bottom:5px;">
+                                <label style="float:right; width:100%; font-size:14px;">@cart.Count ürün</label>
+                            </div>*@
+                        <div style="width:100%; float:left; margin-bottom:5px;">
+                            <label style="float:left; font-size:12px; line-height:22px;">KDV : </label>
+                            <label style="float:right; font-size:16px; font-family:'Open Sans';">@kdv TL</label>
+                        </div>
+                        <div style="width:100%; float:left; margin-bottom:5px;">
+                            <label style="float:left; font-size:12px; line-height:22px;">KDV'siz : </label>
+                            <label style="float:right; font-size:16px; font-family:'Open Sans';">@kdvsiz TL</label>
+                        </div>
+                        <div style="width:100%; float:left;">
+                            <label style="float:left; font-size:14px; line-height:40px;">Genel Toplam : </label>
+                            <label style="float:right; font-family:'Open Sans';">
+                                <span style="font-size:16px; float:right; padding-top:15px; padding-left:5px;">TL</span>
+                                <span style="float:right; font-size:28px;">@totalStr</span>
+                            </label>
+                        </div>
+                        <div style="float:right; border-top:1px solid #e6e6e6; width:100%; padding-top:15px; margin-top:10px;">
+                            <a href="@Url.Action("FromStep1ToStep2","Order")" class="black-gradient" style="padding:10px 20px; float:right; margin-top:0px; font-size:14px; cursor:pointer; color:white; text-decoration:none; text-align:center; letter-spacing:1px;">DEVAM ET</a>
+                            <a href="@Url.Action("Index","Home")" class="gray-gradient" style="padding:10px 20px; float:left; margin-top:0px; font-size:14px; cursor:pointer; color:white; text-decoration:none; text-align:center; letter-spacing:1px;">ALIŞVERİŞE DÖN</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="padding:0px; float:left; width:100%; margin-top:5%; padding-top:5%; padding-bottom:150px; border-top:1px solid #e6e6e6;">
+                <div style="width:100%; float:left; padding-bottom:10px; margin-bottom:10px; text-align:center;">
+                    <label style="width:100%; float:left; font-size:22px; padding-bottom:10px; margin-bottom:10px !important; color:#3f2518; text-align:center;">Bunları da beğenebilirsiniz</label>
+                </div>
+                <div style="width:100%; float:left;" id="sepetim-recommended-slider" class="owl-carousel owl-theme">
+                    @{
+                        for (int i = 0; i < recommended.Rows.Count + recommended2.Rows.Count + recommended3.Rows.Count; i++)
+                        {
+                            DataRow product = null; String partyrule = "";
+                            if(i < recommended3.Rows.Count) { product = recommended3.Rows[i]; }
+                            else if (i >= recommended3.Rows.Count & i < recommended2.Rows.Count + recommended3.Rows.Count) { product = recommended2.Rows[i - recommended3.Rows.Count]; }
+                            else if (i >= recommended3.Rows.Count + recommended2.Rows.Count  & i < recommended.Rows.Count + recommended2.Rows.Count + recommended3.Rows.Count) { product = recommended.Rows[i - recommended3.Rows.Count - recommended2.Rows.Count]; }
+                            String img = "/Images/Products/" + product["ProductID"] + "/" + product["Thumbnail"].ToString().Split(' ')[0];
+                            String bakeryName = ""; String bakeryLocation = "";
+
+                            for (int i2 = 0; i2 < bakeries.Count; i2++)
+                            {
+                                if (bakeries[i2]["BakeryID"].ToString().ToLower() == product["BakeryID"].ToString().ToLower())
+                                {
+                                    bakeryName = bakeries[i2]["Name"].ToString();
+                                    if (bakeries[i2]["Province"].ToString() == "48") { bakeryLocation = "İSTANBUL"; }
+                                    else if (bakeries[i2]["Province"].ToString() == "76") { bakeryLocation = "ANKARA"; }
+                                }
+                            }
+
+                            String productCategory = uc.cleanseUrlString(product["Category"].ToString());
+                            String productBakery = uc.cleanseUrlString(dc.getBakeryNameByID(new Guid(product["BakeryID"].ToString())));
+                            String productName = uc.cleanseUrlString(product["Name"].ToString()) + "-" + product["ProductID"].ToString().Split('-')[0];
+
+                            String price = product["Price"].ToString().Split(' ')[0];
+
+                            if (product["Category"].ToString() == "Parti Malzemeleri") { bakeryName = "iCaked"; bakeryLocation = "Parti Sepetleri"; partyrule = "background:url('/Images/Site/party_bg.jpg'); background-size:contain;"; }
+
+                            <a class="item" style="width:100%;"  href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })">
+                                <div class="col-md-12 col-sm-12 col-xs-12 new-product-wrapper" style="padding:0px 2.5%;">
+                                    <img class="new-product-img lazy img_transition" alt="ürün tasarım pasta" src="@img" onclick="$(this).parent().parent().submit()" style="@partyrule" />
+                                    <div class="new-product-div">
+                                        <span class="new-product-name">@product["Name"]</span>
+                                        <span class="new-product-description2">@uc.productCatCorrector(product)</span>
+                                        <span class="new-product-description2 bnl" style="font-size:14px; padding-bottom:10px;">@bakeryName - @bakeryLocation</span>
+                                        <span class="new-product-price"> @price.Split('.')[0] TL</span>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+                        }
+                        else
+                        {
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center; margin-top:150px; margin-bottom:20px;">
+                                        <img src="~/Images/Site/empty_cart_icon.png" style="margin:auto; width:70px; " />
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center;">
+                                        <label style="width:100%; float:left; text-align:center; font-weight:500; font-size:20px; padding-bottom:20px;">Sepetiniz henüz boş</label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center; margin-bottom:200px;">
+                                        <a href="@Url.Action("Index","Home")" style="text-decoration:none; margin-top:20px; font-size:16px; color:white !important;" class="go_gradient">Alışverişe Devam Edin</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+}

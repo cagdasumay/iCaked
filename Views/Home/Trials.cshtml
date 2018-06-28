@@ -1,0 +1,298 @@
+﻿@using Cake.Controllers
+@using System.Data
+@using Cake.Models
+
+@{
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+    DataTable tasarim = dc.DBQueryGetter("select top 8 * from MadeCakes where Visible = 'yes' order by newid(), DateTime desc");
+    DataTable butik = dc.DBQueryGetter("select top 8 * from Products where Category = N'Doğum Günü Pastaları' or Category = N'1 Yaş Pastaları' or Category = N'Kutlama Pastaları' or Category = N'Bebek Pastaları' or Category = N'Sevgili Pastaları' or Category = N'Çizgi Film Pastaları' and Approved = 'yes' order by newid(), AddDate desc");
+    DataTable yas = dc.DBQueryGetter("select top 8 * from Products where Category = N'Yaş Pasta' and Approved = 'yes' order by newid(), AddDate desc");
+    DataTable bakeries = dc.DBQueryGetter("select * from Bakeries");
+}
+
+<style>
+    .swiper-container {
+        width: 100%;
+        height: 400px;
+    }
+
+    .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: none;
+        width: 60%;
+        /* Center slide text vertically */
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        justify-content: center;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        -webkit-align-items: center;
+        align-items: center;
+        opacity: 0.5;
+        transition: ease-in-out 0.1s;
+    }
+
+    .swiper-slide-active {
+        opacity: 1;
+    }
+
+    .swiper-button-next {
+        background-image: url(../../Images/Site/rightarr.png);
+    }
+
+    .swiper-button-next, .swiper-button-prev {
+        padding: 40px 20px;
+        background-color: rgba(0,0,0,0.4);
+        border-radius: 3px;
+        background-size: 30%;
+        transition: ease-in-out 0.07s;
+    }
+
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+            background-color: rgba(0,0,0,0.6);
+        }
+</style>
+
+<div class="container-fluid">
+
+    @*<div style="width:100%; float:left; margin-top:-30px; padding:30px 0px;">
+
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+
+                <div class="swiper-slide">
+                    <div style="width:100%; float:left; height:100%;">
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="height:100%; padding:0px 5px;">
+                            <a style="width:100%; height:100%;" href="">
+                                <div id="main-slide2" style="border-radius:3px; width:100%; height:100%; float:left; background:#f0f0f0; background-size:cover; background-repeat:no-repeat; background-position:top center;">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="height:100%;  padding:0px 5px;">
+                            <a style="width:100%; height:100%;" href="">
+                                <div id="main-slide1" style="border-radius:3px; width:100%; height:100%; float:left; background:#f0f0f0; background-size:cover; background-repeat:no-repeat; background-position:center left;">
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div style="width:100%; float:left; height:100%;">
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="height:100%; padding:0px 5px;">
+                            <a style="width:100%; height:100%;" href="">
+                                <div id="main-slide2" style="border-radius:3px; width:100%; height:100%; float:left; background:#f0f0f0; background-size:cover; background-repeat:no-repeat; background-position:top center;">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="height:100%;  padding:0px 5px;">
+                            <a style="width:100%; height:100%;" href="">
+                                <div id="main-slide1" style="border-radius:3px; width:100%; height:100%; float:left; background:#f0f0f0; background-size:cover; background-repeat:no-repeat; background-position:center left;">
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="swiper-slide">
+                    <div style="width:100%; float:left; height:100%;">
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="height:100%; padding:0px 5px;">
+                            <a style="width:100%; height:100%;" href="">
+                                <div id="main-slide2" style="border-radius:3px; width:100%; height:100%; float:left; background:#f0f0f0; background-size:cover; background-repeat:no-repeat; background-position:top center;">
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="height:100%;  padding:0px 5px;">
+                            <a style="width:100%; height:100%;" href="">
+                                <div id="main-slide1" style="border-radius:3px; width:100%; height:100%; float:left; background:#f0f0f0; background-size:cover; background-repeat:no-repeat; background-position:center left;">
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+                <!-- Add Arrows -->
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+
+        <div class="container-fluid" style="width:100%; float:left; background: url(../../Images/Site/lower_bg.png); background-color: #f9f9f9; background-size: contain; margin-bottom:-100px; padding-bottom:100px; padding-top:10px;">
+            <div class="container">
+
+                <div style="float:left; width:100%; text-align:center; padding:30px 0px;">
+                    <img walt="özel tasarım pastalar" src="~/Images/Site/tasarim_pastalar_icon.png" style="width:24px; margin-bottom:10px;" />
+                    <h3 class="new-product-h3">Tasarım Pastalar</h3>
+                </div>
+
+                <div style="width:100%; float:left;  border-radius:5px;">
+                    @{
+                        for (int i = 0; i < tasarim.Rows.Count; i++)
+                        {
+                            if (i < tasarim.Rows.Count)
+                            {
+                                DataRow design = tasarim.Rows[i];
+                                String img = "/Images/MadeCakes/" + design["MadeID"] + "/designImg-275x275.png";
+
+                                String designType = uc.cleanseUrlString(design["Type"].ToString().Replace("\r\n", ""));
+                                String designName = uc.cleanseUrlString(design["Name"].ToString()) + "-" + design["MadeID"].ToString().Split('-')[0];
+
+                                <a  href="@Url.Action("Tasarim","Home", new { type = designType, designName = designName })">
+                                    <div class="col-md-3 col-sm-4 col-xs-6 new-product-wrapper" style="padding:0.5%;">
+                                        <img class="new-product-img lazy" alt="ürün tasarım pasta" data-original="@img" onclick="$(this).parent().parent().submit()" />
+                                        <noscript>
+                                            <img src="@img">
+                                        </noscript>
+                                        <div class="new-product-div">
+                                            <label class="new-product-name">@design["Name"]</label>
+                                            <label class="new-product-description">@design["SizeOptions"] kişilik</label>
+                                            <label class="new-product-price">₺ @uc.ArrangePrice(design["PriceInterval"].ToString())</label>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    }
+                    <div style="width:100%; float:left; padding-top:20px;">
+                        <a class="swing"  href="/tasarim-pasta" style="float:right; font-size:18px; margin-right:1%; color:black;">Tüm Tasarım Pasta Ürünleri <img src="~/Images/Site/right.png" style="float:right; width:12px;  margin-top:7px; margin-left:7px;" /></a>
+                    </div>
+                </div>
+
+                <div style="float:left; width:100%; text-align:center; padding:30px 0px;">
+                    <img alt="yaş pastalar" src="~/Images/Site/hazir_pastalar_icon.png" style="width:30px; margin-bottom:10px;" />
+                    <h3 class="new-product-h3">Butik Pastalar</h3>
+                </div>
+
+                <div style="width:100%; float:left; border-radius:5px;">
+                    @{
+                        for (int i = 0; i < butik.Rows.Count; i++)
+                        {
+                            if (i < butik.Rows.Count)
+                            {
+                                DataRow product = butik.Rows[i];
+                                String img = "/Images/Products/" + product["ProductID"] + "/" + product["Thumbnail"].ToString().Split(' ')[0];
+
+                                String bakeryName = ""; String bakeryLocation = "";
+
+                                for (int i2 = 0; i2 < bakeries.Rows.Count; i2++)
+                                {
+                                    if (bakeries.Rows[i2]["BakeryID"].ToString().ToLower() == product["BakeryID"].ToString().ToLower())
+                                    {
+                                        bakeryName = bakeries.Rows[i2]["Name"].ToString();
+                                        if (bakeries.Rows[i2]["Province"].ToString() == "48") { bakeryLocation = "İSTANBUL"; }
+                                        else if (bakeries.Rows[i2]["Province"].ToString() == "76") { bakeryLocation = "ANKARA"; }
+                                    }
+                                }
+
+                                String price = uc.ArrangePrice(product["Price"].ToString().Split(' ')[0]);
+
+                                String productCategory = uc.cleanseUrlString(product["Category"].ToString());
+                                String productBakery = uc.cleanseUrlString(bakeryName);
+                                String productName = uc.cleanseUrlString(product["Name"].ToString()) + "-" + product["ProductID"].ToString().Split('-')[0];
+
+                                <a  href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })">
+                                    <div class="col-md-3 col-sm-4 col-xs-6 new-product-wrapper" style="padding:0.5%;">
+                                        <img class="new-product-img lazy" alt="ürün tasarım pasta" data-original="@img" onclick="$(this).parent().parent().submit()" />
+                                        <noscript>
+                                            <img src="@img">
+                                        </noscript>
+                                        <div class="new-product-div">
+                                            <label class="new-product-name">@product["Name"]</label>
+                                            <label class="new-product-description2">@bakeryName - @bakeryLocation</label>
+                                            <label class="new-product-description2">@product["SizeOptions"].ToString().Split(' ')[0] kişilik</label>
+                                            <label class="new-product-price">₺ @product["Price"].ToString().Split(' ')[0]</label>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    }
+                    <div style="width:100%; float:left; padding-top:20px;">
+                        <a class="swing"  href="/pastane/liva/butik-pasta" style="float:right; font-size:18px; margin-right:1%; color:black;">Tüm Butik Pasta Ürünleri <img src="~/Images/Site/right.png" style="float:right; width:12px;  margin-top:7px; margin-left:7px;" /></a>
+                    </div>
+                </div>
+
+                <div style="float:left; width:100%; text-align:center; padding:30px 0px;">
+                    <img alt="butik pastalar" src="~/Images/Site/editor_cake_icon.png" style="width:30px; margin-bottom:10px;" />
+                    <h3 class="new-product-h3">Yaş Pastalar</h3>
+                </div>
+
+                <div style="width:100%; float:left; border-radius:5px;">
+                    @{
+                        for (int i = 0; i < yas.Rows.Count; i++)
+                        {
+                            if (i < yas.Rows.Count)
+                            {
+                                DataRow product = yas.Rows[i];
+                                String img = "/Images/Products/" + product["ProductID"] + "/" + product["Thumbnail"].ToString().Split(' ')[0];
+                                String img2 = "/Images/Products/" + product["ProductID"] + "/" + product["Thumbnail"].ToString().Split(' ')[1];
+                                String bakeryName = ""; String bakeryLocation = "";
+
+                                for (int i2 = 0; i2 < bakeries.Rows.Count; i2++)
+                                {
+                                    if (bakeries.Rows[i2]["BakeryID"].ToString().ToLower() == product["BakeryID"].ToString().ToLower())
+                                    {
+                                        bakeryName = bakeries.Rows[i2]["Name"].ToString();
+                                        if (bakeries.Rows[i2]["Province"].ToString() == "48") { bakeryLocation = "İSTANBUL"; }
+                                        else if (bakeries.Rows[i2]["Province"].ToString() == "76") { bakeryLocation = "ANKARA"; }
+                                    }
+                                }
+
+                                String price = uc.ArrangePrice(product["Price"].ToString().Split(' ')[0]);
+
+                                String productCategory = uc.cleanseUrlString(product["Category"].ToString());
+                                String productBakery = uc.cleanseUrlString(bakeryName);
+                                String productName = uc.cleanseUrlString(product["Name"].ToString()) + "-" + product["ProductID"].ToString().Split('-')[0];
+
+                                <a  href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })">
+                                    <div class="col-md-3 col-sm-4 col-xs-6 new-product-wrapper" style="padding:0.5%;">
+                                        <img id="top"contenteditable="true" class="new-product-img lazy" alt="ürün tasarım pasta" data-original="@img" onclick="$(this).parent().parent().submit()" />
+
+                                        <!--script>
+                                            var x = document.getElementById("top");
+
+                                            $("#top").hover(
+                                            img = img2; )
+                                        </script>
+
+                                        <style>
+                                            #top:hover {
+                                                content: url(img2);
+                                                animation: 3s infinite;
+                                                -webkit-animation: 3s infinite;
+                                            }
+                                        </style>-->
+
+                                        <noscript>
+                                            <img src="@img">
+                                        </noscript>
+                                        <div class="new-product-div">
+                                            <label class="new-product-name">@product["Name"]</label>
+                                            <label class="new-product-description2">@bakeryName - @bakeryLocation</label>
+                                            <label class="new-product-description2">@product["SizeOptions"].ToString().Split(' ')[0] kişilik</label>
+                                            <label class="new-product-price">₺ @product["Price"].ToString().Split(' ')[0]</label>
+                                        </div>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    }
+                    <div style="width:100%; float:left; padding-top:20px;">
+                        <a class="swing"   href="/pastane/liva/yas-pasta" style="float:right; font-size:18px; margin-right:1%; color:black;">Tüm Yaş Pasta Ürünleri <img src="~/Images/Site/right.png" style="float:right; width:12px;  margin-top:7px; margin-left:7px;" /></a>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+</div>
+
+<script src="jquery.js"></script>
+<script src="jquery.lazyload.js"></script>

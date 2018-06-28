@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Page not found";
+    ViewBag.Keywords = "cake order, online cake design, ankara design cake order, istanbul design cake order, liva cake order, ferlife cake order, design cake order, boutique cake order";
+    ViewBag.Description = "Cake ordering is now easy: design your dream cake and order it right away!";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="text-align:center; margin-top:150px; margin-bottom:20px;">
+            <img alt="sayfa bulunamadı" src="~/Images/Site/empty_cart_icon.png" style="margin:auto; width:60px; margin-bottom:20px;" />
+        </div>
+        <div style="width:100%; float:left; height:300px; text-align:center;">
+            <label style="font-size:18px; font-weight:400;">No such page was found.</label>
+            <a style="font-size:18px; color:black !important; font-weight:400;" href="@Url.Action("Editor","Home")">Let's take you to the <b>Editor</b></a>
+        </div>
+    </div>
+</div>

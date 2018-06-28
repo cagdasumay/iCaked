@@ -1,0 +1,393 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>My first Three.js app</title>
+	<style>
+	body { margin: 0; }
+	canvas { width: 100%; height: 100% }
+	#main-container {
+		width: 100%;
+		height: 100%;
+	}
+	.main-floating {
+		float: left;
+	}
+	</style>
+	<script src="jquery.min.js"></script>
+	<script src="jquery.mousewheel.min.js"></script>
+  <script src="object_sources.js"></script>
+  <script src="coord_sources.js"></script>
+  <script src="object_sources_2.js"></script>
+</head>
+<body>
+
+
+		<script id="vertexShader" type="x-shader/x-vertex">
+			varying vec2 vUv;
+			uniform vec2 scale;
+			uniform vec2 offset;
+			void main( void ) {
+				vUv = uv * scale + offset;
+				gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+			}
+		</script>
+	<div id="main-container" style="width: 100%;">
+		<div id="canvas-sizer" class="main-floating" style="width: 70%;">
+			<div id="canvas-container"></div>
+		</div>
+		<div id="menu" class="main-floating">
+			<ul><b>Obje ekle</b>
+				  <li><a class="aaadd-cake" id="cake-c1-c2" href="#">Taban ekle</a></li>
+          <li><a class="aaadd-cake" id="cake-dortgen" href="#">Taban dörtgen ekle</a></li>
+				<li><a class="aaadd-cake" id="cake-yuvarlak" href="#">Taban yuvarlak ekle</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c3" href="#">Obje üst ekle</a></li>
+ 				<li><a class="aaadd-cake" id="object-spiderman" href="#">Obje spiderman ekle</a></li>
+        <li><a class="aaadd-cake" id="object-mickey" href="#">Obje mickey</a></li>
+        <li><a class="aaadd-cake" id="colorize-mickey" href="#">Renklendir mickey</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c4" href="#">Basketbol taban ekle</a></li>
+				<li><a class="aaadd-cake" id="decal-add" href="#">Obje decal</a></li>
+				<li><a class="aaadd-cake" id="decal-add-text" href="#">Obje decal text</a></li>
+				<li><a class="aaadd-cake" id="decal-add-text-2" href="#">Obje decal text 2</a></li>
+				<li><a class="aaadd-cake" id="decal-scale" href="#">Obje decal scale</a></li>
+				<li><a class="aaadd-cake" id="rotate-obj" href="#">Decal Obje dön</a></li>
+				<li><a class="aaadd-cake" id="rotate-obj-reset" href="#">Decal Obje dön reset</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c6" href="#">Obje yeşil</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c61" href="#">Obje mavi</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c5" href="#">Obje scale</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c55" href="#">Obje scale 2</a></li>
+        <li><a class="aaadd-cake" id="cake-sdown" href="#">Obje scale down</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c44" href="#">Obje dön</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-c45" href="#">Obje dön daha</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-cc5" href="#">Obje kırmızı</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-ccc5" href="#">Obje rotate</a></li>
+				<li><a class="aaadd-cake" id="cake-c1-ccc5pc" href="#">Obje rotate preview</a></li>
+				<li><a class="aaadd-cake" id="text-c1-ccc5" href="#">Texture</a></li>
+ 				<li><a class="aaadd-cake" id="add-side-decor" href="#">Kenar süsü</a></li>
+ 				<li><a class="aaadd-cake" id="colorize-side" href="#">Kenar süsü renklendir</a></li>
+        <li><a class="aaadd-cake" id="add-side-decor-all" href="#">Kenar süsü step</a></li>
+        <li><a class="aaadd-cake" id="side-decor-all-color" href="#">Kenar süsü renk step</a></li>
+        <li><a class="aaadd-cake" id="add-random-decor-all" href="#">Random süs step</a></li>
+        <li><a class="aaadd-cake" id="add-random-decor" href="#">Rastgele süs</a></li>
+        <li><a class="aaadd-cake" id="add-3d-text" href="#">3D yazı</a></li>
+        <li><a class="aaadd-cake" id="add-3d-text-2" href="#">3D yazı</a></li>
+        <li><a class="aaadd-cake" id="add-3d-text-3" href="#">3D yazı</a></li>
+        <li><a class="aaadd-cake" id="add-3d-text-4" href="#">3D yazı</a></li>
+        <li><a class="aaadd-cake" id="square-plate" href="#">Altlık kare</a></li>
+				<li><a id="undo" href="#">Geri</a></li>
+				<li><a id="redo" href="#">İleri</a></li>
+				<li><a id="remove" href="#">Sil</a></li>
+				<li><a id="copy" href="#">Kopyala</a></li>
+			</ul>
+			<ul><b>Döndür ve yaklaştır</b>
+				<li><a id="rotation-toogle" href="#">Durdur</a></li>
+				<li><a id="zoom-in" href="#">+</a></li>
+				<li><a id="zoom-out" href="#">-</a></li>
+				<li><a id="rotate-x-1" href="#"><</a></li>
+				<li><a id="rotate-x-2" href="#">></a></li>
+				<li><a id="rotate-y-1" href="#">Up</a></li>
+				<li><a id="rotate-y-2" href="#">Down</a></li>
+			</ul>
+ 			<ul><b>Save</b>
+				<li><a id="save-design" href="#">Kaydet</a></li>
+        <li><a id="load-design" href="#">Yükle</a></li>
+        </ul>
+		</div>
+	</div>
+	<script src="/pasta.js"></script>
+	<script>
+	 var name = "";
+   var decal_idx = 12;
+		function objectCloser () {
+		}
+		function objectGetter (_name, p) {
+			name = _name;
+			console.log(p);
+		}
+    function globalLoadSource2 (n, a) {
+    return gulKenar;
+    }
+    function globalLoadSource (n, a) {
+    if (n.split("-")[0] === "cake")
+    return gCakeYuvarlak;
+    else if (n.indexOf("-side") >= 0)
+    return gulKenar;
+    else
+    return gMickey;
+
+    }
+    function globalLoadTextureURL (n, a) {
+    return "/Images/Mickey_Mouse_D.png";
+    }
+	</script>
+	<script>
+	 $(window).resize(function () {
+		   $("#canvas-sizer").height($(window).height()*0.8);
+	 });
+	 $(document).ready(function () {
+       $("#save-design").click(function () {
+           var savedata = pasta.save();
+           console.log(savedata);
+           pasta.load(savedata);
+       });
+       $("#load-design").click(function () {
+           pasta.load('{"name": "main-0","parentName": "null-0","children": {"plate-0": {"name": "plate-0","parentName": "main-0","children": {"cake-3": {"name": "cake-3","parentName": "plate-0","children": {"object-4-side": {"name": "object-4-side","parentName": "cake-3","children": {},"isElement": true,"dParent": {"x":0,"y":0,"z":0},"preScaler": 1,"preRotation": 0,"properties": {"color":16711680,"rotationY":0,"scale":1,"texture":"texture-16777217","transform":{"position":{"x":0,"y":0.15,"z":0},"rotation":{"x":0,"y":0,"z":0}}},"decal": false,"source": "","scaled": 1,"rotated": 0,"isText3D": false,"textureURL": "/Images/3_gul_dec_texture.png","textureAlphaURL": "/Images/3_gul_dec_alpha.png","unlimitedScale": 1,"lockRotation": false,"isCake": false,"sideDecorDelta": 0.136,"done": "","textStyle": 0,"alignNormal": false,"isSideDecoration": true,"isRandom": false,"coordSource": {"255,0,0":[["23,29","25,223","197,221","195,29",""]],"0,255,0":[["71,310","73,481","239,479","237,310",""]],"0,0,255":[["318,88","320,246","472,244","470,88",""]]},"lookAtData": {"point":{"x":0,"y":0,"z":0},"normal":{"x":0,"y":1,"z":0}},"colorize": {"255,0,0":3917824,"0,255,0":15790080,"0,0,255":1044720},"allowChildren": false,"doneCallback": "addTexture:texture-19:object-4-side:/Images/3_gul_dec_texture.png" },"object-3": {"name": "object-3","parentName": "cake-3","children": {},"isElement": true,"dParent": {"x":0.1904,"y":0.5059,"z":0.533},"preScaler": 0.4,"preRotation": 0,"properties": {"color":16777215,"rotationY":0,"scale":0.4,"texture":"texture-16777220","transform":{"position":{"x":0.1904,"y":0.6559,"z":0.533},"rotation":{"x":0,"y":0,"z":0}},"normalScale":1},"decal": false,"source": "","scaled": 1,"rotated": 0,"isText3D": false,"textureURL": "/Images/Mickey_Mouse_D.png","textureAlphaURL": "/Images/Mickey_Mouse_D_alpha.png","unlimitedScale": 0.4,"lockRotation": false,"isCake": false,"sideDecorDelta": null,"done": "","textStyle": 0,"alignNormal": false,"isSideDecoration": false,"isRandom": false,"coordSource": {"Çl öş":[["323,324","315,333","305,339","295,344","285,346","275,348","265,352","255,356","245,360","235,362","225,361","216,358","214,368","215,378","208,386","205,393","214,403","221,413","224,423","226,433","233,441","239,451","242,461","243,471","247,481","252,490","261,497","271,503","272,512","276,503","267,495","258,485","252,475","262,465","272,457","282,450","292,445","302,440","312,437","322,434","332,433","342,432","351,430","351,420","350,410","350,400","351,390","351,380","351,370","352,361","348,353","338,353","328,352","328,343","327,333","323,324",""],["348,1","347,11","346,21","339,30","332,36","333,46","332,56","332,66","328,76","327,86","327,96","327,106","325,116","324,126","323,136","323,146","323,156","325,166","329,176","335,186","342,196","349,206","358,215","368,221","378,227","388,228","398,230","408,230","418,228","428,227","438,223","446,218","454,210","460,202","467,192","470,183","472,173","472,163","476,154","481,144","488,134","490,124","490,114","490,104","490,94","490,84","483,82","473,85","463,82","453,83","443,81","433,74","429,64","427,54","419,45","413,36","411,27","415,17","414,7","409,1","399,1","389,1","383,3","387,12","386,22","384,32","382,42","381,52","383,62","385,72","389,82","395,92","403,102","413,106","423,113","433,114","443,117","453,115","463,113","473,116","469,126","459,131","449,131","439,131","429,129","419,127","409,123","399,115","393,105","389,96","383,86","380,76","376,66","373,56","372,64","367,56","365,46","365,36","365,26","367,16","370,6","363,1","353,1",""]],"Müşşlü":[["431,258","425,268","422,278","412,286","402,285","392,285","382,284","372,284","362,285","352,287","346,295","346,305","351,314","349,324","348,334","348,344","351,354","354,364","352,374","352,384","353,394","351,404","352,414","353,424","350,434","350,444","350,454","353,464","357,473","356,483","366,490","376,488","386,488","396,487","398,493","394,498","385,504","381,511","390,512","400,512","410,512","420,512","430,512","440,512","450,512","460,512","470,511","476,504","485,500","495,500","505,500","512,492","512,482","507,476","507,470","507,467","503,476","501,486","491,490","483,482","486,472","496,469","506,464","501,460","491,460","493,453","503,450","512,447","512,437","512,427","510,417","506,407","505,397","505,387","506,377","507,367","508,357","511,347","512,337","512,327","510,317","507,307","497,305","487,305","477,303","467,296","462,287","458,277","452,267","445,258","435,258",""]]},"lookAtData": {"point":{"x":0,"y":0,"z":0},"normal":{"x":0,"y":1,"z":0}},"colorize": {"Çl öş":4991952,"Müşşlü":1044720},"allowChildren": false }},"isElement": true,"dParent": {"x":0,"y":0.15,"z":0},"preScaler": 1,"preRotation": 0,"properties": {"color":16777215,"rotationY":0,"scale":1,"texture":0,"transform":{"position":{"x":0,"y":0.15,"z":0},"rotation":{"x":0,"y":0,"z":0}}},"decal": false,"source": "","scaled": 1,"rotated": 0,"isText3D": false,"textureURL": "","textureAlphaURL": "","unlimitedScale": 1,"lockRotation": false,"isCake": true,"sideDecorDelta": null,"done": "","textStyle": 0,"alignNormal": false,"isSideDecoration": false,"isRandom": false,"coordSource": {},"lookAtData": {"point":{"x":0,"y":0,"z":0},"normal":{"x":0,"y":1,"z":0}},"colorize": {},"allowChildren": true,"autoAdd": false }},"isElement": true,"dParent": {"x":0,"y":0,"z":0},"preScaler": 1,"preRotation": 0,"properties": {"color":15658734,"scale":1,"shape":1,"transform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0}},"rotationY":0,"scaleZ":1},"decal": false,"source": "","scaled": 1,"rotated": 0,"isText3D": false,"textureURL": "","textureAlphaURL": "","unlimitedScale": 1,"lockRotation": false,"isCake": false,"sideDecorDelta": null,"done": "" }},"isElement": true,"dParent": {"x":0,"y":0,"z":0},"preScaler": 1,"preRotation": 0,"properties": {"transform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0}},"scale":1,"rotationY":0},"decal": false,"source": "","scaled": 1,"rotated": 0,"isText3D": false,"textureURL": "","textureAlphaURL": "","unlimitedScale": 1,"lockRotation": false,"isCake": false,"sideDecorDelta": null,"done": ""}');
+       });
+
+			 $("#decal-add").click(function (event) {
+				   pasta.addObject({ Name: "cake-"+ (a++), Properties: { scale: 0.1, transform: { position: { x: 0, y: 1.0, z: 0 } } },  Decal: true,  Source: 'url:/Images/Site/plate_texture.png' });
+	     });
+  		 $("#add-3d-text").click(function (event) {
+				   pasta.addObject({ Name: "object-"+ (a++), Properties: { transform: { position: { x: 0, y: 0.15, z:0  } } },  isText3D: true,  Source: 'Hoşgeldin"lll', Font: 0, TextStyle: 4 });
+	     });
+       $("#add-3d-text-2").click(function (event) {
+				   pasta.addObject({ Name: "object-"+ (a++), Properties: { transform: { position: { x: 0, y: 0.15, z: 1.3 } } },  isText3D: true,  Source: 'ABCıdeişüğçö', Font: 1, TextStyle: 3 });
+	     });
+
+       $("#add-3d-text-3").click(function (event) {
+				   pasta.addObject({ Name: "object-"+ (a++), Properties: { transform: { position: { x: 0, y: 0.15, z: 1.3 } } },  isText3D: true,  Source: 'ÇöŞİĞÜrabcABC', Font: 2, TextStyle: 2 });
+	     });
+
+    	 $("#square-plate").click(function (event) {
+				   pasta.changePlate(2);
+	     });
+    	 $("#add-side-decor").click(function (event) {
+				   pasta.addObject({ Name: "object-"+ (a++) +"-side", onTo: name, Properties: { color: 0xff0000 },  isSideDecoration: true, SideDecorDelta: 0.126, pieces: gulKenar, CoordSource: yanSus3luCoordsSource, Done: function () {
+               // console.log("Dona dona");
+               pasta.addTexture("texture-19", "object-"+ (a-1) +"-side", "/Images/3_lu_yan_sus_1_texture.png");
+           }
+           });
+           // pasta.addTexture("texture-19", "object-"+ (a-1), "/Images/3_gul_dec_texture.png");
+	     });
+       $("#add-side-decor-all").click(function (event) {
+				   pasta.addObject({ Name: "object-"+ (a++) +"-side", onTo: "all", Properties: { color: 0xff0000 },  isSideDecoration: true, pieces: gKrema });
+           a += 10;
+	     });
+
+       $("#add-random-decor").click(function (event) {
+				   pasta.addRandomObject("object-"+ (a++), gRandart, name, 15, { color: 3407871, type: 2 });
+           a += 45;
+			 });
+       $("#add-random-decor-all").click(function (event) {
+				   pasta.addRandomObject("object-"+ (a++), gRandart, "all", 10, { color: 3407871 });
+           a += 45*5;
+			 });
+
+<<<<<<< HEAD
+
+
+			 $("#decal-add-text").click(function (event) {
+				   pasta.addObject({ Name: "cake-"+ (a++), Properties: { scale: 1.0, transform: { position: { x: 0, y: 1.0, z: 0 } } },  Decal: true,  Source: 'text:48px Times New Roman:1:rgb(255, 0, 0):İyi ki doğdun lan elelelelele!' });
+			 });
+			 $("#remove").click(function (event) {
+				   pasta.removeObject(name);
+			 });
+			 $("#text-c1-ccc5").click(function (event) {
+				   pasta.addTexture("texture-12", "object-666");
+			 });
+			 $("#copy").click(function (event) {
+	         var tmp = name.split("-");
+           var suff = "";
+           if (tmp.length === 3) suff = "-"+ tmp[2]; 
+				   pasta.addObject({ Name: tmp[0] +"-"+ (a++) + suff, Properties: { scale: 0.1, transform: { position: { x: 1.5, y: 0, z: 0 } } },  Copy: name });
+			 });
+			 $("#canvas-sizer").height($(window).height()*0.8);
+			 pasta.init({ sizerId: "canvas-sizer", containerId: "canvas-container", mobile: false });
+
+	     $("#cake-c1-c5").click(function () {
+		       pasta.setProperties(name, { scale: 1.5 });
+	     });
+	     $("#cake-c1-c55").click(function () {
+		       pasta.setProperties(name, { scale: 1.0 });
+	     });
+=======
+			$("#decal-add-text").click(function (event) {
+				pasta.addObject({ Name: "cake-"+ (a++), Properties: { scale: 1.0, transform: { position: { x: 0, y: 1.0, z: 0 } } },  Decal: true,  Source: 'text:48px Times New Roman:1:rgb(255, 0, 0):İyi ki doğdun lan elelelelele!' });
+			});
+			$("#remove").click(function (event) {
+				pasta.removeObject(name);
+			});
+			$("#text-c1-ccc5").click(function (event) {
+				pasta.addTexture("texture-12", "object-666");
+			});
+			$("#copy").click(function (event) {
+	var tmp = name.split("-");
+  var suff = "";
+if (tmp.length === 3) suff = "-"+ tmp[2];
+				pasta.addObject({ Name: tmp[0] +"-"+ (a++) + suff, Properties: { scale: 0.1, transform: { position: { x: 1.5, y: 0, z: 0 } } },  Copy: name });
+			});
+				$("#canvas-sizer").height($(window).height()*0.8);
+				pasta.init({ sizerId: "canvas-sizer", containerId: "canvas-container", vertexShader: document.getElementById('vertexShader').textContent, fragmentShader: document.getElementById('fragmentShader').textContent, mobile: false });
+// 				pasta.addObject("plate", { Name: "plate-1", Source: `v 0.404509 0.293893 -0.500000
+// v 0.154508 0.475528 -0.500000
+// v -0.154509 0.475528 -0.500000
+// v -0.404509 0.293893 -0.500000
+// v -0.500000 0.000000 -0.500000
+// v -0.404509 -0.293893 -0.500000
+// v -0.154508 -0.475528 -0.500000
+// v 0.154509 -0.475528 -0.500000
+// v 0.404509 -0.293893 -0.500000
+// v 0.500000 0.000000 -0.500000
+// v 0.404509 0.293893 0.500000
+// v 0.154508 0.475528 0.500000
+// v -0.154509 0.475528 0.500000
+// v -0.404509 0.293893 0.500000
+// v -0.500000 0.000000 0.500000
+// v -0.404509 -0.293893 0.500000
+// v -0.154508 -0.475528 0.500000
+// v 0.154509 -0.475528 0.500000
+// v 0.404509 -0.293893 0.500000
+// v 0.500000 0.000000 0.500000
+// v 0.000000 0.000000 -0.500000
+// v 0.000000 0.000000 0.500000
+// vt 0.500000 0.000000
+// vt 0.000000 0.159155
+// vt 0.100000 0.159155
+// vt 0.200000 0.159155
+// vt 0.300000 0.159155
+// vt 0.400000 0.159155
+// vt 0.500000 0.159155
+// vt 0.600000 0.159155
+// vt 0.700000 0.159155
+// vt 0.800000 0.159155
+// vt 0.900000 0.159155
+// vt 1.000000 0.159155
+// vt 0.000000 0.477465
+// vt 0.100000 0.477465
+// vt 0.200000 0.477465
+// vt 0.300000 0.477465
+// vt 0.400000 0.477465
+// vt 0.500000 0.477465
+// vt 0.600000 0.477465
+// vt 0.700000 0.477465
+// vt 0.800000 0.477465
+// vt 0.900000 0.477465
+// vt 1.000000 0.477465
+// vt 0.500000 0.636620
+// g default
+// f 1/2 2/3 12/14 11/13
+// f 2/3 3/4 13/15 12/14
+// f 3/4 4/5 14/16 13/15
+// f 4/5 5/6 15/17 14/16
+// f 5/6 6/7 16/18 15/17
+// f 6/7 7/8 17/19 16/18
+// f 7/8 8/9 18/20 17/19
+// f 8/9 9/10 19/21 18/20
+// f 9/10 10/11 20/22 19/21
+// f 10/11 1/12 11/23 20/22
+// f 2/3 1/2 21/1
+// f 3/4 2/3 21/1
+// f 4/5 3/4 21/1
+// f 5/6 4/5 21/1
+// f 6/7 5/6 21/1
+// f 7/8 6/7 21/1
+// f 8/9 7/8 21/1
+// f 9/10 8/9 21/1
+// f 10/11 9/10 21/1
+// f 1/12 10/11 21/1
+// f 11/13 12/14 22/24
+// f 12/14 13/15 22/24
+// f 13/15 14/16 22/24
+// f 14/16 15/17 22/24
+// f 15/17 16/18 22/24
+// f 16/18 17/19 22/24
+// f 17/19 18/20 22/24
+// f 18/20 19/21 22/24
+// f 19/21 20/22 22/24
+// f 20/22 11/23 22/24
+// ` });
+	$("#cake-c1-c5").click(function () {
+		pasta.setProperties(name, { scale: 1.5 });
+	});
+	$("#cake-c1-c55").click(function () {
+		pasta.setProperties(name, { scale: 1.0 });
+	 });
+>>>>>>> c8c1f00649a665f40e96d4cd7f3ae140e548fc5e
+	     $("#cake-sdown").click(function () {
+		       pasta.setProperties(name, { scale: 0.4 });
+	     });
+	     $("#cake-c1-c44").click(function () {
+		       pasta.setProperties(name, { rotationY: Math.PI/2 });
+	     });
+	     $("#cake-c1-c45").click(function () {
+		       pasta.setProperties(name, { rotationY: Math.PI });
+	     });
+	     $("#cake-c1-cc5").click(function () {
+		       pasta.previewChanges(name, { color: 0xff0000, scale: 0.9 });
+	     });
+	     $("#cake-c1-ccc5").click(function () {
+		       pasta.setProperties(name, {  rotationY: 1.8 });
+	     });
+	     $("#cake-c1-ccc5pc").click(function () {
+		       pasta.previewChanges(name, {  rotationY: 1.2 });
+	     });
+	     $("#decal-scale").click(function () {
+		       pasta.setPropertiesDecal(name, { color: 0xff0000, scale: 0.5 });
+	     });
+	     $("#rotate-obj").click(function () {
+		       pasta.setPropertiesDecal(name, { rotationY: Math.PI/3 });
+	     });
+	     $("#rotate-obj-reset").click(function () {
+		       pasta.setPropertiesDecal(name, { rotationY: 0 });
+	     });
+	     $("#cake-c1-c6").click(function () {
+		       pasta.setProperties(name, { color: 1045678 });
+	     });
+       $("#side-decor-all-color").click(function () {
+		       pasta.setProperties(name, { color: 1045678 << 1 , all: "side" });
+	     });
+	     $("#cake-c1-c61").click(function () {
+		       pasta.setProperties(name, { color: 0x0000fa });
+	     });
+			 $("#cake-c1-c2").click(function () {
+					 pasta.addObject({ Properties: { scale: 1.0 }, AllowChildren: true, Name: "cake-"+ (a++), Source: gThree }, "cake");
+           // pasta.addTexture("texture-1", "cake-5", "/editor/objects/basketball/Basketball-ColorMap.jpg")
+
+       });
+	     a = 3;
+       $("#object-mickey").click(function () {
+	         pasta.addObject({ Name: "object-"+ (a++), Properties: { scale: 0.4, transform: { position: { x: 1.5, y: 0, z: 1.5 } }, normalScale: 1.0 }, Source: gMickey, CoordSource: gMickeyCoordsSource, Done: function () {
+               pasta.addTexture("texture-12", "object-"+ (a-1), "/Images/Mickey_Mouse_D.png");
+           }
+           }, "object");
+       });
+
+       $("#colorize-mickey").click(function () {
+	         pasta.colorizeObject(name, "/Images/Mickey_Mouse_D_alpha.png", {
+               "Çl öş": Math.floor(Math.random()*0x1000000),
+               "Çöşğü": 0xf0f000,
+               "Müşşlü": 0x0ff0f0
+           });
+       });
+
+       $("#colorize-side").click(function () {
+	         pasta.colorizeObject(name, "/Images/3_gul_dec_alpha.png", {
+               "255,0,0": Math.floor(Math.random()*0x1000000),
+               "0,255,0": 0xf0f000,
+               "0,0,255": 0x0ff0f0
+           });
+       });
+
+       $("#cake-c1-c3").click(function () {
+	         pasta.addObject({ Name: "object-"+ (a++), Properties: { scale: 1.0, transform: { position: { x: 1.5, y: 0, z: 1.5 } } }, Source: gStethoscope }, "object");
+       });
+       $("#object-spiderman").click(function () {
+	         pasta.addObject({ Name: "object-"+ (a++), Properties: { scale: 1.0, transform: { position: { x: 1.5, y: 0, z: 1.5 } } }, Source: gSpiderman, Object2D: true }, "object");
+       });
+
+   $("#cake-yuvarlak").click(function () {
+			 pasta.addObject({ Properties: { scale: 1.0, transform: { position: {x: 0, y: 0.15, z: 0 }} }, Name: "cake-"+ (a++), Source: gCakeYuvarlak }, "cake");
+   });
+
+<<<<<<< HEAD
+   $("#cake-dortgen").click(function () {
+			 pasta.addObject({ Properties: { scale: 1.0, transform: { position: {x: 0, y: 0.15, z: 0 }} }, Name: "cake-"+ (a++), Source: gDikdortgen }, "cake");
+   });
+	 });
+
+=======
+		});
+>>>>>>> c8c1f00649a665f40e96d4cd7f3ae140e548fc5e
+	</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using System.Globalization
+
+@{
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    DataTable products = dc.DBQueryGetter("select * from Products where Approved = 'yes' and Category <> 'Parti Malzemeleri'");
+    DataTable bakeries = dc.DBQueryGetter("select * from ForeignBakeries");
+
+    List<string> cats = new List<string>();
+    for (int i = 0; i < products.Rows.Count; i++)
+    {
+        DataRow product = products.Rows[i];
+        if (cats.Contains(product["Category"].ToString()) == false) { cats.Add(product["Category"].ToString()); }
+    }
+
+    String category = ""; String h1 = "";
+    if(ViewData["category"] != null) {
+        category = (string)ViewData["category"];
+        ViewBag.Title = uc.UppercaseFirst(category) + " Siparişi, " + uc.UppercaseFirst(category) + " Ürünleri";
+        ViewBag.Keywords = category + "ürün," + category + " ürünleri," + "tasarım ürün, hazır pasta, yaş pasta, hazır ürün, pastane ürünleri, tatlı";
+        ViewBag.Description = uc.UppercaseFirst(category) + " seçenekleri ile iCaked sizlere doğumgünleri, kutlamalar ve özel günleriniz için geniş bir seçim imkanı sunuyor";
+        string catStr = "";
+        if (category.ToLower() == "cikolata") { catStr = "Çikolata"; }
+        else if (category.ToLower() == "butik-pasta") { catStr = "Butik Pasta"; }
+        else if (category.ToLower() == "pasta") { catStr = "Pasta"; }
+        else if (category.ToLower() == "tatli") { catStr = "Tatlı"; }
+        h1 = catStr + " Ürünleri";
+    }
+    else
+    {
+        ViewBag.Title = "Pasta Siparişi – Doğum Günü Pastası ve Tasarım Pastalar";
+        ViewBag.Keywords = "tasarım ürün, hazır pasta, yaş pasta, hazır ürün, pastane ürünleri, çikolata, tatlı";
+        ViewBag.Description = "Doğumgünleri, kutlamalar ve özel günleriniz için iCaked sizlere tasarım pasta ve pastane ürünleri ile geniş bir seçim imkanı sunuyor";
+        h1 = "Ürünler";
+    }
+}
+
+<script>
+
+    $(document).ready(function () {
+        if ("@category" != "") {
+            filterAllProducts("@category");
+            $('#allProductsFilter option[value=@category]').attr('selected', 'selected');
+        }
+    });
+</script>
+
+<div class="container">
+    <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left; padding:0px;">
+        <div style="float:left; width:100%; text-align:center; margin-top:20px; ">
+            <h1 id="urunlerh1" style="font-size:40px; color:#3f2518; margin-top:20px; text-transform:capitalize;">@h1</h1>
+        </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px 3.7%; float:left; margin-bottom:10px;">
+
+        <input class="hidden-xs" id="searchAllProductsFilter" onkeyup="searchAllProducts(this)" type="text" style="float:left;  color:#3f2518; border:1px solid #e6e6e6; font-size:16px; border-radius:3px; padding:10px; width:300px;" placeholder="Ürün Ara" />
+
+        <select id="allProductsProvinceFilter" onchange="filterAllProductsByProvince()" style="float:right; width:120px; color:#3f2518; border:1px solid #e6e6e6; border-radius:3px; padding:10px 5px; font-size:18px;">
+            <option disabled selected>Şehir</option>
+            <option value="all">Hepsi</option>
+            <option value="76">Ankara</option>
+            <option value="48">İstanbul</option>
+        </select>
+
+        <select id="allProductsFilter" onchange="filterAllProducts()" style="float:right; color:#3f2518; width:120px; border:1px solid #e6e6e6; border-radius:3px; padding:10px 5px; font-size:18px; margin-right:10px;">
+            <option disabled selected>Kategori</option>
+            <option value="all">Hepsi</option>
+            <option value="butik-pasta">Butik Pasta</option>
+            @{
+                for (int i = 0; i < cats.Count; i++)
+                {
+                    <option value="@cats[i].Replace("Ç","C")">@cats[i]</option>
+                }
+            }
+        </select>
+
+        <select id="sortAllFilter" onchange="sortAllProducts()" style="float:right; margin-right:10px; width:120px; color:#3f2518; border:1px solid #e6e6e6; border-radius:3px; padding:10px 5px; font-size:18px;">
+            <option disabled selected>Sıralama</option>
+            <option value="newest">En Yeniler</option>
+            <option value="popular">En Sevilenler</option>
+            <option value="priceDesc">Fiyata Göre Azalan</option>
+            <option value="priceAsc">Fiyata Göre Artan</option>
+        </select>
+    </div>
+
+    <div class="col-md-12 col-sm-12 col-xs-12" style="position:relative; margin-bottom:30px; " id="sortAllWrapper">
+        @{
+            for (int i = 0; i < products.Rows.Count; i++)
+            {
+                DataRow urun = products.Rows[i]; String product_thumbnail = "/Images/Products/" + urun["ProductID"] + "/" + (urun["Thumbnail"].ToString().Split(' '))[0];
+                String price = urun["Price"].ToString().Split(' ')[0];
+                price = uc.ArrangePrice(price);
+
+                DataRow bakery = null;
+                for (int i2 = 0; i2 < bakeries.Rows.Count; i2++)
+                {
+                    if(bakeries.Rows[i2]["BakeryID"].ToString().ToLower() == urun["BakeryID"].ToString().ToLower()) { bakery = bakeries.Rows[i2]; }
+                }
+
+                String productCategory = uc.cleanseUrlString(urun["Category"].ToString());
+                String productBakery = uc.cleanseUrlString(bakery["Name"].ToString());
+                String productName = uc.cleanseUrlString(urun["Name"].ToString()) + "-" + urun["ProductID"].ToString().Split('-')[0];
+
+                String bakery_img = "/Images/Bakery/" + bakery["Thumbnail"];
+                String product_cat = urun["Category"].ToString().Replace("Ç","C");
+
+                if(urun["DesignProduct"].ToString() == "yes") { product_cat = "butik-pasta"; }
+
+                <div class="col-md-4 col-sm-4 col-xs-6 sortAllProduct" style="padding:2.5%;" data-province="@bakery["Province"]" data-name="@urun["Name"]" data-price="@price.Split('.')[0]" data-category="@product_cat" data-date="@Convert.ToDateTime(urun["AddDate"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-favs="@urun["Fav"]">
+
+                    <div class="product-div">
+
+                        <div style="padding-right:0px;">
+                            <a  style="color:black; cursor:pointer; position:relative; width:100%; float:left;" href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })">
+                                <img alt="pastane resmi" src="@bakery_img" style="width:75px; position:absolute; top:10px; right:10px; border:none; box-shadow:none; background:none;" />
+                                <img alt="pastane ürünü" src="@product_thumbnail" style="width:100%; float:left; border-radius:0px;" />
+                            </a>
+                            <div class="index-sub-product-div" style="border-radius:0px; padding:15px 0px; border:none; border-bottom:1px solid #e6e6e6;">
+                                <label style="padding-bottom:0px; text-align:center; font-size:18px; font-weight:500;">@urun["Name"]</label>
+                                <label class="product-description" style="font-size:12px; text-align:center; padding-bottom:5px;">@urun["Description"].ToString().Split('~')[0]</label>
+                                <label style="text-align:center;">@price <span style="font-size:12px;">TL</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

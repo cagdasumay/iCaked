@@ -1,0 +1,210 @@
+﻿@using EventApp.Models
+@model EventApp.Models.SurveyActivityQuestion
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Anketler";
+
+    string DateDisplay = (string)ViewData["DateDisplay"];
+    string IsActive = (string)ViewData["IsActive"];
+    EventActivity ThisSurveyEvent = (EventActivity)ViewData["ThisSurveyEvent"];
+    Activity ThisSurvey = (Activity)ViewData["ThisSurvey"];
+    string related = (string)ViewData["RelatedActivity"];
+
+    List<SurveyActivityQuestion> SortedSurveyQuestions = (List<SurveyActivityQuestion>)ViewData["SortedSurveyQuestions"];
+    int QNumber = SortedSurveyQuestions.Count;
+    int OrderNumber = QNumber + 1;
+    List<int> OptionNumberOfQuestions = (List<int>)ViewData["OptionNumberOfQuestions"];
+    List<SurveyQuestionOption> QuestionOptions = (List<SurveyQuestionOption>)ViewData["QuestionOptions"];
+    List<string> TypeOfQuestionByOrder = (List<string>)ViewData["TypeOfQuestionByOrder"];
+}
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("SurveyListEditable", "Activities")">Anketler</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>@ThisSurvey.Name</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title" style="float: left;">
+            @ThisSurvey.Name
+            <small>Ön İzleme</small>
+        </h1>
+        <h1>
+            @{
+                if (IsActive == "true")
+                {
+                    <a href="@Url.Action("CancelSurvey", "Activities", new { SurveyEventID = ThisSurveyEvent.Id})" id="continue-btn" class="btn green" style="float: right; margin-left: 5px;">
+                        Yayından Kaldır
+                        <i class="fa fa-times"></i>
+                    </a>
+                }
+                else
+                {
+                    Session["ToEditSurvey"] = "SurveyDisplayOrg";
+                    <a href="@Url.Action("CompleteSurvey", "Activities", new { SurveyEventID = ThisSurveyEvent.Id})" id="continue-btn" class="btn green" style="float: right; margin-left: 5px;">
+                        Yayınla
+                        <i class="fa fa-check"></i>
+                    </a>
+                    <a href="@Url.Action("EditSurvey", "Activities", new { SurveyEventID = ThisSurveyEvent.Id})" style="float: right;" class="btn btn-outline green button-next">
+                        Düzenle
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                }
+            }
+        </h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered" style="border-bottom: 0 !important;">
+                    <div class="portlet box green">
+                        <div class="portlet-title">
+                            <div class="caption">
+                                <i class="icon-pencil font-white"></i>
+                                <span class="caption-subject font-white sbold">@ThisSurvey.Name</span>
+                            </div>
+                            <div class="actions">
+                                <a class="btn btn-circle btn-icon-only btn-default fullscreen" href="javascript:;" data-original-title="" title=""> </a>
+                            </div>
+                        </div>
+
+                        <div class="portlet-body form">
+                            <form role="form" class="form-horizontal">
+                                <div class="form-horizontal">
+                                    <div class="form-group" style="padding-top: 13px;">
+                                        <label class="control-label col-md-3"><b>Anket ismi:</b></label>
+                                        <label class="control-label col-md-9" style="float: left; text-align:left; padding-right: 30px;">@ThisSurvey.Name</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3"><b>Anket Açıklaması:</b></label>
+                                        <label class="control-label col-md-9" style="float: left; text-align:left; padding-right: 30px;">@ThisSurvey.Content</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3"><b>Kapanış Tarihi:</b></label>
+                                        <label class="control-label col-md-9" style="float: left; text-align:left; padding-right: 30px;">@DateDisplay</label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3"><b>İlgili Oturum:</b></label>
+                                        <label class="control-label col-md-9" style="float: left; text-align:left; padding-right: 30px;">@related</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-offset-1 col-md-10" style="border-bottom: 2px solid #32c5d2;"></div>
+
+                                <div class="form-horizontal" style="margin-top: 0px; padding-top: 0px; border-top: 0px;">
+
+                                    @{
+                                        if (QNumber > 0)
+                                        {
+                                            <div class="form-actions" style="border-top-color: white;">
+                                                <div class="row">
+                                                    <div class="col-md-offset-2 col-md-9 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-10">
+                                                        @{
+
+                                                            for (int i = QNumber - 1; i >= 0; i--)
+                                                            {
+                                                                if (TypeOfQuestionByOrder[i] == "Klasik")
+                                                                {
+                                                                    <div style="margin-top:10px; padding-top: 5px;">
+                                                                        @SortedSurveyQuestions[i].Order. @SortedSurveyQuestions[i].Quesiton
+                                                                    </div>
+                                                                    <div style="border-bottom: 2px solid #b7b5b5; padding-top: 20px; padding-bottom: 5px;"></div>
+                                                                }
+                                                                else if (TypeOfQuestionByOrder[i] == "Çoktan seçmeli tek seçim")
+                                                                {
+                                                                    <div style="margin-top:10px; padding-top: 5px;">
+                                                                        @SortedSurveyQuestions[i].Order. @SortedSurveyQuestions[i].Quesiton (Tekli Seçim)
+                                                                    </div>
+                                                                    <div class="md-radio-list" style="padding-bottom: 5px;">
+                                                                        @{
+                                                                            for (int j = QuestionOptions.Count - 1; j >= 0; j--)
+                                                                            {
+                                                                                if (QuestionOptions[j].SurveyActivityQuestionID == SortedSurveyQuestions[i].Id)
+                                                                                {
+                                                                                    <div class="md-checkbox">
+                                                                                        <input type="checkbox" id="" class="md-checkbox">
+                                                                                        <label for="" style="cursor: default">
+                                                                                            <span></span>
+                                                                                            <span class="check"></span>
+                                                                                            <span class="box"></span> @QuestionOptions[j].Option
+                                                                                        </label>
+                                                                                    </div>
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                            }
+                                                                            else if (TypeOfQuestionByOrder[i] == "Çoktan seçmeli çoklu seçim")
+                                                                            {
+                                                                                <div style="margin-top:10px; padding-top: 5px;">
+                                                                                    @SortedSurveyQuestions[i].Order. @SortedSurveyQuestions[i].Quesiton (Çoklu Seçim)
+                                                                                </div>
+                                                                                <div class="md-radio-list" style="padding-bottom: 5px;">
+                                                                                    @{
+                                                                                        for (int j = QuestionOptions.Count - 1; j >= 0; j--)
+                                                                                        {
+                                                                                            if (QuestionOptions[j].SurveyActivityQuestionID == SortedSurveyQuestions[i].Id)
+                                                                                            {
+                                                                                                <div class="md-checkbox">
+                                                                                                    <input type="checkbox" id="" class="md-checkbox">
+                                                                                                    <label for="" style="cursor: default">
+                                                                                                        <span></span>
+                                                                                                        <span class="check"></span>
+                                                                                                        <span class="box"></span> @QuestionOptions[j].Option
+                                                                                                    </label>
+                                                                                                </div>
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                </div>
+                                                                                            }
+                                                                                        }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                                                        }
+                                    }
+
+                                </div>
+                                <br />
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

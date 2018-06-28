@@ -1,0 +1,534 @@
+﻿
+@model EventApp.Models.User
+
+@{
+    Layout = null;
+    string Validation = (string)ViewData["ValidationError"];
+    string SpeakerCompany = (string)ViewData["SpeakerCompany"];
+    string SpeakerTitle = (string)ViewData["SpeakerTitle"];
+    string SpeakerAbout = (string)ViewData["SpeakerAbout"];
+
+}
+<!DOCTYPE html>
+<!--
+
+<!--[if !IE]><!-->
+<html lang="en">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <meta charset="utf-8" />
+    <title>EventApp | Register</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta content="" name="description" />
+    <meta content="" name="author" />
+    <!-- BEGIN GLOBAL MANDATORY STYLES -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+    <link href="../assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+    <!-- END GLOBAL MANDATORY STYLES -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <link href="../assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+    <link href="../assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL STYLES -->
+    <link href="../assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+    <link href="../assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+    <!-- END THEME GLOBAL STYLES -->
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="../assets/pages/css/login.min.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
+    <!-- BEGIN THEME LAYOUT STYLES -->
+    <!-- END THEME LAYOUT STYLES -->
+    <link rel="shortcut icon" href="~/favicon.ico" />
+</head>
+<!-- END HEAD -->
+<body class=" login">
+    <!-- BEGIN LOGO -->
+    <div class="logo">
+        <a href="@Url.Action("Login","Account")">
+            <img src="../assets/pages/img/logo-big.png" alt="" />
+        </a>
+    </div>
+    <!-- END LOGO -->
+    <!-- BEGIN LOGIN -->
+    <div class="content">
+
+        <h3 class="font-green">Sign Up</h3>
+        <div class="portlet-body">
+            <div class="mt-element-step">
+                <div class="row step-background-thin">
+                    <div class="col-md-6 bg-grey-steel mt-step-col">
+                        <div class="mt-step-number">1</div>
+                        <div class="mt-step-title uppercase font-grey-cascade" style="font-size: 20px; text-align: center">Select</div>
+                        <div class="mt-step-content font-grey-cascade" style="font-size: 14px; text-align: center">User Type</div>
+                    </div>
+                    <div class="col-md-6 bg-grey-steel mt-step-col active">
+                        <div class="mt-step-number">2</div>
+                        <div class="mt-step-title uppercase font-grey-cascade" style="font-size: 20px; text-align: center">Enter</div>
+                        <div class="mt-step-content font-grey-cascade" style="font-size: 14px; text-align: center">Details</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p class="hint"> Speaker </p>
+        <div class="alert alert-danger display-hide">
+            <button class="close" data-close="alert"></button>
+            <span> Fill all boxes with *. </span>
+        </div>
+
+
+
+        @using (Html.BeginForm("RegisterSpeaker", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal">
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @placeholder = "Name *", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Surname, new { htmlAttributes = new { @placeholder = "Surname *", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Surname, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Mail, new { htmlAttributes = new { @placeholder = "Email *", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Mail, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 col-lg-6 col-xs-6">
+                        <select name="countryphonecode" class="form-control form-control-solid placeholder-no-fix">
+                            <option selected value="90">+90&nbsp;Turkey</option>
+                            <option value="49">+49&nbsp;Germany</option>
+                            <option value="1">+1&nbsp;United States</option>
+                            <option value="44">+44&nbsp;United Kingdom</option>
+                            <option value="7">+7&nbsp;Russia</option>
+                            <option value="33">+33&nbsp;France</option>
+                            <option value="34">+34&nbsp;Spain</option>
+                            <option value="81">+81&nbsp;Japan</option>
+                            <option value="39">+39&nbsp;Italy</option>
+                            <option value="31">+31&nbsp;Netherlands</option>
+                            <option value="93">+93&nbsp;Afghanistan</option>
+                            <option value="355">+355&nbsp;Albania</option>
+                            <option value="213">+213&nbsp;Algeria</option>
+                            <option value="1684">+1684&nbsp;American Samoa</option>
+                            <option value="376">+376&nbsp;Andorra</option>
+                            <option value="244">+244&nbsp;Angola</option>
+                            <option value="1264">+1264&nbsp;Anguilla</option>
+                            <option value="1268">+1268&nbsp;Antigua and Barbuda</option>
+                            <option value="54">+54&nbsp;Argentina</option>
+                            <option value="374">+374&nbsp;Armenia</option>
+                            <option value="297">+297&nbsp;Aruba</option>
+                            <option value="61">+61&nbsp;Australia</option>
+                            <option value="43">+43&nbsp;Austria</option>
+                            <option value="994">+994&nbsp;Azerbaijan</option>
+                            <option value="1242">+1242&nbsp;Bahamas</option>
+                            <option value="973">+973&nbsp;Bahrain</option>
+                            <option value="880">+880&nbsp;Bangladesh</option>
+                            <option value="1246">+1246&nbsp;Barbados</option>
+                            <option value="375">+375&nbsp;Belarus</option>
+                            <option value="32">+32&nbsp;Belgium</option>
+                            <option value="501">+501&nbsp;Belize</option>
+                            <option value="229">+229&nbsp;Benin</option>
+                            <option value="1441">+1441&nbsp;Bermuda</option>
+                            <option value="975">+975&nbsp;Bhutan</option>
+                            <option value="591">+591&nbsp;Bolivia</option>
+                            <option value="387">+387&nbsp;Bosnia and Herzegovina</option>
+                            <option value="267">+267&nbsp;Botswana</option>
+                            <option value="55">+55&nbsp;Brazil</option>
+                            <option value="673">+673&nbsp;Brunei</option>
+                            <option value="359">+359&nbsp;Bulgaria</option>
+                            <option value="226">+226&nbsp;Burkina Faso</option>
+                            <option value="257">+257&nbsp;Burundi</option>
+                            <option value="855">+855&nbsp;Cambodia</option>
+                            <option value="237">+237&nbsp;Cameroon</option>
+                            <option value="1">+1&nbsp;Canada</option>
+                            <option value="238">+238&nbsp;Cape Verde</option>
+                            <option value="1345">+1345&nbsp;Cayman Islands</option>
+                            <option value="236">+236&nbsp;Central Africa</option>
+                            <option value="235">+235&nbsp;Chad</option>
+                            <option value="56">+56&nbsp;Chile</option>
+                            <option value="86">+86&nbsp;China</option>
+                            <option value="57">+57&nbsp;Colombia</option>
+                            <option value="2693">+2693&nbsp;Comoros</option>
+                            <option value="242">+242&nbsp;Congo</option>
+                            <option value="682">+682&nbsp;Cook Islands</option>
+                            <option value="506">+506&nbsp;Costa Rica</option>
+                            <option value="385">+385&nbsp;Croatia</option>
+                            <option value="53">+53&nbsp;Cuba</option>
+                            <option value="420">+420&nbsp;Czech Republic</option>
+                            <option value="225">+225&nbsp;Côte d'Ivoire</option>
+                            <option value="243">+243&nbsp;Democratic Congo</option>
+                            <option value="45">+45&nbsp;Denmark</option>
+                            <option value="253">+253&nbsp;Djibouti</option>
+                            <option value="1767">+1767&nbsp;Dominica</option>
+                            <option value="1809">+1809&nbsp;Dominican Republic</option>
+                            <option value="593">+593&nbsp;Ecuador</option>
+                            <option value="20">+20&nbsp;Egypt</option>
+                            <option value="503">+503&nbsp;El Salvador</option>
+                            <option value="240">+240&nbsp;Equatorial Guinea</option>
+                            <option value="291">+291&nbsp;Eritrea</option>
+                            <option value="372">+372&nbsp;Estonia</option>
+                            <option value="251">+251&nbsp;Ethiopia</option>
+                            <option value="298">+298&nbsp;Faroe Islands</option>
+                            <option value="679">+679&nbsp;Fiji</option>
+                            <option value="358">+358&nbsp;Finland</option>
+                            <option value="594">+594&nbsp;French Guyana</option>
+                            <option value="689">+689&nbsp;French Polynesia</option>
+                            <option value="241">+241&nbsp;Gabon</option>
+                            <option value="220">+220&nbsp;Gambia</option>
+                            <option value="995">+995&nbsp;Georgia</option>
+                            <option value="233">+233&nbsp;Ghana</option>
+                            <option value="350">+350&nbsp;Gibraltar</option>
+                            <option value="30">+30&nbsp;Greece</option>
+                            <option value="299">+299&nbsp;Greenland</option>
+                            <option value="1473">+1473&nbsp;Grenada</option>
+                            <option value="590">+590&nbsp;Guadeloupe</option>
+                            <option value="1671">+1671&nbsp;Guam</option>
+                            <option value="502">+502&nbsp;Guatemala</option>
+                            <option value="224">+224&nbsp;Guinea</option>
+                            <option value="592">+592&nbsp;Guyana</option>
+                            <option value="509">+509&nbsp;Haiti</option>
+                            <option value="504">+504&nbsp;Honduras</option>
+                            <option value="852">+852&nbsp;Hong Kong</option>
+                            <option value="36">+36&nbsp;Hungary</option>
+                            <option value="354">+354&nbsp;Iceland</option>
+                            <option value="91">+91&nbsp;India</option>
+                            <option value="62">+62&nbsp;Indonesia</option>
+                            <option value="98">+98&nbsp;Iran</option>
+                            <option value="964">+964&nbsp;Iraq</option>
+                            <option value="353">+353&nbsp;Ireland</option>
+                            <option value="972">+972&nbsp;Israel</option>
+                            <option value="1876">+1876&nbsp;Jamaica</option>
+                            <option value="962">+962&nbsp;Jordan</option>
+                            <option value="7">+7&nbsp;Kazakhstan</option>
+                            <option value="254">+254&nbsp;Kenya</option>
+                            <option value="686">+686&nbsp;Kiribati</option>
+                            <option value="381">+381&nbsp;Kosovo</option>
+                            <option value="965">+965&nbsp;Kuwait</option>
+                            <option value="996">+996&nbsp;Kyrgyz Republic</option>
+                            <option value="856">+856&nbsp;Laos</option>
+                            <option value="371">+371&nbsp;Latvia</option>
+                            <option value="961">+961&nbsp;Lebanon</option>
+                            <option value="266">+266&nbsp;Lesotho</option>
+                            <option value="231">+231&nbsp;Liberia</option>
+                            <option value="218">+218&nbsp;Libya</option>
+                            <option value="423">+423&nbsp;Liechtenstein</option>
+                            <option value="370">+370&nbsp;Lithuania</option>
+                            <option value="352">+352&nbsp;Luxembourg</option>
+                            <option value="389">+389&nbsp;Macedonia</option>
+                            <option value="261">+261&nbsp;Madagascar</option>
+                            <option value="265">+265&nbsp;Malawi</option>
+                            <option value="60">+60&nbsp;Malaysia</option>
+                            <option value="960">+960&nbsp;Maldives</option>
+                            <option value="223">+223&nbsp;Mali</option>
+                            <option value="356">+356&nbsp;Malta</option>
+                            <option value="692">+692&nbsp;Marshall Islands</option>
+                            <option value="596">+596&nbsp;Martinique</option>
+                            <option value="222">+222&nbsp;Mauritania</option>
+                            <option value="262">+262&nbsp;Mayotte</option>
+                            <option value="52">+52&nbsp;Mexico</option>
+                            <option value="691">+691&nbsp;Micronesia</option>
+                            <option value="373">+373&nbsp;Moldova</option>
+                            <option value="377">+377&nbsp;Monaco</option>
+                            <option value="976">+976&nbsp;Mongolia</option>
+                            <option value="382">+382&nbsp;Montenegro</option>
+                            <option value="1664">+1664&nbsp;Montserrat</option>
+                            <option value="212">+212&nbsp;Morocco</option>
+                            <option value="258">+258&nbsp;Mozambique</option>
+                            <option value="95">+95&nbsp;Myanmar</option>
+                            <option value="264">+264&nbsp;Namibia</option>
+                            <option value="674">+674&nbsp;Nauru</option>
+                            <option value="977">+977&nbsp;Nepal</option>
+                            <option value="599">+599&nbsp;Netherlands Antilles</option>
+                            <option value="687">+687&nbsp;New Caledonia</option>
+                            <option value="64">+64&nbsp;New Zealand</option>
+                            <option value="505">+505&nbsp;Nicaragua</option>
+                            <option value="227">+227&nbsp;Niger</option>
+                            <option value="234">+234&nbsp;Nigeria</option>
+                            <option value="683">+683&nbsp;Niue</option>
+                            <option value="672">+672&nbsp;Norfolk Island</option>
+                            <option value="850">+850&nbsp;North Korea</option>
+                            <option value="90">+90&nbsp;Northern Cyprus</option>
+                            <option value="47">+47&nbsp;Norway</option>
+                            <option value="968">+968&nbsp;Oman</option>
+                            <option value="92">+92&nbsp;Pakistan</option>
+                            <option value="970">+970&nbsp;Palestine</option>
+                            <option value="507">+507&nbsp;Panama</option>
+                            <option value="675">+675&nbsp;Papua New Guinea</option>
+                            <option value="595">+595&nbsp;Paraguay</option>
+                            <option value="51">+51&nbsp;Peru</option>
+                            <option value="63">+63&nbsp;Philippines</option>
+                            <option value="48">+48&nbsp;Poland</option>
+                            <option value="351">+351&nbsp;Portugal</option>
+                            <option value="1787">+1787&nbsp;Puerto Rico</option>
+                            <option value="974">+974&nbsp;Qatar</option>
+                            <option value="262">+262&nbsp;Reunion</option>
+                            <option value="40">+40&nbsp;Romania</option>
+                            <option value="250">+250&nbsp;Rwanda</option>
+                            <option value="290">+290&nbsp;Saint Helena and Dependencies</option>
+                            <option value="1869">+1869&nbsp;Saint Kitts and Nevis</option>
+                            <option value="1758">+1758&nbsp;Saint Lucia</option>
+                            <option value="508">+508&nbsp;Saint Pierre and Miquelon</option>
+                            <option value="1784">+1784&nbsp;Saint Vincent and the Grenadines</option>
+                            <option value="378">+378&nbsp;San Marino</option>
+                            <option value="966">+966&nbsp;Saudi Arabia</option>
+                            <option value="221">+221&nbsp;Senegal</option>
+                            <option value="381">+381&nbsp;Serbia</option>
+                            <option value="248">+248&nbsp;Seychelles</option>
+                            <option value="232">+232&nbsp;Sierra Leone</option>
+                            <option value="65">+65&nbsp;Singapore</option>
+                            <option value="421">+421&nbsp;Slovakia</option>
+                            <option value="386">+386&nbsp;Slovenia</option>
+                            <option value="677">+677&nbsp;Solomon Islands</option>
+                            <option value="252">+252&nbsp;Somalia</option>
+                            <option value="27">+27&nbsp;South Africa</option>
+                            <option value="82">+82&nbsp;South Korea</option>
+                            <option value="211">+211&nbsp;South Sudan</option>
+                            <option value="357">+357&nbsp;Southern Cyprus</option>
+                            <option value="94">+94&nbsp;Sri Lanka</option>
+                            <option value="249">+249&nbsp;Sudan</option>
+                            <option value="597">+597&nbsp;Suriname</option>
+                            <option value="268">+268&nbsp;Swaziland</option>
+                            <option value="46">+46&nbsp;Sweden</option>
+                            <option value="41">+41&nbsp;Switzerland</option>
+                            <option value="963">+963&nbsp;Syria</option>
+                            <option value="239">+239&nbsp;São Tomé and Príncipe</option>
+                            <option value="886">+886&nbsp;Taipei</option>
+                            <option value="992">+992&nbsp;Tajikistan</option>
+                            <option value="255">+255&nbsp;Tanzania</option>
+                            <option value="66">+66&nbsp;Thailand</option>
+                            <option value="670">+670&nbsp;Timor Leste</option>
+                            <option value="228">+228&nbsp;Togo</option>
+                            <option value="676">+676&nbsp;Tonga</option>
+                            <option value="1868">+1868&nbsp;Trinidad and Tobago</option>
+                            <option value="216">+216&nbsp;Tunisia</option>
+                            <option value="993">+993&nbsp;Turkmenistan</option>
+                            <option value="1649">+1649&nbsp;Turks And Caicos Islands</option>
+                            <option value="688">+688&nbsp;Tuvalu</option>
+                            <option value="1340">+1340&nbsp;US Virgin Islands</option>
+                            <option value="256">+256&nbsp;Uganda</option>
+                            <option value="380">+380&nbsp;Ukraine</option>
+                            <option value="971">+971&nbsp;United Arab Emirates</option>
+                            <option value="598">+598&nbsp;Uruguay</option>
+                            <option value="998">+998&nbsp;Uzbekistan</option>
+                            <option value="379">+379&nbsp;Vatican City</option>
+                            <option value="58">+58&nbsp;Venezuela</option>
+                            <option value="84">+84&nbsp;Vietnam</option>
+                            <option value="681">+681&nbsp;Wallis and Futuna</option>
+                            <option value="967">+967&nbsp;Yemen</option>
+                            <option value="260">+260&nbsp;Zambia</option>
+                            <option value="263">+263&nbsp;Zimbabwe</option>
+                            <option value="0">Other Countries</option>
+                        </select>
+
+                    </div>
+                    <div class="col-md-6 col-lg-6 col-xs-6">
+                        @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @placeholder = "Phone Number *", @id = "mask_phone", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @{
+                    if (SpeakerCompany == "CompanyError")
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.Company, new { htmlAttributes = new { @placeholder = "Company *", @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-12" style="color: #ed6b75;">Company Information is Required For Speakers</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.Company, new { htmlAttributes = new { @placeholder = "Company *", @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.Company, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+                }
+
+                @{
+                    if (SpeakerTitle == "TitleError")
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.PersonelTitle, new { htmlAttributes = new { @placeholder = "Title *", @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PersonelTitle, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-12" style="color: #ed6b75;">Personal Title is Required For Speakers</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.PersonelTitle, new { htmlAttributes = new { @placeholder = "Title *", @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.PersonelTitle, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City *", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @{
+                    if (SpeakerAbout == "AboutError")
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.TextAreaFor(model => model.About, new { @placeholder = "About *", @class = "form-control", @style = "background-color: #dde3ec; color: #8290a3; height: 43px; border: 1px solid #dde3ec; width: 100%; line-height: 30px;" })
+                                @Html.ValidationMessageFor(model => model.About, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-12" style="color: #ed6b75;">Please Write Something About Speaker</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.TextAreaFor(model => model.About, new { @placeholder = "About *", @class = "form-control", @style = "background-color: #dde3ec; color: #8290a3; height: 43px; border: 1px solid #dde3ec; width: 100%; line-height: 30px;" })
+                                @Html.ValidationMessageFor(model => model.About, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Facebook, new { htmlAttributes = new { @placeholder = "Facebook Url", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Facebook, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Twitter, new { htmlAttributes = new { @placeholder = "Twitter Url", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Twitter, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Instagram, new { htmlAttributes = new { @placeholder = "Instagram Url", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Instagram, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Linkedin, new { htmlAttributes = new { @placeholder = "Linkedin Url", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Linkedin, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Website, new { htmlAttributes = new { @placeholder = "Personal Website Url", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Website, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <label class="control-label visible-ie8 visible-ie9">Password</label>
+                        <input class="form-control form-control-solid placeholder-no-fix" type="file" name="imageinput" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Password *", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @placeholder = "Re-Type Your Password *", @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @{
+                    if (Validation == "ValidationError")
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.AccountConfirmation, new { htmlAttributes = new { @placeholder = "Event Code *", @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.AccountConfirmation, "", new { @class = "text-danger" })
+                            </div>
+                            <div class="col-md-12" style="color: #ed6b75;">Please Enter Valid Event Code</div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.EditorFor(model => model.AccountConfirmation, new { htmlAttributes = new { @placeholder = "Event Code *", @class = "form-control" } })
+                                @Html.ValidationMessageFor(model => model.AccountConfirmation, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+                    }
+                }
+
+                <a href="@Url.Action("SelectUserType","Account")" type="button" id="register-back-btn" class="btn green btn-outline">Back</a>
+                <button type="submit" id="register-submit-btn" class="btn btn-success uppercase pull-right">Submit</button>
+            </div>
+        }
+
+
+
+    </div>
+    <div>
+    </div>
+    <div class="copyright"> 2016 © INFINIA Engineering. Admin Dashboard Template. </div>
+
+    <!-- BEGIN CORE PLUGINS -->
+    <script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+    <!-- END CORE PLUGINS -->
+    <!-- BEGIN PAGE LEVEL PLUGINS -->
+    <script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js" type="text/javascript"></script>
+    <script src="../assets/global/plugins/jquery.input-ip-address-control-1.0.min.js" type="text/javascript"></script>
+    <!-- END PAGE LEVEL PLUGINS -->
+    <!-- BEGIN THEME GLOBAL SCRIPTS -->
+    <script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+    <!-- END THEME GLOBAL SCRIPTS -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="../assets/pages/scripts/login.min.js" type="text/javascript"></script>
+    <script src="../assets/pages/scripts/form-input-mask.js" type="text/javascript"></script>
+    <!-- END PAGE LEVEL SCRIPTS -->
+    <!-- BEGIN THEME LAYOUT SCRIPTS -->
+    <!-- END THEME LAYOUT SCRIPTS -->
+</body>
+</html>

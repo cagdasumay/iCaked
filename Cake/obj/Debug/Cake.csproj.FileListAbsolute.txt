@@ -1,0 +1,336 @@
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\ApplicationInsights.config
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\csc.exe
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CSharp.Core.targets
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.VisualBasic.Core.targets
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\System.Collections.Immutable.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\System.Reflection.Metadata.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\vbc.exe
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\VBCSCompiler.exe
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\roslyn\VBCSCompiler.exe.config
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Cake.dll.config
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Cake.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Cake.pdb
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Agent.Intercept.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.DependencyCollector.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.PerfCounterCollector.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Web.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.WindowsServer.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.ApplicationInsights.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.Web.Infrastructure.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Helpers.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Mvc.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Razor.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Deployment.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Razor.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.DependencyCollector.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Web.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.WindowsServer.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.ApplicationInsights.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Razor.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Deployment.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Razor.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Helpers.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\bin\System.Web.Mvc.xml
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\obj\Debug\Cake.dll
+c:\users\okan demir\documents\visual studio 2015\Projects\Cake\Cake\obj\Debug\Cake.pdb
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\ApplicationInsights.config
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\csc.exe
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\vbc.exe
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\VBCSCompiler.exe
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Cake.dll.config
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Cake.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Cake.pdb
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Web.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.ApplicationInsights.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Helpers.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Mvc.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Razor.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Deployment.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Razor.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Web.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.ApplicationInsights.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Razor.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Deployment.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Razor.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Helpers.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Mvc.xml
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\obj\Debug\Cake.dll
+C:\Users\cagda\Documents\Visual Studio 2015\Projects\Cake\Cake\obj\Debug\Cake.pdb
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\ApplicationInsights.config
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\csc.exe
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\csc.exe.config
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\csc.rsp
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\csi.exe
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\csi.rsp
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.AppContext.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\vbc.exe
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\vbc.exe.config
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\vbc.rsp
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\VBCSCompiler.exe
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Cake.dll.config
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Cake.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Cake.pdb
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Antlr3.Runtime.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\EcmaScript.NET.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\ePayment.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\HtmlRenderer.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\HtmlRenderer.PdfSharp.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Web.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.ApplicationInsights.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Newtonsoft.Json.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\nQuant.Core.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\PdfSharp.Charting.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\PdfSharp.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Helpers.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Mvc.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Optimization.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Razor.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Deployment.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Razor.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\WebGrease.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Yahoo.Yui.Compressor.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Antlr3.Runtime.pdb
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\HtmlRenderer.pdb
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\HtmlRenderer.PdfSharp.pdb
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.Web.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.ApplicationInsights.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\Newtonsoft.Json.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\nQuant.Core.pdb
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\PdfSharp.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\PdfSharp.Charting.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Optimization.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Razor.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Deployment.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Webpages.Razor.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Helpers.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\System.Web.Mvc.xml
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\de\PdfSharp.resources.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\bin\de\PdfSharp.Charting.resources.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\obj\Debug\Cake.csprojResolveAssemblyReference.cache
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\obj\Debug\Cake.dll
+C:\Users\Cagdas Umay\Documents\Visual Studio 2015\Projects\Cake\Cake\obj\Debug\Cake.pdb
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\ApplicationInsights.config
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\csc.exe
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\csc.exe.config
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\csc.rsp
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\csi.exe
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\csi.rsp
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\System.AppContext.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\vbc.exe
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\vbc.exe.config
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\vbc.rsp
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\VBCSCompiler.exe
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Cake.dll.config
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Cake.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Cake.pdb
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Antlr3.Runtime.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\EcmaScript.NET.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\ePayment.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\HtmlRenderer.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\HtmlRenderer.PdfSharp.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.Web.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.ApplicationInsights.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Newtonsoft.Json.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\nQuant.Core.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\PdfSharp.Charting.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\PdfSharp.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Helpers.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Mvc.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Optimization.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Razor.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Webpages.Deployment.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Webpages.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Webpages.Razor.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\WebGrease.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Yahoo.Yui.Compressor.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Antlr3.Runtime.pdb
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\HtmlRenderer.pdb
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\HtmlRenderer.PdfSharp.pdb
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.Web.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.ApplicationInsights.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\Newtonsoft.Json.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\nQuant.Core.pdb
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\PdfSharp.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\PdfSharp.Charting.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Optimization.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Razor.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Webpages.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Webpages.Deployment.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Webpages.Razor.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Helpers.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\System.Web.Mvc.xml
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\de\PdfSharp.resources.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\bin\de\PdfSharp.Charting.resources.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\obj\Debug\Cake.csprojResolveAssemblyReference.cache
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\obj\Debug\Cake.dll
+C:\Users\Çağdaş\Source\Workspaces\Cake\Cake\obj\Debug\Cake.pdb
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\ApplicationInsights.config
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\csc.exe
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\csc.exe.config
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\csc.rsp
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\csi.exe
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\csi.rsp
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.CSharp.Core.targets
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\Microsoft.VisualBasic.Core.targets
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\System.AppContext.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\System.Collections.Immutable.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\System.Diagnostics.StackTrace.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\System.IO.FileSystem.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\System.Reflection.Metadata.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\vbc.exe
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\vbc.exe.config
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\vbc.rsp
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\VBCSCompiler.exe
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\roslyn\VBCSCompiler.exe.config
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Cake.dll.config
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Cake.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Cake.pdb
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Antlr3.Runtime.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\EcmaScript.NET.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\ePayment.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\HtmlRenderer.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\HtmlRenderer.PdfSharp.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.Agent.Intercept.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.DependencyCollector.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.PerfCounterCollector.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.Web.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.WindowsServer.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.ApplicationInsights.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Newtonsoft.Json.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\nQuant.Core.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\PdfSharp.Charting.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\PdfSharp.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Helpers.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Mvc.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Optimization.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Razor.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Webpages.Deployment.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Webpages.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Webpages.Razor.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\WebGrease.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Yahoo.Yui.Compressor.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Antlr3.Runtime.pdb
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\HtmlRenderer.pdb
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\HtmlRenderer.PdfSharp.pdb
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.DependencyCollector.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.ServerTelemetryChannel.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.Web.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.AI.WindowsServer.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.ApplicationInsights.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\Newtonsoft.Json.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\nQuant.Core.pdb
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\PdfSharp.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\PdfSharp.Charting.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Optimization.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Razor.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Webpages.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Webpages.Deployment.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Webpages.Razor.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Helpers.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\System.Web.Mvc.xml
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\de\PdfSharp.resources.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\bin\de\PdfSharp.Charting.resources.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\obj\Debug\Cake.csprojResolveAssemblyReference.cache
+C:\Users\Çağdaş\Desktop\Cake\Cake\obj\Debug\Cake.dll
+C:\Users\Çağdaş\Desktop\Cake\Cake\obj\Debug\Cake.pdb

@@ -1,0 +1,183 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow bakery = (DataRow)ViewData["bakeryinfo"];
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#bakeryTime1").on("change", function () {
+            var opts = $("#bakeryTime2 option");
+            $("#bakeryTime2").val("");
+            for (i = 0; i < opts.length; i++) { if (parseInt($(opts[i]).val()) <= parseInt($("#bakeryTime1").val())) { $(opts[i]).attr("disabled", true); } else { $(opts[i]).attr("disabled", false); } }
+        });
+
+        $("#bakery_phone").mask("(999) 999-99-99");
+    });
+</script>
+
+<div class="col-md-12 col-sm-12 col-xs-12 bakeryInfo" style="margin-bottom:40px; float:left; padding:0px;">
+
+    <label style="float:left; font-size:30px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px solid #e6e6e6; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">Pastane Bilgileri</label>
+
+    @using (Html.BeginForm("EditBakeryInfo", "Account"))
+    {
+        String check = ""; String billCheck = "";
+        if ((bool)bakery["isOpen"] == true) { check = "checked"; }
+        if ((bool)bakery["BillWanted"] == true) { billCheck = "checked"; }
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+            <div>
+                <label>Pastane Açıklaması: </label>
+                <input value="@bakery["Description"]" onkeyup="if ($(this).val().length == 0) { $(this).css('border-color', 'red'); } else { $(this).css('border-color', '#cccccc'); }" type="text" id="bakery_description" name="bakery_description" />
+            </div>
+            <div>
+                <label>Kullanıcı Adı: </label>
+                <input value="@bakery["Username"]" onkeyup="if ($(this).val().length == 0) { $(this).css('border-color', 'red'); } else { $(this).css('border-color', '#cccccc'); }" type="text" id="bakery_username" name="bakery_username" />
+            </div>
+            <div>
+                <label>Şifre: </label>
+                <input value="@bakery["Password"]" onkeyup="if ($(this).val().length == 0) { $(this).css('border-color', 'red'); } else { $(this).css('border-color', '#cccccc'); }" type="text" id="bakery_password" name="bakery_password" />
+            </div>
+            <div>
+                <label>Telefon: </label>
+                <input value="@bakery["Phone"]" onkeyup="if ($(this).val() == '(___) ___-__-__') { $(this).css('border-color', 'red'); } else { $(this).css('border-color', '#cccccc'); }" type="text" id="bakery_phone" name="bakery_phone" />
+            </div>
+            <div>
+                <label>İletişim E-posta: </label>
+                <input value="@bakery["Email"]" type="text" id="bakery_email" name="bakery_email" placeholder="Örn. pastane@icaked.com" />
+            </div>
+            <div>
+                <label>Açık Adres: </label>
+                <textarea id="bakery_address" name="bakery_address" style="float:left; resize:none;" placeholder="Örn. Ümit, No:, 2494/3. Sk. No:13, 06810 Çankaya/Yenimahalle/Ankara" >@bakery["SpecificAddress"]</textarea>
+            </div>
+            <div>
+                <label>Açık / Kapalı: </label>
+                <input type="checkbox" id="bakery_open" name="bakery_open" style="width:20px; height:20px; float:left; margin-top:10px;" @check />
+            </div>
+            <div>
+                <label>Fatura İsteniyor: </label>
+                <input type="checkbox" id="bakery_bill" name="bakery_bill" style="width:20px; height:20px; float:left; margin-top:10px;" @billCheck />
+            </div>
+            <div>
+                <label>Min. Paket Tutarı: </label>
+                <input value="@bakery["MinPacket"]" type="text" id="bakery_min_price" name="bakery_min_price" style="float:left;" placeholder="Örn. 20.00 TL" />
+            </div>
+            <div>
+                <label>Pasta Baz Fiyat: </label>
+                <input value="@bakery["CakePrice"]" type="text" id="bakery_cake_price" name="bakery_cake_price" style="float:left;" placeholder="Örn. 20.00 TL" />
+            </div>
+            <div>
+                <label>Cupcake Baz Fiyat: </label>
+                <input value="@bakery["CupcakePrice"]" type="text" id="bakery_cupcake_price" name="bakery_cupcake_price" style="float:left;" placeholder="Örn. 20.00 TL" />
+            </div>
+            <div>
+                <label>Kurabiye Baz Fiyat: </label>
+                <input value="@bakery["CookiePrice"]" type="text" id="bakery_cookie_price" name="bakery_cookie_price" style="float:left;" placeholder="Örn. 20.00 TL" />
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="line-height:20px;">En Erken Teslimat (Hazır Ürün): </label>
+                <select style="float:left;" id="bakery_earliest" name="bakery_earliest">
+                    @{
+                        for (int i = 1; i < 100; i++)
+                        {
+                            if (i == Convert.ToInt32(bakery["earliestDelivery"])) { <option selected value="@i">@i</option>  } else { <option value="@i">@i</option> }
+                        }
+                    }
+                </select>
+                <label style="float:left; margin-left:10px; width:initial; color:black;">Saat</label>
+            </div>
+
+            <div style="margin-bottom:20px; margin-top:10px;">
+                <label style="line-height:20px; width:100%; float:left; text-align:left; padding-bottom:15px;">En Erken Teslimat (Tasarım Pastalar): </label>
+
+                <div style="float:left; width:100%; min-width:600px;">
+                    <label style="width:initial; color:black; float:left; margin-right:10px;">Eğer saat </label>
+                    <select style="width:70px; float:left;" onchange="$('#early1').text($(this).val())" id="bakery_earliest_design1" name="bakery_earliest_design1">
+                        @{
+                            string[] earliest = bakery["earliestDeliveryDesign"].ToString().Split(' ');
+
+                            for(int i = 0; i < 24; i++)
+                            {
+                                String selected = "";
+                                if(i.ToString() == earliest[0].Split(':')[0]) { selected = "selected"; }
+                                <option value="@i:00" @selected>@i:00</option>
+                            }
+                        }
+                    </select>
+                    <label style="width:initial; color:black; float:left; margin-left:10px; margin-right:10px;"> 'den geç ise </label>
+                    <select style="width:50px; float:left;" onchange="$('#early2').text(parseInt($(this).val()) - 1)" id="bakery_earliest_design2" name="bakery_earliest_design2">
+                        @{
+                            for (int i = 1; i < 49; i++)
+                            {
+                                String selected = "";
+                                if (i.ToString() == earliest[1]) { selected = "selected"; }
+                                <option value="@i" @selected>@i</option>
+                            }
+                        }
+                    </select>
+                    <label style="width:initial; color:black; float:left; margin-left:10px; margin-right:10px;"> saat sonra saat </label>
+                    <select style="width:70px; float:left;" onchange="$('#early3').text($(this).val())" id="bakery_earliest_design3" name="bakery_earliest_design3">
+                        @{
+                            for (int i = 0; i < 24; i++)
+                            {
+                                String selected = "";
+                                if (i.ToString() == earliest[2].Split(':')[0]) { selected = "selected"; }
+                                <option value="@i:00" @selected>@i:00</option>
+                            }
+                        }
+                    </select>
+                    <label style="width:initial; color:black; float:left; margin-left:10px; margin-right:10px;"> 'den itibaren </label>
+                </div>
+
+                <div style="float:left; width:100%; min-width:600px;">
+                    <label style="width:100%; float:left; text-align:left; color:black;">Eğer saat <span id="early1">@earliest[0]</span> 'den erken ise aynı gün içinde saat <span id="early3">@earliest[2]</span> 'den itibaren</label>
+                </div>
+            </div>
+
+            <div>
+                <label>Çalışma Saatleri: </label>
+                <select style="width:65px; float:left; padding:0px;" id="bakeryTime1" name="bakeryTime1">
+                    @{
+                        for (int i = 1; i < 25; i++)
+                        {
+                            if (i == Convert.ToInt32(bakery["workHours"].ToString().Split('-')[0].Trim().Replace(":00",""))) { <option selected value="@i">@i:00</option>  } else { <option value="@i">@i:00</option> }
+                        }
+                    }
+                </select>
+                <label style="float:left; margin:0px 7px; width:initial;"> - </label>
+                <select style="width:65px; float:left; padding:0px;" id="bakeryTime2" name="bakeryTime2">
+                    @{
+                        for (int i = 1; i < 25; i++)
+                        {
+                            if (i == Convert.ToInt32(bakery["workHours"].ToString().Split('-')[1].Trim().Replace(":00", ""))) { <option selected value="@i">@i:00</option>  } else { <option value="@i">@i:00</option> }
+                        }
+                    }
+                </select>
+            </div>
+            <div>
+                @{
+                    String[] clas = new String[7];
+                    for(int i = 0; i < bakery["workDays"].ToString().Length; i++)
+                    {
+                        if (bakery["workDays"].ToString()[i] == '1') { clas[i] = "bw_active"; } else { clas[i] = "bw_passive"; }
+                    }
+                }
+                <label>Çalışma Günleri: </label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[0]">Pzt</label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[1]">Sal</label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[2]">Çar</label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[3]">Per</label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[4]">Cum</label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[5]">Cmt</label>
+                <label style="margin:0px;" onclick="$(this).toggleClass('bw_active bw_passive')" class="bakery_weekdays @clas[6]">Paz</label>
+            </div>
+
+            <div>
+                <input type="hidden" id="bakery_weekdays" name="bakery_weekdays" />
+                <input onclick="validateBakeryInfo()" type="submit" class="go_gradient" style="margin-left:150px; margin-top:10px; font-size:14px; font-weight:400; color:black;" value="Kaydet" />
+            </div>
+        </div>
+    }
+</div>

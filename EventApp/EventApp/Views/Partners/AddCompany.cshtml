@@ -1,0 +1,269 @@
+﻿@using EventApp.Models
+@model EventApp.Models.Partner
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Sponsorlar";
+    List<Partner> Companies = (List<Partner>)ViewData["CompanyList"];
+    List<string> Errors = (List<string>)ViewData["CompanyErrors"];
+    string SelectCategory = (string)ViewData["SelectCategory"];
+
+    string NameError = Errors[0];
+    string LogoError = Errors[1];
+    string WebsiteError = Errors[2];
+    string IntroductionError = Errors[3];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    function displayContinue() { 
+        var itemVal = $("#CompanySelect").prop('selectedIndex');
+        if (itemVal == 0) {
+            $("#companyContinue").hide(200);
+        }
+        else {
+            $("#companyContinue").show(200);
+        }
+    }
+
+</script>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("PartnerListEditable", "Partners")">Sponsorlar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Yeni</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <h1 class="page-title" style="float: left;">
+                    Firmalar
+                    <small>Firma Seç-Yeni Firma Ekle...</small>
+                </h1>
+                <h1>
+                    <a href="@Url.Action("TypeCategories", "Partners")" style="float: right;" class="btn green">
+                        Sponsorluk Kategorilerini Belirle
+                    </a>
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet-body">
+                        <div class="mt-element-step">
+                            <div class="row step-background-thin">
+                                <div class="col-md-6 bg-grey-steel mt-step-col active">
+                                    <div class="mt-step-number">1</div>
+                                    <div class="mt-step-title font-grey-cascade">Firma</div>
+                                    <div class="mt-step-content font-grey-cascade">Seç</div>
+                                </div>
+                                <div class="col-md-6 bg-grey-steel mt-step-col">
+                                    <div class="mt-step-number">2</div>
+                                    <div class="mt-step-title font-grey-cascade">Sponsorluk</div>
+                                    <div class="mt-step-content font-grey-cascade">Oluştur</div>
+                                </div>
+                            </div>
+                        </div>
+                        @using (Html.BeginForm("CompanyDetails", "Partners", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal">
+                                <h3 class="block">Eğer, Firma Kayıtlıysa</h3>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Firmalar</label>
+                                    <div class="col-md-5">
+                                        <select onchange="displayContinue()" name="CompanySelect" id="CompanySelect" class="form-control form-control-solid placeholder-no-fix">
+                                            <option value=@Guid.Empty>Seçin...</option>)
+                                            @{
+                                                for (int i = 0; i < Companies.Count; i++)
+                                                {
+                                                    <option value=@Companies[i].Id>@Companies[i].Name</option>
+
+                                                }
+                                            }
+                                        </select>
+                                        @{
+                                            if (SelectCategory == "SelectCategory")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Firma Seçin ya da Yeni Oluşturun </span>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" id="companyContinue" style="display:none;" class="btn btn-outline green button-next" name="CompanySelect" value="CompanySelect">Devam</button>
+                                    </div>
+                                </div>
+
+                                <h3 class="block">değilse, Yeni Firma Ekle </h3>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Firma İsmi (*)</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                        @{
+                                            if (NameError == "NameError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Firma İsmi Gereklidir </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Firma Hakkında (*)</label>
+                                    <div class="col-md-5">
+                                        @Html.TextAreaFor(model => model.Introduction, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Introduction, "", new { @class = "text-danger" })
+                                        @{
+                                            if (IntroductionError == "IntroductionError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Firma Bilgileri Gereklidir </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Firma Logosu (*)</label>
+                                    <div class="col-md-5">                                      
+                                        <input class="form-control form-control-solid placeholder-no-fix" type="file" id="imageinput" name="imageinput" />
+                                        @{
+                                            if (LogoError == "LogoError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Firma Logosu Gereklidir </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Web Sitesi (*)</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Website, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Website, "", new { @class = "text-danger" })
+                                        @{
+                                            if (WebsiteError == "WebsiteError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Web Sitesi Gereklidir </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Facebook</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Facebook, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Facebook, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Twitter</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Twitter, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Twitter, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Instagram</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Instagram, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Instagram, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Linkedin</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Linkedin, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Linkedin, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Youtube</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Youtube, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Youtube, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Pinterest</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Pinterest, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Pinterest, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Google+</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.GooglePlus, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.GooglePlus, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Tumblr</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Tumblr, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Tumblr, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                
+                                <div class="row">
+                                    <div class="col-md-offset-3 col-md-9">
+                                        <button type="submit" id="continue-btn" class="btn btn-outline green button-next" name="Continue" value="Continue">Devam</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+
+
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

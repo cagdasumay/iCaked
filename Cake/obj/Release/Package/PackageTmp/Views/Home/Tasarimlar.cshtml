@@ -1,0 +1,262 @@
+﻿@using Cake.Controllers
+@using System.Data
+@using System.Globalization
+
+@{
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+
+    DataTable madeCakes = new DataTable();
+    String city = (string)Session["city"];
+
+    if (city == "Ankara")
+    {
+        madeCakes = dc.MemoryCacheByQuery("select * from MadeCakes where Category <> N'Erkek Pastaları' and Visible = 'yes'");
+    }
+    else
+    {
+        madeCakes = dc.MemoryCacheByQuery("select * from MadeCakes where Category <> N'Erkek Pastaları' and Visible = 'yes' and SizeOptions >= 10");
+    }
+
+
+    //for (int i = madeCakes.Rows.Count - 1; i >= 0; i--)
+    //{
+    //    DataRow dr = madeCakes.Rows[i];
+    //    if (dr["UserID"].ToString() == "00000000-0000-0000-0000-000000000000" & dr["Category"].ToString() != "Yarışma Pastaları")
+    //    { dr.Delete(); }
+    //}
+    //madeCakes.AcceptChanges();
+
+    madeCakes = dc.sortByDate(madeCakes);
+    String selectStr = "";
+
+    for (int i = 0; i < madeCakes.Rows.Count; i++) { selectStr = selectStr + " UserID = '" + madeCakes.Rows[i]["UserID"] + "' or "; }
+    selectStr = selectStr.Substring(0, selectStr.Length - 4);
+
+    DataTable cakeCats = dc.MemoryCacheByQuery("select * from DesignCategories where Type = 'cake'");
+
+    String category = ""; String h1 = "";
+    if (ViewData["category"] != null)
+    {
+        category = (string)ViewData["category"];
+        string correctedCat = uc.categoryCorrector(category);
+        ViewBag.Title = correctedCat + " Modelleri ve Siparişi";
+
+        if(category == "dogum-gunu-pastalari")
+        {
+            ViewBag.Description = "Doğum günü pastaları için tasarlanan en güzel pastaları burada bulabilir, anında butik pasta siparişi verip sevdiklerinize güzel bir sürpriz yapabilirsiniz.";
+            ViewBag.Keywords = "Doğum Günü Pastaları, doğum günü pastası, doğum günü pastası siparişi, pasta siparişi, butik pasta, butik pasta siparişi, doğum günü pastası,";
+        }
+        else if (category == "bebek-pastalari")
+        {
+            ViewBag.Description = "iCaked kullanıcıları tarafından 3 boyutlu pasta tasarım editörü kullanılarak tasarlanmış birbirinden güzel yüzlerce bebek pastası burada. ";
+            ViewBag.Keywords = "Bebek pastaları, bebek pastası, baby shower pastaları, bebek pastası modelleri, diş buğdayı pastaları, bebek butik pastaları, butik pasta, ";
+        }
+        else if (category == "1-yas-pastalari")
+        {
+            ViewBag.Description = "Bebeğinizin 1. yaş gününü unutulmaz kılın, kullanıcılar tarafından tasarlanan en güzel 1 yaş butik pastalar arasından en beğendiğinizi anında sipariş verin";
+            ViewBag.Keywords = "Bebek pastaları, bebek pastası, baby shower pastaları, 1 yaş pastaları, 1 yaş pastası, butik pasta, pasta siparişi";
+        }
+        else if (category == "cizgi-film-pastalari")
+        {
+            ViewBag.Description = "Çocuğunuz için unutulmaz bir doğum günü partisi hazırlamak ister misiniz? Ona en sevdiği çizgi film karakterlerinden oluşan bir butik pasta siparişi verin.";
+            ViewBag.Keywords = "Çizgi film pastaları, Elsa pastası, karlar ülkesi pastası, örümcek adam butik pasta, pokemon butik pasta, şimşek McQueen butik pasta, pasta siparişi";
+        }
+        else if (category == "sevgili-pastalari")
+        {
+            ViewBag.Description = "Sevgilinize özel bir pasta yaptırarak ona unutmayacağı bir sürpriz yaşamak ister misiniz? En güzel sevgili pastasını seçin ve hemen sipariş verin.";
+            ViewBag.Keywords = "Sevgililer günü pastası, sevgiliye pasta, sevgili pastası, sevgiliye özel pasta, sevgili butik pasta, butik pasta siparişi, sevgiliye pasta siparişi, sevgililer günü pasta siparişi";
+        }
+        else if (category == "kutlama-pastalari")
+        {
+            ViewBag.Description = "Arkadaşınıza işe giriş hediyesi veya bir yıldönümü mü kutlayacaksınız? Tam ağzınıza layık kutlama pastalarına bir göz atın…";
+            ViewBag.Keywords = "Yeni iş pastası, yıldönümü pastası, kutlama pastası, butik pasta, pasta siparişi, tasarım pasta, özel pasta siparişi";
+        }
+        else if (category == "yarisma-pastalari")
+        {
+            ViewBag.Description = "Yarışmaya katılın ve en güzel butik pasta ve tasarım pastalardan kazanma şansı yakalayın…";
+            ViewBag.Keywords = "Yarışma pastası, yarışma pastaları, kutlama pastası, butik pasta, pasta siparişi, tasarım pasta, özel pasta siparişi";
+        }
+
+        h1 = correctedCat;
+    }
+    else
+    {
+        ViewBag.Title = "Tasarım Pastalar – Tasarım Pasta Modelleri ve Siparişi";
+        ViewBag.description = "iCaked’in Tasarım Pastalar bölümünden yüzlerce kullanıcı tarafından tasarlanan binlerce çeşit butik pasta modeli bulabilir ve online pasta siparişi verebilirsiniz. Sevdikleriniz için en güzel doğum günü pastası burada!";
+        ViewBag.Keywords = "tasarım pasta, butik pasta, doğum günü pastası, butik pasta modelleri, doğum günü pastası modelleri, doğum günü pastası örnekleri, tasarım pasta örnekleri, şeker hamurlu pasta modelleri";
+        h1 = "Tasarım Pastalar";
+    }
+}
+
+<script>
+
+    $(document).ready(function () {
+        if ("@category" != "") {
+            var desc; var category;
+            if ("@category" == "dogum-gunu-pastalari") {
+                category = "Doğum Günü Pastaları";
+                desc = "Doğum günü pastaları için tasarlanan en güzel pastaları burada bulabilir, anında butik pasta siparişi verip sevdiklerinize güzel bir sürpriz yapabilirsiniz.";
+            }
+            else if ("@category" == "bebek-pastalari") {
+                category = "Bebek Pastaları";
+                desc = "iCaked kullanıcıları tarafından 3 boyutlu pasta tasarım editörü kullanılarak tasarlanmış birbirinden güzel yüzlerce bebek pastası burada. ";
+            }
+            else if ("@category" == "1-yas-pastalari") {
+                category = "1 Yaş Pastaları";
+                desc = "Bebeğinizin 1. yaş gününü unutulmaz kılın, kullanıcılar tarafından tasarlanan en güzel 1 yaş butik pastalar arasından en beğendiğinizi anında sipariş verin";
+            }
+            else if ("@category" == "cizgi-film-pastalari") {
+                category = "Çizgi Film Pastaları";
+                desc = "Çocuğunuz için unutulmaz bir doğum günü partisi hazırlamak ister misiniz? Ona en sevdiği çizgi film karakterlerinden oluşan bir butik pasta siparişi verin.";
+            }
+            else if ("@category" == "sevgili-pastalari") {
+                category = "Sevgili Pastaları";
+                desc = "Sevgilinize özel bir pasta yaptırarak ona unutmayacağı bir sürpriz yaşamak ister misiniz? En güzel sevgili pastasını seçin ve hemen sipariş verin.";
+            }
+            else if ("@category" == "kutlama-pastalari") {
+                category = "Kutlama Pastaları";
+                desc = "Arkadaşınıza işe giriş hediyesi veya bir yıldönümü mü kutlayacaksınız? Tam ağzınıza layık kutlama pastalarına bir göz atın…";
+            }
+            else if ("@category" == "yarisma-pastalari") {
+                category = "Yarışma Pastaları";
+                desc = "Yarışmaya katılın ve en güzel butik pasta ve tasarım pastalardan kazanma şansı yakalayın…";
+            }
+            console.log(desc);
+            filterIncomingDesigns(null, category);
+            $('#filterIncomingDesigns option[value="' + category + '"]').attr('selected', 'selected');
+        }
+
+        var cat = "@category";
+        if (cat != "") {
+            $("#designs-check-filter-div input[type=checkbox]").not($("#design-" + cat.toLowerCase() + "-check")).trigger('click');
+        }
+    });
+</script>
+
+<div class="container-fluid" style="margin-top:-60px; margin-bottom:-100px; background-size:contain; padding-bottom:200px;">
+    <div class="container" style="margin-top:30px; padding:0px;">
+
+        <div id="design-sapka-wrapper" style="width:100%; float:left; text-align:center; margin-bottom:10px; margin-top:50px;">
+            <img src="~/Images/Site/sapka_icon2.png" style="width:60px;" />
+        </div>
+
+        <h1 id="tasarimlarh1" style="width:100%; float:left; text-align:center; font-size:36px; margin-bottom:20px; color:#3f2518;">@h1</h1>
+
+        <label class="hidden-xs" style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:50px;">
+            iCaked kullanıcıları tarafından 3 boyutlu olarak tasarlanan tüm butik pastalar burada sergilenmektedir.
+            <br />
+
+            @{
+                if (String.IsNullOrEmpty(category) == false)
+                {
+                    <span id="tasarimlar-upper-description">
+                        @ViewBag.Description
+                    </span>
+                }
+                else
+                {
+                    <span id="tasarimlar-upper-description">
+                        Beğendiğiniz tasarım pasta fotoğrafına tıklayarak daha yakından inceleyebilirsiniz.
+                        Dilerseniz beğendiğiniz pastayı editörde açıp tasarım pasta üzerinde değişiklik yapabilir veya sepete ekle butonuyla anında online pasta siparişi verebilirsiniz.
+                        Bunun yanı sıra pasta tasarımcılarının tüm pastalarını inceleyebilir, üye olarak beğendiğiniz tasarımcıları takibe alabilirsiniz.
+                        iCaked kullanıcıları tarafından tasarlanan yüzlerce tasarım pasta burada…
+                    </span>
+                }
+            }
+        </label>
+
+        <div class="row" style="padding:0px; width:100%; float:left;">
+
+            <div style="width:100%; float:left; background:white; padding:0px;">
+
+                <div id="design-main-mobile-filter" class="col-xs-12" style="float:left; display:none; text-align:center; margin-bottom:20px;">
+                    <label style="width:100%; float:left; font-size:16px; font-weight:500; padding:10px; border-radius:50px; background:linear-gradient(to bottom,#f4f5f5,#dfdddd); border:1px solid #e0e0e0;" onclick="toggleMobileFilter('#designs-main-filter-div', this);">Filtrele</label>
+                    <div id="design-mobile-search" style="width:100%; float:left; margin-top:15px;">
+                        <input onkeyup="searchIncomingDesigns(this)" type="text" placeholder="Ürün Arama" style="width:100%; float:left; border:2px solid #f0f0f0; border-radius:3px; padding:10px; font-size:18px;" />
+                    </div>
+                 </div>
+
+                <div id="designs-main-filter-div" class="col-md-3 col-sm-5 col-md-12" style="padding:0px;">
+                    <div style="width:100%; float:left; background:#f5f5f5; border-radius:5px; padding:13px; margin-top:7px;">
+                        <div id="design-desktop-search" style="width:100%; float:left; margin-bottom:15px;">
+                            <input onkeyup="searchIncomingDesigns(this)" type="text" placeholder="Ürün Arama" style="width:100%; float:left; border:1px solid #f0f0f0; border-radius:3px; padding:10px; font-size:18px;" />
+                        </div>
+                        <div style="width:100%; float:left;">
+                            <select id="filterIncomingDesigns" onchange="sortIncomingDesigns(this)" style="width:100%; border:1px solid #f0f0f0; border-radius:3px; padding:11px 10px; font-size:18px;">
+                                <option disabled selected>Sıralama</option>
+                                <option value="newest">En Yeniler</option>
+                                <option value="popular">En Sevilenler</option>
+                                <option value="priceAsc">Fiyata Göre Azalan</option>
+                                <option value="priceDesc">Fiyata Göre Artan</option>
+                            </select>
+                        </div>
+
+                        <label style="width:100%; float:left; font-size:20px; text-align:center; padding-top:10px;">Ürün Çeşitleri</label>
+
+                        <div id="designs-check-filter-div" style="width:100%; float:left; margin-top:10px; border:1px solid #f0f0f0; padding:10px; border-radius:3px; background:white; color:dimgray;">
+                            <div style="width:100%; float:left; padding:3px 0px;">
+                                <input id="design-dogum-gunu-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">Doğum Günü Pastaları</label>
+                            </div>
+                            <div style="width:100%; float:left; padding:3px 0px;">
+                                <input id="design-1-yas-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">1 Yaş Pastaları</label>
+                            </div>
+                            <div style="width:100%; float:left; padding-top:5px;">
+                                <input id="design-bebek-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">Bebek Pastaları</label>
+                            </div>
+                            <div style="width:100%; float:left; padding-top:5px;">
+                                <input id="design-cizgi-film-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">Çizgi Film Pastaları</label>
+                            </div>
+                            <div style="width:100%; float:left; padding-top:5px;">
+                                <input id="design-sevgili-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">Sevgili Pastaları</label>
+                            </div>
+                            <div style="width:100%; float:left; padding-top:5px;">
+                                <input id="design-kutlama-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">Kutlama Pastaları</label>
+                            </div>
+                            <div style="width:100%; float:left; padding-top:5px;">
+                                <input id="design-yarisma-pastalari-check" checked type="checkbox" style="width:20px; height:20px; float:left; margin-right:10px; margin-top:1px;" />
+                                <label style="float:left; font-size:15px;">Yarışma Pastaları</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-9 col-sm-7 col-xs-12" style="padding-right:0px; margin-top:-7px; float:left;" id="filter-design-wrapper">
+                    @{
+                        if (madeCakes.Rows.Count > 0)
+                        {
+                            for (int i = 0; i < madeCakes.Rows.Count; i++)
+                            {
+                                DataRow design = madeCakes.Rows[i];
+                                String img = "/Images/MadeCakes/" + design["MadeID"] + "/designImg-275x275.png";
+
+                                String designType = uc.cleanseUrlString(design["Type"].ToString().Replace("\r\n", ""));
+                                String designName = uc.cleanseUrlString(design["Name"].ToString()) + "-" + design["MadeID"].ToString().Split('-')[0];
+                                String price = uc.ArrangePrice(design["PriceInterval"].ToString());
+
+                                <div class="col-md-4 col-sm-6 col-xs-6 design-product filter-design" style="padding:1.5%; float:left;" data-price="@design["PriceInterval"].ToString()" data-name="@design["Name"]" data-size="@design["SizeOptions"]" data-category="@design["Category"].ToString().Trim()" data-date="@Convert.ToDateTime(design["DateTime"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-likes="@design["Likes"]">
+                                    <a  href="@Url.Action("Tasarim","Home", new { type = designType, designName = designName })">
+                                        <div class="new-product-wrapper" style="padding:1%;">
+                                            <img class="new-product-img" alt="ürün tasarım pasta" src="@img" onclick="$(this).parent().parent().submit()" />
+                                            <div class="new-product-div">
+                                                <span class="new-product-name">@design["Name"]</span>
+                                                <span class="new-product-description">@design["SizeOptions"] kişilik</span>
+                                                <span class="new-product-price"> @price.Split('.')[0] <span style="font-size:16px; margin-left:-7px;">.@price.Split('.')[1] TL</span></span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

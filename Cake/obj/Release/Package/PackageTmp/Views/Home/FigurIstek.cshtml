@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "Boutique Pastry Figures - 3D Pie Design";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "If you can not find the 3D figure you want, you can contact us with the request form and it will be added as soon as possible.";
+    ViewBag.Keywords = "Design cake figures, boutique cake figures, design cake samples, boutique cake samples, candy pastry figures, candy pastry patterns, candy cake pastry";
+
+    bool istekFigurTaken = false;
+
+    if (TempData["istekFigurTaken"] != null) { istekFigurTaken = true; } else { istekFigurTaken = false; }
+}
+
+<div class="container-fluid" >
+    <div class="container" style="background:white; padding:3%; padding-bottom:150px; padding-top:100px;">
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:70px; text-align:center;">
+
+                @{
+                    if (istekFigurTaken == false)
+                    {
+                        <img alt="istek figür" src="~/Images/Site/thanks_icon.png" style="width:50px; margin-bottom:10px;" />
+
+                        <h1 style="width:100%; float:left; font-size:22px; text-align:center;">You Cake It, We Bake It</h1>
+                        <h2 style="width:100%; float:left; padding:10px 0px; font-size:16px; text-align:center; padding-bottom:0px;">In the lower form you can describe the desired figure in detail.</h2>
+                        <h3 style="width:100%; float:left; padding:10px 0px; font-size:14px; text-align:center; padding-bottom:30px;">Your design request will be added to your design as soon as possible.</h3>
+
+                        using (Html.BeginForm("IstekFigurForm", "Home", FormMethod.Post, new { enctype = "multipart/form-data", id = "istekFigurForm" }))
+                        {
+                            <div style="width:100%; float:left;">
+                                <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="100" id="istekFigurName" name="istekFigurName" type="text" placeholder="Name Surname" />
+                                <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="istekFigurMail" name="istekFigurMail" type="text" placeholder="E-Mail" />
+                            </div>
+
+                                <div style="width:100%; float:left; position:relative;">
+                                    <textarea onkeyup="validateKeyup(this)" autocomplete="off" maxlength="1500" id="istekFigurMessage" name="istekFigurMessage" placeholder="Describe your 3D figure"></textarea>
+                                    <input id="istekFigurImg" name="istekFigurImg" type="file" style="display:none;" />
+                                    <label for="istekFigurImg" class="gray-gradient" style="font-size:16px; font-weight:400; position:absolute; bottom:12px; right:5px;">Add Picture</label>
+                                </div>
+
+                                <div style="float:right; width:100%; margin-top:10px; text-align:center; display:none;" id="istekFigurThumbnailWrapper">
+                                    <img alt="figürünüzü açıklayın" src="" id="istekFigurThumbnail" style="width:100%; padding:5px; border:1px solid #d6d6d6; box-shadow: 0px 1px 5px -3px grey; border-radius:3px;" />
+                                </div>
+
+                                <div style="width:100%; float:left;">
+                                    <input id="istekFigurSubmit" class="black-gradient" type="submit" style="border-radius:30px; border:none;" onclick="validateFigurForm()" value="Send" />
+                                    <img alt="figür isteğiniz alınmıştır" id="istekFigurLoading" src="~/Images/Site/loading_mini.gif" style="width:25px; border-radius:50px; margin-top:20px; display:none;" />
+                                </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="width:100%; float:left; padding:150px 0px;">
+                            <div style="width:100%; float:left; text-align:center; padding-bottom:40px;">
+                                <img alt="iletişime geçeceğiz" src="~/Images/Site/success_icon.png" style="width:50px; border-radius:50px; box-shadow: 0px 1px 5px 0px #909090;" />
+                            </div>
+                            <label style="width:100%; float:left; text-align:center; font-size:18px;">We Thank You.</label>
+                            <label style="width:100%; float:left; text-align:center; font-size:14px; padding-top:15px;">Your request for a figure has been received. We will contact you as soon as possible.</label>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

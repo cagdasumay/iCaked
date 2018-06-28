@@ -1,0 +1,148 @@
+﻿@using EventApp.Models
+@model EventApp.Models.PartnerEvent
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Sponsorlar";
+    Partner thispartner = (Partner)ViewData["Partner"];
+    String photo = "../PartnerLogo/" + thispartner.Id + ".jpg";
+
+    string ratingerror = (string)ViewData["ratingerror"];
+    string categoryerror = (string)ViewData["categoryerror"];
+}
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="index.html">Add New Partner</a>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title">
+            Partner
+            <small>Sponsorship Details...</small>
+        </h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet-body">
+                        <div class="mt-element-step">
+                            <div class="row step-background-thin">
+                                <div class="col-md-6 bg-grey-steel mt-step-col">
+                                    <div class="mt-step-number">1</div>
+                                    <div class="mt-step-title uppercase font-grey-cascade">Select</div>
+                                    <div class="mt-step-content font-grey-cascade">Company</div>
+                                </div>
+                                <div class="col-md-6 bg-grey-steel mt-step-col active">
+                                    <div class="mt-step-number">2</div>
+                                    <div class="mt-step-title uppercase font-grey-cascade">Enter</div>
+                                    <div class="mt-step-content font-grey-cascade">Sponsorship Details</div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        @using (Html.BeginForm("EditSponsorship", "Partners", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal">
+                                <div class="row">
+                                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="mt-card-item">
+                                            <div class="mt-card-avatar mt-overlay-4">
+                                                <img src="@photo" />
+                                                <div class="mt-overlay">
+                                                    <div class="mt-info font-white">
+                                                        <div class="mt-card-content">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-9 col-md-8 col-sm-8 col-xs-12">
+                                        <br />
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-md-offset-1">Sponsorship Model</label>
+                                            <div class="col-md-7">
+                                                @Html.EditorFor(model => model.SponsorshipContent, new { htmlAttributes = new { @placeholder = "Ex: Golden, Silver, Dinner, Coffee Break", @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.SponsorshipContent, "", new { @class = "text-danger" })
+                                                @{
+                                                    if (categoryerror == "categoryerror")
+                                                    {
+                                                        <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Please indicate Category of Sponsorship </span>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3 col-md-offset-1">Rating</label>
+                                            <div class="col-md-7">
+                                                @Html.EditorFor(model => model.Rating, new { htmlAttributes = new { @placeholder = "1(Lowest)-100(Highest)", @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Rating, "", new { @class = "text-danger" })
+                                                @{
+                                                    if (ratingerror == "ratingerror")
+                                                    {
+                                                        <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Please indicate Rating of Sponsorship </span>
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-offset-4 col-md-8">
+                                                <a href="@Url.Action("PartnerListEditable","Partners")" id="continue-btn" class="btn btn-success">
+                                                    Back
+                                                </a>
+                                                <button type="submit" id="continue-btn" class="btn btn-outline green button-next" name="CompanySelect" value="CompanySelect">Create</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                                    }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+
+
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

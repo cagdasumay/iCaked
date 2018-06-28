@@ -1,0 +1,19 @@
+{
+  "name": "inf_pasta",
+  "version": "0.0.0",
+  "description": "3D pasta",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Inf",
+  "license": "Infinia License",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "three": "~0.77.1",
+    "three-decal-geometry": "~1.0.0",
+    "three-mtl-loader": "^1.0.1",
+    "three-obj-loader": "~1.0.2",
+    "webpack-shell-plugin": "~0.4.2"
+  }
+}

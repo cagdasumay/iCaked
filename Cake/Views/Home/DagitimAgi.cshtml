@@ -1,0 +1,91 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using Cake.Models
+
+@{
+    ViewBag.Title = "Distribution Network - Posting Zones for Pastry";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "Locations served by iCaked.com pastries and minimum package amounts.";
+    ViewBag.keywords = "Pastry distribution, ankara pastry, ankara pastry order, pastry delivery areas, distribution network, cake order, Istanbul cake order";
+
+    DatabaseController dc = new DatabaseController();
+    DataTable networks = dc.DBQueryGetter("select * from BakeryNetwork order by BakeryID asc, cast(MinPacket as int) asc");
+    DataTable bakeries = dc.DBQueryGetter("select * from ForeignBakeries");
+}
+
+<style>
+    td {
+        text-transform: lowercase;
+        text-transform: capitalize;
+    }
+
+    tr:nth-child(2n+1) td {
+        background: #f5f5f5;
+    }
+
+    thead td {
+        font-size: 16px;
+        background: white !important;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="container" style="background:white; padding:3%; padding-bottom:150px;">
+        <div class="row">
+            <h1 style="float:left; width:100%; font-size:32px; font-weight:500; padding-bottom:15px;">
+                Delivery Network
+            </h1>
+            <h2 style="float:left; width:100%; font-size:16px; font-weight:500; padding-bottom:25px; padding-top:10px;">
+                Areas served by bakeries in iCaked.com
+            </h2>
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; margin-top:20px;">
+
+                <table style="width:100%; float:left; text-align:center; line-height:30px;">
+                    <thead>
+                        <tr>
+                            <td>Bakery</td>
+                            <td>Province</td>
+                            <td>District</td>
+                            <td>Minimum Packet</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            List<DagitimAgi> dagitimlar = new List<DagitimAgi>();
+
+                            for (int i = 0; i < networks.Rows.Count; i++)
+                            {
+                                DataRow net = networks.Rows[i];
+                                DagitimAgi dagitim = new DagitimAgi();
+                                dagitim.bakery = net["BakeryID"].ToString();
+                                dagitim.district = net["District"].ToString();
+
+                                int index = dagitimlar.FindIndex(f => f.bakery == dagitim.bakery & f.district == dagitim.district);
+
+                                if (index < 0)
+                                {
+                                    string bakeryName = "";
+                                    for (int i2 = 0; i2 < bakeries.Rows.Count; i2++)
+                                    {
+                                        if (bakeries.Rows[i2]["BakeryID"].ToString().ToLower() == net["BakeryID"].ToString().ToLower()) { bakeryName = bakeries.Rows[i2]["Name"].ToString(); }
+                                    }
+
+                                    <tr>
+                                        <td style="font-weight:500; font-size:16px;">@bakeryName</td>
+                                        <td>@net["ProvinceName"].ToString().ToLower()</td>
+                                        <td>@net["DistrictName"].ToString().ToLower()</td>
+                                        <td style="font-weight:500; font-size:16px;">@net["MinPacket"] TL</td>
+                                    </tr>
+
+                                    dagitimlar.Add(dagitim);
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

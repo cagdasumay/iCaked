@@ -1,0 +1,208 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow bakery = (DataRow)Session["bakeryinfo"];
+
+    DataTable cakeContents = dc.DBQueryGetter("select * from BakeryContents where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cake'");
+    DataTable cupcakeContents = dc.DBQueryGetter("select * from BakeryContents where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cupcake'");
+    DataTable cookieContents = dc.DBQueryGetter("select * from BakeryContents where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cookie'");
+}
+
+<label style="float:left; font-size:30px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px solid #e6e6e6; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">Ürün İçerikleri</label>
+
+<div id="cakeContentDialog">
+    @using (Html.BeginForm("AddEditBakeryContent", "Bakery", FormMethod.Post, new { id = "addCakeContentForm", onsubmit = "validateAddContent(this)" }))
+    {
+        <div style="width:100%; float:left; text-align:center;">
+            <img src="~/Images/Site/cake_vector_icon.png" style="width:50px; margin:10px 0px; -webkit-filter: drop-shadow(0px 1px 2px gray);" />
+        </div>
+        <div style="width:100%; float:left;">
+            <label style="float:left; width:100%; text-align:center; font-size:14px;">İç Malzeme</label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:100%; float:left; text-align:center;">
+                <input autocomplete="off" name="content" type="text" style="border:1px solid #cccccc; border-radius:3px; background:white; width:100%; padding:7px 5px;" placeholder="Örn. Çikolatalı,Cevizli,Kestaneli" />
+            </div>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input type="submit" class="cart_gradient" value="Tamam" style="float:left;" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <label onclick="clearBakeryContent('cake')" class="yukle_gradient" style="font-size:16px; font-weight:400; padding:5px 10px; float:right;">İptal</label>
+            </div>
+        </div>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="what" value="add" />
+        <input type="hidden" name="type" value="cake" />
+        <input type="hidden" name="bakeryID" value="@bakery["BakeryID"]" />
+    }
+</div>
+
+<div id="cupcakeContentDialog">
+    @using (Html.BeginForm("AddEditBakeryContent", "Bakery", FormMethod.Post, new { id = "addCupcakeContentForm", onsubmit = "validateAddContent(this)" }))
+    {
+        <div style="width:100%; float:left; text-align:center;">
+            <img src="~/Images/Site/cupcake_vector_icon.png" style="width:50px; margin:10px 0px; -webkit-filter: drop-shadow(0px 1px 2px gray);" />
+        </div>
+        <div style="width:100%; float:left;">
+            <label style="float:left; width:100%; text-align:center; font-size:14px;">İç Malzeme</label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:100%; float:left; text-align:center;">
+                <input autocomplete="off" name="content" type="text" style="border:1px solid #cccccc; border-radius:3px; background:white; width:100%; padding:7px 5px;" placeholder="Örn. Çikolatalı,Cevizli,Kestaneli" />
+            </div>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input type="submit" class="cart_gradient" value="Tamam" style="float:left;" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <label onclick="clearBakeryContent('cupcake')" class="yukle_gradient" style="font-size:16px; font-weight:400; padding:5px 10px; float:right;">İptal</label>
+            </div>
+        </div>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="what" value="add" />
+        <input type="hidden" name="type" value="cupcake" />
+        <input type="hidden" name="bakeryID" value="@bakery["BakeryID"]" />
+    }
+</div>
+
+<div id="cookieContentDialog">
+    @using (Html.BeginForm("AddEditBakeryContent", "Bakery", FormMethod.Post, new { id = "addCookieContentForm", onsubmit = "validateAddContent(this)" }))
+    {
+        <div style="width:100%; float:left; text-align:center;">
+            <img src="~/Images/Site/cookie_vector_icon.png" style="width:50px; margin:10px 0px; -webkit-filter: drop-shadow(0px 1px 2px gray);" />
+        </div>
+        <div style="width:100%; float:left;">
+            <label style="float:left; width:100%; text-align:center; font-size:14px;">İç Malzeme</label>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:100%; float:left; text-align:center;">
+                <input autocomplete="off" name="content" type="text" style="border:1px solid #cccccc; border-radius:3px; background:white; width:100%; padding:7px 5px;" placeholder="Örn. Çikolatalı,Cevizli,Kestaneli" />
+            </div>
+        </div>
+        <div style="width:100%; float:left; margin-top:10px;">
+            <div style="width:50%; float:left; text-align:center;">
+                <input type="submit" class="cart_gradient" value="Tamam" style="float:left;" />
+            </div>
+            <div style="width:50%; float:left; text-align:center;">
+                <label onclick="clearBakeryContent('cookie')" class="yukle_gradient" style="font-size:16px; font-weight:400; padding:5px 10px; float:right;">İptal</label>
+            </div>
+        </div>
+        <input type="hidden" name="ID" value="" />
+        <input type="hidden" name="what" value="add" />
+        <input type="hidden" name="type" value="cookie" />
+        <input type="hidden" name="bakeryID" value="@bakery["BakeryID"]" />
+    }
+</div>
+
+<div class="row" style="padding:0px;">
+    <div class="col-md-4 col-sm-4 col-xs-12" style="padding:0px 10px; margin-bottom:30px; float:left;">
+        <div style="width:100%; float:left; padding:20px 10px; padding-bottom:10px; border:3px solid #f0f0f0;">
+            <div class="bakeryContents-vectorImg">
+                <img src="~/Images/Site/cake_vector_icon.png" />
+                <label style="color:#d89d5b;">Pasta</label>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;">
+                <label style="float:left; width:50%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px solid #e6e6e6;">İç Malzeme</label>
+                <label style="float:left; width:50%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px solid #e6e6e6;">Eylem</label>
+                @{
+                    for (int i = 0; i < cakeContents.Rows.Count; i++)
+                    {
+                        DataRow content = cakeContents.Rows[i];
+                        <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6;">
+                            <div style="width:50%; float:left; padding:12px 0px; padding-bottom:13px;">
+                                <label class="priceNumber" style="float:left; width:100%; text-align:center; font-size:14px; color:gray; ">@content["Inside"]</label>
+                            </div>
+                            <div style="width:50%; float:left; padding:10px 0px; text-align:center;">
+                                <img onclick="editBakeryContent('@content["Inside"]','cake','@content["ID"]')" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                                <a onclick="confirmAction('Seçtiğiniz fiyat bilgisi silinecektir. Onaylıyor musunuz?')" style="color:black; text-decoration:none;" href="@Url.Action("DeleteBakeryContent","Bakery", new { contentID = content["ID"] })">
+                                    <img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; cursor:pointer; padding:5px; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" />
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div style="width:100%; float:left; text-align:center; margin-top:15px;">
+                <div onclick="$('#cakeContentDialog').fadeToggle(300); $('#addCakeContentForm').find('input[name=what]').val('add');" class="cart_gradient" style="cursor:pointer;">
+                    <img src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Ekle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-12" style="padding:0px 10px; margin-bottom:30px; float:left;">
+        <div style="width:100%; float:left; padding:20px 10px; padding-bottom:10px; border:3px solid #f0f0f0;">
+            <div class="bakeryContents-vectorImg">
+                <img src="~/Images/Site/cupcake_vector_icon.png" />
+                <label style="color:#a95356;">Cupcake</label>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;">
+                <label style="float:left; width:50%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px solid #e6e6e6;">İç Malzeme</label>
+                <label style="float:left; width:50%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px solid #e6e6e6;">Fiyat</label>
+                @{
+                    for (int i = 0; i < cupcakeContents.Rows.Count; i++)
+                    {
+                        DataRow content = cupcakeContents.Rows[i];
+                        <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6;">
+                            <div style="width:50%; float:left; padding:12px 0px; padding-bottom:13px;">
+                                <label class="priceNumber" style="float:left; width:100%; text-align:center; font-size:14px; color:gray; ">@content["Inside"]</label>
+                            </div>
+                            <div style="width:50%; float:left; padding:10px 0px; text-align:center;">
+                                <img onclick="editBakeryContent('@content["Inside"]','cupcake','@content["ID"]')" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                                <a onclick="confirmAction('Seçtiğiniz fiyat bilgisi silinecektir. Onaylıyor musunuz?')" style="color:black; text-decoration:none;" href="@Url.Action("DeleteBakeryContent","Bakery", new { contentID = content["ID"] })">
+                                    <img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; cursor:pointer; padding:5px; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" />
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div style="width:100%; float:left; text-align:center; margin-top:15px;">
+                <div onclick="$('#cupcakeContentDialog').fadeToggle(300); $('#addCupcakeContentForm').find('input[name=what]').val('add');" class="cart_gradient" style="cursor:pointer;">
+                    <img src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Ekle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-4 col-xs-12" style="padding:0px 10px; margin-bottom:30px; float:left;">
+        <div style="width:100%; float:left; padding:20px 10px; padding-bottom:10px; border:3px solid #f0f0f0;">
+            <div class="bakeryContents-vectorImg">
+                <img src="~/Images/Site/cookie_vector_icon.png" />
+                <label style="color:#3f2518;">Kurabiye</label>
+            </div>
+            <div style="width:100%; float:left; margin-top:20px;">
+                <label style="float:left; width:50%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px solid #e6e6e6;">İç Malzeme</label>
+                <label style="float:left; width:50%; text-align:center; padding:10px 0px; font-size:14px; border-bottom:1px solid #e6e6e6;">Fiyat</label>
+                @{
+                    for (int i = 0; i < cookieContents.Rows.Count; i++)
+                    {
+                        DataRow content = cookieContents.Rows[i];
+                        <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6;">
+                            <div style="width:50%; float:left; padding:12px 0px; padding-bottom:13px;">
+                                <label class="priceNumber" style="float:left; width:100%; text-align:center; font-size:14px; color:gray; ">@content["Inside"]</label>
+                            </div>
+                            <div style="width:50%; float:left; padding:10px 0px; text-align:center;">
+                                <img onclick="editBakeryContent('@content["Inside"]','cookie','@content["ID"]')" src="~/Images/Site/edit_icon.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; padding:5px; border:1px solid #cccccc; border-radius:3px; cursor:pointer;" />
+                                <a onclick="confirmAction('Seçtiğiniz fiyat bilgisi silinecektir. Onaylıyor musunuz?')" style="color:black; text-decoration:none;" href="@Url.Action("DeleteBakeryContent","Bakery", new { contentID = content["ID"] })">
+                                    <img src="~/Images/Site/close_icon2.png" style="background: linear-gradient(to bottom,#FCFCFC 0,#F7F7F7 100%); width:25px; cursor:pointer; padding:5px; border:1px solid #cccccc; border-radius:3px; margin-left:5px;" />
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div style="width:100%; float:left; text-align:center; margin-top:15px;">
+                <div onclick="$('#cookieContentDialog').fadeToggle(300); $('#addCookieContentForm').find('input[name=what]').val('add');" class="cart_gradient" style="cursor:pointer;">
+                    <img src="~/Images/Site/plus_icon2_white.png" style="float:left; width:15px; margin-top:3px; cursor:pointer;" />
+                    <label style="float:left; margin-left:7px; cursor:pointer;">Ekle</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

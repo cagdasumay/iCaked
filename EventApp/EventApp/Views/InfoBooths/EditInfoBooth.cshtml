@@ -1,0 +1,206 @@
+﻿@using EventApp.Models
+@model EventApp.Models.InfoBooth
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Bilgi Standı";
+
+    string SavedUsage = (string)ViewData["Usage"];
+    Guid? PhotoID = (Guid?)ViewData["Photo"];
+    String photo;
+    if (PhotoID != null)
+    {
+        photo = "../Images/InfoBooth/" + PhotoID.ToString() + ".jpg";
+    }
+    else
+    {
+        photo = "Foto Yok";
+    }
+    string NameInfoBooth = (string)ViewData["NameInfoBooth"];
+    Guid ChangeThis = (Guid)ViewData["ThisInfoBooth"];
+
+    string From = (string)ViewData["FromPage"];
+    Guid? FromDetails = (Guid?)ViewData["FromDetails"];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setTimeout(function () { $(this).scrollTop(0); }, 1);
+    });
+</script>
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("InfoBoothOrg", "InfoBooths")">Bilgi Standı</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>@NameInfoBooth</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title">
+            Bilgi Standı
+            <small>Düzenle</small>
+        </h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet box">
+                        <div class="portlet-title" style="background-color: #36c6d3;">
+                            <div class="caption">
+                                <i class="icon-user-following font-white"></i>
+                                <span class="caption-subject font-white sbold">@NameInfoBooth Bilgilerini Düzenle</span>
+                            </div>
+                        </div>
+
+                        @using (Html.BeginForm("ChangeInfoBoot", "InfoBooths", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal" style="padding-top: 20px;">
+
+                                @{
+                                    if (photo != "Foto Yok")
+                                    {
+                                        <div class="form-group">
+                                            <div class="profile-userpic photo mt-card-round col-md-12 col-sm-12 col-xs-12">
+                                                <img src="@photo" style="width: 120px; height: 120px" class="img-responsive" alt="">
+                                            </div>
+                                            <label class="control-label col-md-4">Fotoğrafı değiştir</label>
+                                            <div class="col-md-5">
+                                                <label class="control-label visible-ie8 visible-ie9">Password</label>
+                                                <input class="form-control form-control-solid placeholder-no-fix" type="file" id="imageinput" name="imageinput" />
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-4">İsim (*)</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-4">Açıklama (*)</label>
+                                    <div class="col-md-5">
+                                        @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @rows = "6" })
+                                        @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                @{
+                                    if (photo == "Foto Yok")
+                                    {
+                                        <div class="form-group">
+                                            <label class="control-label col-md-4">Görsel</label>
+                                            <div class="col-md-5">
+                                                <label class="control-label visible-ie8 visible-ie9">Password</label>
+                                                <input class="form-control form-control-solid placeholder-no-fix" type="file" id="imageinput" name="imageinput" />
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-4">Bilgi İçeriği Seçmelisiniz!</label>
+                                    <div class="col-md-5">
+                                        <select name="Usage" id="Usage" class="form-control form-control-solid">
+                                            @{
+                                                if (SavedUsage == "Turlar")
+                                                {
+                                                    <option selected value="Turlar">Tur Tanıtım</option>
+                                                    <option value="Etkinlik Hakkında">Etkinlik Hakkında</option>
+                                                    <option value="Faydalı Bilgiler">Diğer Faydalı Bilgiler</option>
+                                                }
+                                                else if (SavedUsage == "Faydalı Bilgiler")
+                                                {
+                                                    <option value="Turlar">Tur Tanıtım</option>
+                                                    <option value="Etkinlik Hakkında">Etkinlik Hakkında</option>
+                                                    <option selected value="Faydalı Bilgiler">Diğer Faydalı Bilgiler</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="Turlar">Tur Tanıtım</option>
+                                                    <option selected value="Etkinlik Hakkında">Etkinlik Hakkında</option>
+                                                    <option value="Faydalı Bilgiler">Diğer Faydalı Bilgiler</option>
+                                                }
+                                            }
+                                            
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-offset-7 col-md-5">
+                                        <a href="@Url.Action("RoutingFrom","InfoBooths", new { From = @From, FromDetails = @FromDetails })" id="continue-btn" class="btn btn-success">
+                                            Geri
+                                        </a>
+                                        @{ 
+                                            TempData["From"] = From;
+                                        }
+                                        <button href="@Url.Action("ChangeInfoBoot","InfoBooths")" name="ThisInfoBooth" value="@ChangeThis" class="btn btn-outline green button-next">
+                                            Oluştur
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

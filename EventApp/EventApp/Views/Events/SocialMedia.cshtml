@@ -1,0 +1,301 @@
+﻿@using EventApp.Models
+
+@{
+    ViewBag.Title = "Sosyal Medya";
+    Event ThisEvent = (Event)ViewData["ThisEvent"];
+}
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("SocialMedia", "Events")">Sosyal Medya</a>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title">
+            Sosyal Medya'da @ThisEvent.Name
+        </h1>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="profile-content">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="portlet light " style="padding-bottom: 25px;">
+                                <div class="portlet-body">
+                                    <div class="tab-content">
+                                        <div>
+                                            <div class="mt-actions">
+
+                                                @{
+                                                    if (ThisEvent.Website != null)
+                                                    {
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-globe"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Web Sitesi</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Website" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Website
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Twitter != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-twitter"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Twitter</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Twitter" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Twitter
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Instagram != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-instagram"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Instagram</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Instagram" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Instagram
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Facebook != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-facebook-square"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Facebook</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Facebook" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Facebook
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.GooglePlus != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-google-plus"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Google+</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.GooglePlus" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.GooglePlus
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Linkedin != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-linkedin-square"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Linkedin</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Linkedin" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Linkedin
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Pinterest != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-pinterest-p"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Pinterest</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Pinterest" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Pinterest
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Youtube != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-top: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-youtube"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Youtube</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Youtube" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Youtube
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    }
+                                                }
+
+                                                @{
+                                                    if (ThisEvent.Tumblr != null)
+                                                    {
+                                                        <div style="border-top: 1px solid #b7b5b5; padding-top: 5px; padding-bottom: 5px; margin-left: 50px; margin-right: 50px;"></div>
+                                                        <div class="mt-action" style="padding-bottom: 0px; border-bottom: 0">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-info ">
+                                                                        <div class="mt-action-icon ">
+                                                                            <i class="fa fa-tumblr"></i>
+                                                                        </div>
+                                                                        <div class="mt-action-details ">
+                                                                            <span class="mt-action-author">Tumblr</span>
+                                                                            <p class="mt-action-desc">
+                                                                                <a href="@ThisEvent.Tumblr" target="_blank" style="color: #999b9b !important;">
+                                                                                    @ThisEvent.Tumblr
+                                                                                </a>
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                }
+
+                                            </div>
+                                            <!-- END: Actions -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- END : LISTS -->
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

@@ -1,0 +1,516 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+
+    bool orderStarted = false;
+    if (ViewData["orderStarted"] != null) { orderStarted = true; }
+
+    String what = "Profil";
+    if (Session["userinfo"] != null) { if (((DataRow)Session["userinfo"])["Role"].ToString().Trim().ToLower() == "admin") { what = "Admin Paneli"; } }
+
+    string cartDisplay = "none;";
+
+    if (Session["cartOpen"] != null)
+    {
+        cartDisplay = "none"; Session["cartOpen"] = null;
+    }
+}
+
+<div id="userContract" class="col-md-6 col-sm-6 col-xs-9" style="position:fixed; left:0; right:0; top:0; bottom:0; margin:auto; border-radius:5px; display:none; z-index:100000; background:white; border:1px solid #d6d6d6; box-shadow: 0 5px 10px rgba(0,0,0,.2); padding:10px; font-size:12px; height:500px;">
+    <img alt="sözleşmeyi kapat" onclick="$(this).parent().fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+    <label style="width:100%; float:left; overflow:auto; height:480px; overflow-x:hidden; text-align:justify;">
+        <br /> <b>1. Sözleşmenin Onaylanması</b>
+        <br /> Kullanıcı kayıt formu doldurularak veya sosyal medya ağları üyeliği (Facebook, Twitter, Pinterest ve benzerleri) aracılığıyla www.iCaked.com adresinden veya bu adres üzerinden erişilebilen web-sitelerini kapsayan siteler üzerinden iCaked.com sistemine üye olunabilir. Her iCaked.com kullanıcısı, İNFİNİA Mühendislik Ltd. Şti. (“iCaked.com”) ile akdetmiş olduğu işbu Kullanıcı Sözleşmesi (“Sözleşme”) hükümlerine uyacağını kabul ve taahhüt eder.
+        <br /> <b>2. Hizmetler</b>
+        <br /> iCaked.com kullanıcılarına internet ortamında, mobil telefonlarda, akıllı TV sistemlerinde veya benzer platformlarda geliştirilebilen uygulamalardan sisteme üye işyerlerinden gıda ürünleri ve iCaked.com’dan dekorasyon malzemeleri ve kullan-at ürünleri siparişi verme imkanı ve buna ilişkin sair hizmetler sunar.
+        <br /> <b>3. iCaked.com Kullanıcı Sistemi</b>
+        <br /> •	Her iCaked.com kullanıcısı, kendisinin belirleyeceği bir “kullanıcı adı” veya e-posta adresi ile “şifre”ye sahip olur.
+        <br /> •	“Kullanıcı adı” e-posta adreslerinde olduğu gibi her üyeye özeldir ve aynı kullanıcı adı farklı üyelere verilmez.
+        <br /> •	Her kullanıcının iCaked.com üyeliği gerektiren sistemlere bağlanabilmesi için kullanıcı adını veya kayıtlı e-posta adresi ile şifresini girmesi gereklidir. Bu işlem iCaked.com sistemine giriş yapmak şeklinde tanımlanmıştır.
+        <br /> •	“Şifre” sadece ilgili kullanıcının bilgisi dâhilindedir. Kullanıcı şifresi unutulduğu takdirde iCaked.com, talep üzerine kullanıcının iCaked.com sisteminde kayıtlı e-posta adresine yeni şifre oluşturabilmek için bir bağlantı gönderecektir. Şifre'nin belirlenmesi ve korunması tamamıyla kullanıcının kendi sorumluluğundadır ve iCaked.com şifre kullanımından doğacak problemlerden veya oluşabilecek zararlardan kesinlikle sorumlu değildir.
+        <br /> •	iCaked.com kullanıcılarını iCaked.com’da kayıtlı adreslerinin bulunduğu bölgelerdeki ve sair şekilde yararlanabilecekleri promosyonlar ile iCaked.com sistemi dahilindeki yeni hizmet veya projelerden e-posta yolu ile haberdar edebilecektir. Ayrıca iCaked.com kullanıcılarına sosyal medya kanalları dahil olmak üzere kullanıcıların iCaked.com sistemi ile paylaştıkları her türlü iletişim kanalı üzerinden ulaşabilir ve çeşitli promosyon, kampanya ve benzer bilgileri paylaşabilecektir.
+        <br /> •	Kullanıcıların belirlemiş oldukları iCaked.com sisteminde kayıtlı isim, adres ve telefon numarası, siparişin daha çabuk ve doğru teslimi amacıyla siparişi teslim eden üye işyeri ile paylaşılacaktır.
+        <br /> •	iCaked.com, sisteminde kayıtlı isim, adres ve telefon numarasının siparişi teslim eden üye işyeri ile paylaşılmasından dolayı kullanıcı ve üye işyeri arasında ortaya çıkabilecek her türlü problemden veya oluşabilecek zarardan kesinlikle sorumlu değildir.
+        <br /> •	iCaked.com sisteminin kullanılması ile oluşacak data ve verilerin tüm fikri haklarına sahiptir. iCaked.com, söz konusu bilgilerle kullanıcı üyelik bilgilerini açıklamadan demografik bilgiler içeren raporlar düzenleyebilir veya bu tarz bilgileri veya raporları kendisi kullanabilir ve bu rapor ve/veya istatistikleri iş ortakları ile üçüncü kişilerle bedelli veya bedelsiz paylaşabilir. Bu işlemler iCaked.com Gizlilik Politikası hükümlerine aykırılık teşkil etmez.
+        <br /> <b>4. Kullanıcının Yükümlülükleri</b>
+        <br /> Kullanıcı, iCaked.com hizmetlerinden yararlandığı sırada,
+        <br /> •	Kullanıcı kayıt formunda yer alan bilgilerin doğru olduğunu ve iCaked.com’da oluşturulmuş her bir Kullanıcı adı için yalnızca bir adet e-posta tanımlanabileceğini, bu bilgilerin gerekli olduğu durumlarda bilginin hatalı veya noksan olmasından (şifre unutma gibi) doğacak kendisinin ya da üçüncü kişilerin zararlarından dolayı sorumluluğun kendisine ait olduğunu, bu hallerde iCaked.com üyeliğinin sona erebileceğini;
+        <br /> •	“Kullanıcı adı” veya kayıtlı e-posta adresiyle yapacağı her türlü işlemden bizzat kendisinin sorumlu olduğunu;
+        <br /> •	iCaked.com tarafından verilen hizmetlerin ve yazılımların telif hakkının iCaked.com'a ait olduğunu, bu yazılımları hiçbir şekilde çoğaltıp, dağıtmayacağını;
+        <br /> •	iCaked.com aracılığı ile yapılan herhangi bir tasarımı, farklı mecralarda satış ve/veya kar amacı güden herhangi bir işlemde kullanmayacağını;
+        <br /> •	iCaked.com hizmetlerini kullandığında ileri sürdüğü şahsi fikir, düşünce, ifade, iCaked.cofm ortamına eklediği dosyaların, gönderdiği kişisel bilgilerinin, iCaked.com ortamında yapılan herhangi bir tasarımın sorumluluğunun kendisine ait olduğunu ve üye işyeri ile kullanıcı arasında oluşabilecek ihtilaflar dahil ancak bunlarla sınırlı olmamak üzere iCaked.com'un bu dosyalardan dolayı hiçbir şekilde sorumlu tutulamayacağını, iCaked.com’un bu tasarım, görüş ve düşünceleri yayımlayıp, yayımlamamakta serbest olduğunu ayrıca bu tasarım, görüş ve yorumları moderatörler aracılığıyla düzenleyip, düzeltme hakkı bulunduğunu;
+        <br /> •	iCaked.com tarafından sağlanan hizmetlerde bazı hallerde 18 yaşından büyüklere ait içeriğin yer alabileceğini, bu içeriğin usule aykırı şekilde görüntülenmesi sebebiyle iCaked.com'un sorumlu olmayacağını;
+        <br /> •	iCaked.com servislerinin kullanımı sırasında kaybolacak ve/veya eksik alınacak, yanlış adrese iletilecek bilgi mesaj ve dosyalardan iCaked.com'un sorumlu olmayacağını;
+        <br /> •	iCaked.com' da sunulan hizmetlere iCaked.com tarafından belirlenen şekil dışında ve/veya yetkisiz şekilde ulaşmamayı ve yazılımı hiçbir şekilde değiştirmemeyi, değiştirilmiş olduğu belli olanları kullanmamayı ve anılan kurallara uymadığı durumlarda iCaked.com'un uğrayabileceği tüm maddi ve manevi zararı karşılamayı;
+        <br /> •	Tütün Mamulleri ve Alkollü İçkilerin Satışına ve Sunumuna İlişkin Usul ve Esaslar Hakkında Yönetmelik ve ilgili mevzuat uyarınca iCaked.com üzerinden tütün mamulleri ve alkollü içecek satışı kati suretle yapılmadığını, iCaked.com vasıtasıyla tütün mamulleri ve alkollü içecek temin etmemeyi ve üye işyerlerine bu konuda talepte bulunmamayı, aksi yöndeki işlemlerin üyeliğin iptali ve işbu Sözleşme’nin feshi ile sonuçlanabileceğini;
+        <br /> •	Kullanıcı verilerinin yetkisiz kişilerce okunmasından veya kullanılmasından dolayı gelebilecek zararlardan ötürü iCaked.com'un sorumlu tututalamayacağını;
+        <br /> •	Kullanıcı paylaşımlarının üçüncü kişiler tarafından izinsiz şekilde kullanılmasından, paylaşılmasından veya yayınlanmasından dolayı gelebilecek zararlardan iCaked.com’un sorumlu olmayacağını;
+        <br /> •	Tehdit edici, ahlak dışı, ırkçı, Türkiye Cumhuriyeti kanunlarına, uluslararası anlaşmalara aykırı, politik mesajlar içeren, 3. kişilerin fikri veya sınai mülkiyet haklarını ihlal eder nitelikte kullanıcı adı, fotoğraf ve rumuz kullanmamayı; mesaj veya yorum göndermemeyi;
+        <br /> •	Ortama eklenecek kullanıcı adları, fotoğraflar, yazışmalar, konu başlıkları ve rumuzların genel ahlak, görgü ve hukuk kurallarına uygun olmasını; politik mesajlar içermemesini; ve söz konusu ibareler, yazışmalar ve fotoğraflar ile ilgili tüm yayımlama, işleme ve çoğaltma, yayma, temsil, işaret, ses ve/veya görüntü nakline yarayan araçlarla umuma iletim, üçüncü kişilere devir ve temlik hakları dâhil olmak üzere 5846 sayılı ve 5.12.1951 tarihli Fikir ve Sanat Eserleri Kanunu’nda sayılan tüm mali hakların iCaked.com’a devredildiğini;
+        <br /> •	Diğer kullanıcıları taciz ve tehdit etmemeyi;
+        <br /> •	Diğer kullanıcıların iCaked.com sistemini kullanmasını olumsuz etkileyecek şekilde davranmamayı;
+        <br /> •	iCaked.com sistemi veya ona bağlı olarak geliştirilen sistem ve uygulamalarda yer alan hizmetleri kötüye kullanmayacağını ve bu sistemi kullanan diğer kullanıcıların haklarını ihlal eden nitelikte veya zarar veren hiçbir davranışta bulunmayacağını ve söz konusu kötüye kullanım neticesinde iCaked’in veya ilgili kullanıcının uğrayacağı tüm zararlardan sorumluluğun tamamen kendisine ait olduğunu ve böyle bir kullanımın tespit edilmesi halinde iCaked ‘inbu kullanıcının ilgili hizmetteki hesabını ya da hesabının kullanıcı adı, profil fotoğrafı ve benzeri kısımlarını kapatma veya limitleme veya iCaked üyeliğini sona erdirme hakkının bulunduğunu;
+        <br /> •	Kişi veya kurumların isimlerini lekeleyici, çiğneyici, ahlaka aykırı, yakışıksız veya kanun dışı materyal veya bilgiler yayımlamamayı, basıp çoğaltmamayı, dağıtmamayı;
+        <br /> •	Reklam yapmamayı, herhangi bir mal veya hizmet satmamayı veya satılmasına yönelik teklifte bulunmamayı, anket, yarışma veya zincir mektup faaliyetlerinde bulunmamayı;
+        <br /> •	Diğer kullanıcıların bilgisayarındaki bilgilere veya yazılıma zarar verecek bilgi veya programlar göndermemeyi;
+        <br /> •	iCaked.com hizmetleri kullanarak elde edilen herhangi bir kayıt veya elde edilmiş malzemelerin tamamen kullanıcının rızası dâhilinde olduğunu, kendi bilgisayarında yaratacağı arızalar, bilgi kaybı ve diğer kayıpların sorumluluğunun tamamem kendisine ait olduğunu, iCaked.com sisteminin kullanımından dolayı uğrayabileceği zararlardan dolayı iCaked.com'dan tazminat talep etmemeyi;
+        <br /> •	iCaked.com'dan izin almadan iCaked.com servislerini ticari veya reklam amacıyla kullanmamayı;
+        <br /> •	iCaked.com'un, dilediği zaman veya sürekli olarak tüm sistemi izleyebileceğini;
+        <br /> •	Kurallara aykırı davrandığı takdirde iCaked.com'un gerekli müdahalelerde bulunma ve kullanıcıyı hizmet dışına çıkarma ve üyeliğine son verme hakkına sahip olduğunu,
+        <br /> •	iCaked.com'un, kendi sistemini ticari amaçla kullanabileceğini;
+        <br /> •	Kanunlara göre iletilmesi yasak olan bilgileri iletmemeyi ve zincir posta (chain mail), yazılım virüsü (vb.) gibi gönderilme yetkisi olmayan verileri paylaşmamayı;
+        <br /> •	Başkalarına ait kişisel bilgileri kayıt etmemeyi, yaymamayı, kötüye kullanmamayı;
+        <br /> •	iCaked.com sisteminde çerez (cookie/tanımlama bilgileri) kullanıldığını, çerezlerin bir internet sitesinin kullanıcının bilgisayarındaki sabit diskte çerez dosyasına aktardığı bilgi parçaları olduğunu, bunların kullanıcıların iCaked.com’da gezinmesine olanak sağladığını ve gerektiğinde siteye erişen kullanıcıların ihtiyaçlarına uygun içeriklerin hazırlanmasına yardımcı olduğunu beyan, taahhüt ve kabul eder.
+        <br /> <b>5. iCaked.com'a Tanınan Yetkiler</b>
+        <br /> •	iCaked.com herhangi bir zamanda sistemin çalışmasını geçici bir süre askıya alabilir veya tamamen durdurabilir.
+        <br /> •	iCaked.com güvenliği şüphesi doğuran kullanıcı işlemlerinden dolayı ilgili kullanıcıların Online Ödeme Yöntemi aracılığı ile ödeme yapma imkânını geçici bir süre askıya alabilir veya tamamen durdurabilir.
+        <br /> •	Sistemin veya Online Ödeme Yöntemi kullanımının geçici bir süre askıya alınması veya tamamen durdurulmasından dolayı iCaked.com’un kullanıcılarına veya üçüncü kişilere karşı hiçbir sorumluluğu olmayacaktır.
+        <br /> •	Kullanıcı adı veya e-posta ile şifre iCaked.com tarafından sunulan başvuru alanlarının doldurulmasından sonra görüntülenecek ve onaylanacaktır. iCaked.com kullanıcı kayıt formunu eksiksiz doldurmuş üyelerin veya iCaked.com sistemine giriş yapan kullanıcıların yeni bir şifreye sahip olmalarını veya şifrelerini kullanmalarını münhasıran süresiz olarak engelleyebilecektir.
+        <br /> •	iCaked.com, hizmetlerinin zamanında, güvenli ve hatasız olarak sunulması, hizmet kullanımından elde edilen sonuçların doğru ve güvenilir olması, hizmet kalitesinin beklentilere cevap vermesi için gerekli özeni gösterecektir ancak bunları taahhüt etmemektedir.
+        <br /> •	iCaked.com kullanıcıların sistemden yararlanmaları sırasında ortamda bulunduracakları dosyaların, mesajların bazılarını veya tamamını uygun göreceği periyotlarla yedekleme ve silme yetkisine sahiptir. Yedekleme ve silme işlemlerinden dolayı iCaked.com sorumlu tutulmayacaktır.
+        <br /> •	iCaked.com kendi ürettiği ve/veya dışardan satın aldığı bilgi, belge, yazılım, tasarım, grafik vb. eserlerin mülkiyet ve mülkiyetten doğan telif haklarına sahiptir.
+        <br /> •	iCaked.com sistemindeki satışlar, üye işyeri menülerinin sipariş anındaki mevcudiyetiyle sınırlıdır. iCaked.com ilgili üye işyerinde bulunmayan ürünlerin kullanıcıya teslimini sağlayamayabilir. Ürünlerin iCaked.com sisteminde teşhir edilmesi bunların stokta bulunduğu anlamına gelmemektedir.
+        <br /> •	iCaked.com aracılığı ile tasarlanan ürünlerin benzerine uygun şekilde teslim edilmesinden iCaked.com sorumlu değildir. Ürünlerin kalite ve tasarımından üye işyerleri sorumludur.
+        <br /> •	iCaked.com kullanıcılarının ürettiği ve yayınlanmak üzere kendi iradesiyle sisteme yüklediği (örneğin kullanıcı resimleri, panoya eklediği mesaj, şiir, haber, dosya gibi) bilgi, belge, yazılım, tasarım, grafik vb. eserlerin her türlü yazılı ve görsel mecrada yayınlanma, işleme, sosyal medya ağlarında paylaşma ve/veya iCaked.com sistemi içinde iCaked.com tarafından uygun görülecek başka bir adrese taşıma veya kendi takdirinde olmak üzere internet sitesinden kaldırma haklarına sahiptir. Yayınlanan bu bilgilerin başka kullanıcılar tarafından kopyalanması, işlenmesi ve/veya yayınlanması ihtimal dâhilindedir. Bu hallerde kullanıcı, iCaked.com'dan hiçbir telif ücreti talep etmeyecektir.
+        <br /> •	iCaked.com sisteminde satışa sunulan ürünlerin fiyat ve ürün özellik bilgilerini değiştirme yükümlülüğü iCaked.com sistemindeki üye işyerlerine aittir. Fiyat ve ürün özellik bilgilerinde hata oluştuğu takdirde iCaked.com kullanıcıları bilgilendirerek, bu hatayı düzeltecek şekilde ürün teslimatı yapabilir veya siparişi iptal edebilir.
+        <br /> •	iCaked.com sisteminde satışa sunulan ürünlerin içeriğine dair doğru ve dürüst açıklama yapılmasına dair iCaked.com gerekli özeni gösterecektir ancak üye işyerlerinin sipariş içeriklerine dair yaptıkları eksik ve/veya hatalı açıklamalardan dolayı oluşacak problemlerden veya zararlardan iCaked.com sorumlu değildir.
+        <br /> •	iCaked.com, kullanıcının iCaked.com sistemi dışındaki web-sitelerine geçişini sağlayabilir. Bu takdirde kullanıcı geçiş yapacağı sitelerin içeriğinden iCaked.com'un sorumlu olmadığını peşinen kabul eder.
+        <br /> •	iCaked.com kullanıcı üyeliği gerektirmeyen hizmetleri zaman içinde üyelik gerektiren bir hale dönüştürülebilir, ilave hizmetler açabilir, bazı hizmetlerini kısmen veya tamamen değiştirebilir veya ücretli hale dönüştürebilir. Bu durumda kullanıcının Sözleşme’yi feshederek, üyelikten ayrılma hakkı saklıdır.
+        <br /> •	iCaked.com, ileride doğacak teknik zaruretler ve mevzuata uyum amacıyla kullanıcıların aleyhine olmamak kaydıyla işbu Sözleşme’nin uygulamasında değişiklikler yapabilir, mevcut maddelerini değiştirebilir veya yeni maddeler ilave edebilir.
+        <br /> •	iCaked.com üye pastanelerin sağladığı içerikten sorumlu değildir. Tasarımda kullanılacak figürlerde değişiklikler olabilir.
+        <br /> <b>6. Kullanım Amacı</b>
+        <br /> Kullanıcılar, iCaked.com sistemi üzerinde verilen tüm siparişlerin, yapılan tüm alışverişlerin kişisel kullanım amaçlı olduğunu, bunların tekrar satış amaçlı olmadığını kabul ederler.
+        <br /> <b>7. Ödeme</b>
+        <br /> iCaked.com kullanıcıları iCaked.com sisteminden verdikleri siparişin ücretini, iCaked.com sisteminde üzerinden banka havalesi ile veya Online Ödeme Yöntemi kullanarak banka kartı, kredi kartı veya benzer bir ödeme aracı ile diğer ödeme sistemleri vasıtasıyla anında online ödeme yapabileceklerdir. Online Ödeme Yöntemi seçeneği kullanılarak yapılan ödemelerde, kartın hamili haricinde bir başkası tarafından hukuka aykırı şekilde kullanılması halinde 23.02.2006 tarihli 5464 sayılı Banka Kartları ve Kredi Kartları Kanunu ve 10.03.2007 tarihli ve 26458 sayılı Resmi Gazete’de yayımlanan Banka Kartları ve Kredi Kartları Hakkında Yönetmelik hükümlerine göre işlem yapılır. iCaked.com kullanıcılarının iCaked.com sisteminden pastane ürünleri siparişi vermesiyle ilgili pastane ve kullanıcı arasında satış akdi oluşur. iCaked.com bu satış akdinin tarafı olmayıp, ilgili pastane namına, sipariş bedelinin kullanıcılardan tahsili için ilgili pastanenin münhasıran temsilcisidir. Kullanıcıalr siparişlerine ilişkin ödemeyi iCaked.com’a yapmakla alım-satım akdi kapsamında ödeme yükümlülüklerini ifa etmiş olmaktadırlar. Online Ödeme Yöntemi ile ödemesi yapılmış pastanelere yönlendirilien siparişlerde, sipariş karşılığı fiş/fatura siparişi alan pastane tarafından, dekorasyon ürünlerinde ise sipariş karşılığı fiş/fatura iCaked.com tarafından düzenlenir.
+        <br /> <b>8. Kişisel Veri</b>
+        <br /> Kullanıcı iCaked.com’a üye olurken Kullanıcı Sözleşmesini onaylamak ve üyelik sonrası Web Sitesi içerisindeki hareketleri esnasında, veri sorumlusu iCaked ile paylaştıkları ad, soyad, elektronik posta adresi, sipariş adres/adresleri, telefon numarası gibi kişisel verilerinin (“Kişisel Veri/ler”) Kişisel Verilerin Korunması Hakkındaki Kanun’da belirlenmiş olan esaslar çerçevesinde işlenmesine, 3. kişilere ve yurtdışına aktarılmasına açıkça rıza gösterdiğini kabul ve beyan eder. Kişisel Veriler’in işlenmesi, 3. kişilere ve yurtdışına aktarılması Kullanıcı ile iCaked.com arasında kurulan hukuki ilişkiye dayanmaktadır. Kişisel Veriler iCaked.com ve iCaked.com iştirakleri tarafından işbu sözleşmesel ilişki kapsamında ve iCaked.com ve iştiraklerinin sözleşmesel ilişkisi bulunan iş ortakları tarafından pazarlama, analiz, istatistik gibi amaçlarla işlenebilir, 3. kişilere ve yurtdışına aktarılabilir veya anonimleştirilerek kullanılabilir. Buna ek olarak Kullanıcılar Kişisel Verileri dışındaki sipariş bilgileri (sipariş verdikleri pastaneler, sipariş verilen ürün tipi, sipariş adedi, sipariş saati, sipariş verilen bölge gibi Web Sitesi (veya kullanılan benzeri mobil veya elektronik mecra) üzerindeki tüm davranışları, sipariş detayları gibi) ve benzeri verilerinin (“Veri/ler”) iCaked.com, iCaked.com iştirakleri ve iş ortakları tarafından kaydedilmesi, işlenmesi ve listelenmesinde ve/veya anonimleştirilerek analizlerde 3. kişilerle hizmetin daha iyi sağlanması veya çeşitli uygulamaların veya programların iCaked.com üzerinde çalıştırılabilmesi için anonim şekilde kullanılmasına açık rızalarının olduğunu kabul ve beyan ederler.
+        <br /> <b>9. Kanuni Zorunluluklar</b>
+        <br /> İşbu Sözleşme kapsamı dışında gerçekleşecek tüm kanuni değişikliklerden kaynaklanan işlemler iCaked.com sorumluluğu dışındadır ve aynen Sözleşme’ye yansıtılır.
+        <br /> <b>10. Ürün Teslimatı</b>
+        <br /> Üye işyerleri tarafından yapılan ürün teslimatı sürecinde kullanıcı, iCaked.com sisteminde seçtiği adreste bulunamaz ise siparişi kesinlikle başka bir adrese bırakılmayacaktır. Bu durum çerçevesinde kullanıcı kendisinin bulunmadığı bir adrese sipariş vermiş olduğu için doğacak kanuni yükümlülükleri kabul etmek durumundadır.
+        <br /> <b>11. Ücret İadesi</b>
+        <br /> Online Ödeme Yöntemi ile ödemesi yapılmış siparişlerle sınırlı olmak üzere kullanıcıya ücret iadesi ancak
+        <br /> •	kullanıcı adresinin sipariş verilen pastanenin gönderim alanı dışında olması nedeniyle siparişin zorunlu iptali;
+        <br /> •	siparişin ilgili pastaneye iletilememesi nedeniyle siparişin zorunlu iptali;
+        <br /> •	pastane tarafından siparişin hazırlanmadığı veya siparişin hazırlanmış olmasına rağmen pastanenin iptal işlemini onaylamış olduğu hallerde kullanıcı talebi üzerine siparişin iptali;
+        <br /> •	siparişin bir kısmının veya tamamının pastanede mevcut olmaması nedeniyle siparişin kısmen veya tamamen zorunlu iptali;
+        <br /> •	siparişi verilen dekorasyon ürünlerinin bir kısmının veya tamamının stokda mevcut olmaması nedeniyle siparişin kısmen veya tamamen zorunlu iptali;
+        <br /> •	Siparişi verilen dekorasyon ürünlerinin teslimatının gecikmesi durumunda iCaked.com onayı üzerine yapılan iptali;
+        <br /> •	Sipariş edilen ürünün teslimatının gecikmesi durumunda ilgili pastane onayı üzerine yapılan iptal durumunda yapılacaktır.
+        <br />
+        <br /> İptale konu siparişe ilişkin ilgili pastane bir fiş veya fatura düzenlemiş ve bu kullanıcıya teslim edilmiş ise ilgili pastane görevlisine iadesi gerekmektedir. iCaked.com, kullanıcıdan kaynaklanan sebeplerden dolayı (örneğin kullanıcının evde olmaması, yanlış adres bilgisi vermesi, siparişi teslim almaması gibi) ücret iadesi yapmama hakkını saklı tutar.
+        <br /> <b>12. Bilgilerin Saklanması ve İspat Yükümlülüğü:</b>
+        <br /> iCaked.com sisteminde kayıtlı kullanıcı bilgileri, siparişleri, yorum/değerlendirmeleri vb. iCaked.com Gizlilik Politikası’na tabi olacak şekilde en az üç (3) yıl boyunca saklanır. İşbu Sözleşme’nin ifasından doğacak her türlü uyuşmazlıkta iCaked.com sisteminde saklanan veriler ile kullanıcı kayıtları bağlayıcı ve kesin delil teşkil eder.
+        <br /> <b>13. Uygulanacak Hukuk ve Yetkili Mahkeme ve İcra Daireleri</b>
+        <br /> İşbu Sözleşme Türkiye Cumhuriyeti kanunlarına tabidir. Sözleşme’nin ifasından doğabilecek her türlü uyuşmazlığın çözümünde Ankara Merkez Mahkeme ve İcra Müdürlükleri yetkilidir.
+        <br /> <b>14. Yürürlük</b>
+        <br /> İşbu Sözleşme taraflar arasında kullanıcının, kullanıcı kayıt formunu doldurmasından itibaren süresiz olarak yürürlüğe girer.
+        <br /> <b>15. Fesih</b>
+        <br /> Taraflar işbu Sözleşme’yi diledikleri zaman sona erdirebileceklerdir. Sözleşme’nin feshi anında tarafların birbirlerinden olan alacak hakları etkilenmez.
+        <br /> Gizlilik Sözleşmesi
+        <br /> Kişisel iletişim bilgileriniz
+        <br /> Web Sitesi üzerinden herhangi bir sipariş vermek için, adınızı, soyadınızı, ev ya da diğer fiziksel adresinizi (sokak adı, semt, il gibi bilgileri içerecek şekilde), telefon numaranızı ve diğer gerçek yaşam kişisel bilgilerinizi bizimle paylaşmanız gerekmektedir. Kişisel bilgilerinizin üzerinde değişiklik yapabilir, yanlışlıkları düzeltmek için gerekli düzenlemeleri kayıt olduktan sonra yapabilirsiniz. Eğer bizimle paylaştığınız detayları izlemek ya da değiştirmek isterseniz, kullanıcı ana sayfanızda bulunan “Üyelik Bilgilerim” linkine tıklayarak hesap detaylarınıza giriş yapabilirsiniz. Lokasyonunuza bağlı olarak birden fazla kayıtlı adresiniz olabilir. Kişisel bilgilerinizin bir kısmı (ad, soyad, siparişinizin gönderileceği kayıtlı adresiniz ve telefon numaranız) sipariş verdiğiniz pastane ile paylaşılmaktadır. Bu bilgiler aynı zamanda Web Sitesi’nin kullanımını geliştirmek, sizinle iletişim kurmak, şirket içi gereksinimler için ve hukuki açıdan gerekli olduğu durumlarda kullanılmaktadır. Bu bilgiler, çalışanlarımızla veya üçüncü partilerle siparişin iletilme aşamalarından herhangi birinde paylaşılabilir ya da Web Sitesi’ni kullanımınızın analizinde ve desteğinde kullanılabilir. İzniniz olmadan, gizlilik politikasında belirtilen kullanım alanları haricinde üçüncü partilerle bilgilerinizi paylaşmıyor ya da bilgilerinizi üçüncü partilere satmıyoruz.
+        <br /> E-posta adresiniz
+        <br /> Bir hesap oluşturmak için, bir e-posta adresinizin olması gerekmektedir. E-posta adresiniz sizinle online olarak iletişim kurmak, bir sipariş verdiğiniz zaman bu siparişi onaylamak, siparişinizle ilgili bir sorun olduğunda veya promosyonarla ilgili size bilgi vermek için kullanılmaktadır. Eğer e-posta adresinizi değiştirmek isterseniz, kullanıcı ana sayfanızda bulunan “Üyelik Bilgilerim” linkine tıklayarak hesap detaylarınıza giriş yapabilirsiniz. E-posta adresinizi paylaşmadığınız durumda Web Sitesi’ne kayıt yaptıramaz ve sipariş veremezsiniz. Kişisel bilgilerinizin bir kısmı (ad, soyad, siparişinizin gönderileceği kayıtlı adresiniz ve telefon numaranız) sipariş verdiğiniz pastane ile paylaşılmaktadır. Bu bilgiler aynı zamanda Web Sitesi’nin kullanımını geliştirmek, sizinle iletişim kurmak, şirket içi gereksinimler için ve hukuki açıdan gerekli olduğu durumlarda kullanılmaktadır. Bu bilgiler, çalışanlarımızla veya üçüncü partilerle siparişinin iletilme aşamalarından herhangi birinde paylaşılabilir ya da Web Sitesi’ni kullanımınızın analizinde ve desteğinde kullanılabilir. İzniniz olmadan, gizlilik politikasında belirtilen kullanım alanları haricinde üçüncü partilerle bilgilerinizi paylaşmıyor ya da bilgilerinizi üçüncü partilere satmıyoruz.
+        <br /> Sipariş bilgileriniz
+        <br /> Siparişler ile ilgili ödeme şekli, sipariş detayları, sipariş tutarı, kullanılan indirim kuponları gibi bilgileri toplayabiliriz. Bu bilgiler Web Sitesi’nin kullanımını analiz etmek ve geliştirmek için kullanılmaktadır. Bu bilgiler, çalışanlarımızla veya ilgili üçüncü partilerle siparişinizin iletilme aşamalarından herhangi birinde paylaşılabilir ya da Web Sitesi’ni kullanımınızın analizinde ve desteğinde kullanılabilir.
+        <br /> Navigasyon ve tıklama bilgisi
+        <br /> Web Sitesi’nde dolaşırken, dolaştığınız sayfalara ve tıkladığınız buton ve bağlantılara ilişkin navigasyon ve tıklama bilgileri, ziyaret ettiğiniz sayfalar, bir sayfada kaldığınız süre, sipariş verme süreniz gibi bilgilere ulaşabilmek için tutulmaktadır. Bu bilgiler sizin kimliğinizi ortaya çıkarmaz ya da direk olarak şahsınızla ilişkilendirilmez. Bu bilgiler, Web Sitesi üzerinden verdiğiniz siparişlerin tamamlanması, analiz edilmesi ve geliştirilmesi, Web Sitesi’nin kullanımının artırılması, hukuki açıdan gerekli olan durumlarda bilgi sağlanması ve Web Sitesi ya da üçüncü partilere ait web siteleri üzerinde ilginizi çekebilecek kampanya, promosyon ve yönlendirmeler için kullanılmaktadır. Bu bilgiler, çalışanlarımız veya ilgili üçüncü partilerle siparişinin iletilme aşamalarından herhangi birinde paylaşılabilir ya da Web Sitesi’ni kullanımınızın analizinde ve desteğinde kullanılabilir.
+        <br /> Navigasyon ve tıklama bilgisi
+        <br /> Çerezler, Web Sitesi’ni ziyaret ettiğiniz zaman bilgisayarınıza tercihlerinizi kaydeden küçük metin dosyalarıdır. Çerezler, alışveriş sepetinizde hangi ürünlerin olduğunu hatırlamak, Web Sitesi’ne tekrar giriş yaptığınızda sitenin sizi tanıması, ilginizi çekebilecek ilan ve reklamların en çok giriş yaptığınız sayfalarda yayınlanması gibi işlemlerde size en kaliteli hizmeti sağlamak için kullanılmaktadır. Herhangi bir kişisel ya da özel bilgi içermezler. Bilgisayarınıza zarar vermezler. Web Sitesi üzerinden sipariş verebilmek için bu çerezlere izin vermeniz gerekir. Eğer isterseniz, daha sonra bu çerezleri bilgisayarınızdan silebilir ya da engelleyebilirsiniz. Çerezler hakkında bilmeniz gerekenler:
+        <br /> •	Kimliğinizi tanımlamak ve siteye giriş yaptıktan sonra ilgili ayarları muhafaza etmek için çerezler kullanabiliriz.
+        <br /> •	Çoğu çerez “oturum çerezi”dir, yani siz ziyaretinizi bitirdikten sonra bilgisayarınızdan silinir.
+        <br /> •	Internet tarayıcınız izin veriyorsa, çerezleri kabul etmeyebilirsiniz.
+        <br /> •	Web Sitesi üzerinde reklamları bulunan üçüncü partilerin çerezleri ile karşılaşabilirsiniz ancak bunlar bizim kontrolümüzde değildir.
+
+    </label>
+</div>
+
+@{
+    if (Session["en"] != null)
+    {
+        <div class="container-fluid" style="background:#f5f5f5; box-shadow:0px 1px 5px -2px gray; margin-bottom:3px;">
+            <div class="container">
+                <div id="google_translate_element"></div>
+                <script type="text/javascript">
+                    function googleTranslateElementInit() {
+                        new google.translate.TranslateElement({ pageLanguage: 'tr', includedLanguages: 'en', layout: google.translate.TranslateElement.FloatPosition.TOP_LEFT, gaTrack: true, gaId: 'UA-85211187-1' }, 'google_translate_element');
+                    }
+
+                    function fireEvent(element, event) {
+                        if (document.createEventObject) {
+                            var evt = document.createEventObject();
+                            return element.fireEvent('on' + event, evt)
+                        }
+                        else {
+                            var evt = document.createEvent("HTMLEvents");
+                            evt.initEvent(event, true, true); // event type,bubbling,cancelable
+                            return !element.dispatchEvent(evt);
+                        }
+                    }
+
+                    $(document).ready(function () {
+                        setTimeout(function () {
+                            var jObj = $('.goog-te-combo');
+                            var db = jObj.get(0);
+                            jObj.val("en");
+                            fireEvent(db, 'change');
+                        }, 1000);
+                    });
+                </script>
+                <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+            </div>
+        </div>
+    }
+}
+
+<div class="header_wrapper" style="background:white; float:left;">
+
+    <div class="container-fluid" style="width:100%; float:left; background:#2c2c2b;">
+        <div class="container">
+            <div class="header-upper-container">
+                <select onchange="window.location = '/' + $(this).val().replace('İ','I')" style="float:left; margin-right:20px; background:#2c2c2b; color:white !important; border:none;">
+                    @{
+
+                        string[] cities = new string[] { "Ankara", "İstanbul" }; string city = "";
+                        if (Session["city"] != null) { city = (string)Session["city"]; }
+                        else
+                        {
+                            <option selected disabled>Şehir</option> }
+
+                        for (int i = 0; i < cities.Length; i++)
+                        {
+                            if (city == cities[i])
+                            {
+                                <option value="@cities[i]" selected>@cities[i]</option> }
+                            else
+                            {
+                                <option value="@cities[i]">@cities[i]</option> }
+                        }
+                    }
+                </select>
+                <a class="hidden-xs"  href="/istek-tasarim" style="float:left; margin-right:25px;">İstek Tasarım</a>
+                <a class="hidden-xs"  href="/pastane" style="float:left; margin-right:25px;">Pastaneler</a>
+                <a class="hidden-xs" href="tel:+008502500458" style="float:left; color:#e0e0e0;">0 (850) 250 04 58</a>
+
+                <a  href="@Url.Action("Iletisim","Home")" style="float:right; margin-left:25px;">İletişim</a>
+                <a  href="@Url.Action("Hakkimizda","Home")" style="float:right; margin-left:25px;">Hakkımızda</a>
+                @*<a class="login-register-toggle login-register" style="float:right;">Üyelik</a>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="width:100%; float:left;">
+
+        <div class="container" id="header-container">
+            <div id="header-upper-menu" style="width:100%; float:left; ">
+                <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; padding:0px;">
+
+                    <div id="header-utility-wrapper" class="col-md-9 col-sm-9 col-xs-6" style="float:right; margin:20px 0px; padding:0px;">
+                        @{
+                            if (Session["userinfo"] == null & Session["bakeryinfo"] == null)
+                            {
+                                <div id="login-register-div" class="header-utility-sub" style="text-align:right; float:right; color:black; ">
+                                    <div class="login-register-toggle header-utility-sub tooltip2">
+                                        <img alt="kullanıcı ikon" class="kullanici-img" src="~/Images/Site/user_icon_header.png" style="width:25px; margin-top:11px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Üyelik</span>
+                                    </div>
+
+                                    <div id="account-floating-div">
+                                        <img alt="menüyü kapat" onclick="$(this).parent().fadeOut(300); $('.overall-mask').fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+                                        <div style="border-bottom:1px solid #b5b5b5; width:100%; float:left;">
+                                            <label class="account-button account-button-active" id="login-menu">Giriş</label>
+                                            <label class="account-button" id="register-menu">Üye Ol</label>
+                                        </div>
+                                        <div class="account-menu-div" id="login-floating-div">
+
+                                            <div id="login-sub-div" style="border:none;">
+                                                <div id="email-login-div" style="margin-top:30px;">
+                                                    <input id="email" name="email" autocomplete="off" class="input-text" type="text" placeholder="E-Posta" />
+                                                </div>
+                                                <div id="password-login-div">
+                                                    <input id="password_login" name="password_login" autocomplete="off" class="input-text" type="password" placeholder="Şifre" />
+                                                </div>
+                                                <div id="login-alert" style="border:none; height:20px;">
+                                                    <label id="login-alert-label" style="color:red; font-size:12px; line-height:20px; float:right; text-align:right; display:none;">Tüm alanlar doldurulmalıdır.</label>
+                                                    <img alt="giriş loading" id="login-loading" src="~/Images/Site/loading_mini.gif" style="float:right; padding-right:10px; width:30px; display:none;" />
+                                                </div>
+                                            </div>
+
+                                            <div id="forgot-password-sub-div" class="forgot" style="border:none;">
+                                                <label style="width:100%; text-align:center; padding:10px 0px;">Üye olurken kullandığınız e-posta adresini girin. Yeni Şifreniz gönderilecektir.</label>
+                                                <div id="forgot-email-div">
+                                                    <input id="forgot-email" name="forgot-email" autocomplete="off" class="input-text" type="text" placeholder="E-Posta" />
+                                                </div>
+                                                <div id="forgot-alert" style="border:none; height:20px;">
+                                                    <label id="forgot-alert-label" style="color:red; font-size:12px; line-height:20px; float:right; text-align:right; display:none;"></label>
+                                                    <img alt="şifremi unuttum loading" id="forgot-loading" src="~/Images/Site/loading_mini.gif" style="float:right; padding-right:10px; width:30px; display:none;" />
+                                                </div>
+                                            </div>
+
+                                            <div style="border:none;">
+                                                <input type="checkbox" id="rememberMe" name="rememberMe" style="float:left; width:15px; height:15px; margin-right:5px;" />
+                                                <label id="rememberMe-btn" onclick="$('#rememberMe').trigger('click');"> beni hatırla </label>
+                                                <label id="forgot-password-button"> şifremi unuttum </label>
+                                            </div>
+                                            <div style="border:none;">
+                                                <input id="login-button" onclick="validateLogin()" type="submit" class="submit-button black-gradient" value="Giriş" />
+                                                <input id="forgot-button" onclick="validateForgot()" type="submit" class="forgot submit-button black-gradient" value="Gönder" />
+                                            </div>
+                                            @*<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+                                                </fb:login-button>*@
+                                        </div>
+                                        <div class="account-menu-div" id="register-floating-div" style="display:none;">
+                                            <div id="email-register-div" style="margin-top:30px;">
+                                                <input id="email_register" name="email_register" autocomplete="off" class="input-text" type="text" placeholder="E-Posta" />
+                                            </div>
+                                            <div id="name-register-div">
+                                                <input id="name_register" name="name_register" autocomplete="off" class="input-text" type="text" placeholder="İsim" />
+                                            </div>
+                                            <div id="surname-register-div">
+                                                <input id="surname_register" name="surname_register" autocomplete="off" class="input-text" type="text" placeholder="Soyisim" />
+                                            </div>
+                                            <div id="password-register-div">
+                                                <input id="password_register" name="password_register" autocomplete="off" class="input-text" type="password" placeholder="Şifre" />
+                                            </div>
+                                            <div id="password-confirm-register-div">
+                                                <input id="password_confirm_register" name="password_confirm_register" autocomplete="off" class="input-text" type="password" placeholder="Şifre Tekrar" />
+                                            </div>
+                                            <div id="register-alert" style="border:none; height:20px;">
+                                                <label id="register-alert-label" style="color:red; font-size:12px; line-height:20px; float:right; text-align:right; display:none;">Tüm alanlar doldurulmalıdır.</label>
+                                                <img alt="kayıt loading" id="register-loading" src="~/Images/Site/loading_mini.gif" style="float:right; padding-right:10px; width:30px; display:none;" />
+                                            </div>
+
+                                            <div style="width:100%; float:left; margin-bottom:10px; border:none; text-align:center;">
+                                                <label id="userContractLabel" onclick="$('#userContract').fadeToggle(300)" style="float:right; font-size:12px; cursor:pointer;">Kullanıcı sözleşmesini okudum ve kabul ettim</label>
+                                                <input onchange="$(this).css('box-shadow','none');" id="acceptUserContract" type="checkbox" style="width:15px; height:15px; margin-right:7px; margin-top:1px;" />
+                                            </div>
+
+                                            <div style="border:none; margin-top:3px;">
+                                                <input id="register-button" onclick="validateRegister()" type="submit" class="submit-button black-gradient" value="Kayıt Ol" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (Session["userinfo"] != null)
+                            {
+                                <a id="logout" onclick="Logout()" style="">
+                                    <div class="logout-button header-utility-sub tooltip2" style="text-align:right; float:right; cursor:pointer; color:black; ">
+                                        <img alt="çıkış" class="kullanici-img" src="~/Images/Site/logout.png" style="width:20px; margin-top:15px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Çıkış</span>
+                                    </div>
+                                </a>
+                                <div class="header-utility-sub tooltip2" style="text-align:right; float:right; color:black; ">
+                                    <a href="/Profil" style="color:black;"><img class="kullanici-img" alt="kullanıcı icon" src="~/Images/Site/user_icon_header.png" style="width:25px; margin-top:11px; margin-left:30px;" /></a>
+                                    <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Profil</span>
+                                </div>
+                            }
+                            else if (Session["bakeryinfo"] != null)
+                            {
+                                String link = "/pastane/" + uc.cleanseUrlString(((DataRow)Session["bakeryinfo"])["Name"].ToString());
+                                <a id="logout" onclick="Logout()" style="">
+                                    <div class="logout-button header-utility-sub tooltip2" style="text-align:right; float:right; cursor:pointer; color:black; ">
+                                        <img alt="çıkış" class="kullanici-img" src="~/Images/Site/logout.png" style="width:20px; margin-top:15px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Çıkış</span>
+                                    </div>
+                                </a>
+                                <div class="header-utility-sub tooltip2" style="text-align:right; float:right; color:black; ">
+                                    <a href="@link" style="color:black;"><img class="kullanici-img" alt="kullanıcı icon" src="~/Images/Site/header_baker_icon.png" style="width:16px; margin-top:11px; margin-left:30px;" /></a>
+                                    <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Pastane</span>
+                                </div>
+                            }
+                            <div class="header-utility-sub" style="display:none;" id="login-hidden">
+                                <a id="logout" onclick="Logout()">
+                                    <div class="logout-button header-utility-sub tooltip2" style="text-align:right; float:right; cursor:pointer; color:black; ">
+                                        <img alt="çıkış" class="kullanici-img" src="~/Images/Site/logout.png" style="width:20px; margin-top:15px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Çıkış</span>
+                                    </div>
+                                </a>
+                                <div class="header-utility-sub" style="text-align:right; float:right; color:black; ">
+                                    <a href="/Profil" style="color:black;"><img class="kullanici-img" alt="kullanıcı icon" src="~/Images/Site/user_icon_header.png" style="width:25px; margin-top:11px; margin-left:30px;" /></a>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="sepetim-header" style="text-align:left; float:right; color:black; ">
+                            <div id="sepetim-header" class="sepetim-header header-utility-sub tooltip2" style="color:black; float:right; cursor:pointer;">
+                                <img id="sepetim-img" alt="sepetim" src="~/Images/Site/cart_icon_header.png" style="width:25px; margin-top:12px; margin-left:35px;" />
+                                <span class="tooltiptext2" style="margin-left:0px; left:-12px;">Sepetim</span>
+
+                                @{
+                                    if (Session["cart"] != null)
+                                    { <label id="new_product_label">@(((List<DataRow>)Session["cart"]).Count)</label> }
+                                }
+
+                            </div>
+                            <div id="sepetim-header-div" style="display:@cartDisplay">
+                                @{
+                                    if (Session["cart"] != null)
+                                    {
+                                        List<DataRow> cart = (List<DataRow>)Session["cart"];
+                                        bool bakerySelected = false; String minPacket = "green";
+                                        String bakeryImg = "Seçilmedi";
+                                        DataRow bakery = null;
+
+                                        for (int i = 0; i < cart.Count; i++)
+                                        {
+                                            if (cart[i]["Category"].ToString() != "Parti Malzemeleri")
+                                            {
+                                                if (String.IsNullOrEmpty(cart[i]["BakeryID"].ToString()) == false)
+                                                {
+                                                    bakerySelected = true;
+                                                    bakery = dc.MemoryCacheByQuery("select * from Bakeries where BakeryID = '" + cart[i]["BakeryID"] + "'").Rows[0];
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (bakerySelected == true)
+                                        {
+                                            bakeryImg = "/Images/Bakery/" + bakery["Thumbnail"].ToString();
+
+                                            double cartSum = 0;
+                                            for (int i = 0; i < cart.Count; i++)
+                                            {
+                                                cartSum = cartSum + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","));
+                                            }
+                                            if (cartSum < Convert.ToDouble(bakery["MinPacket"].ToString().Replace(".", ","))) { minPacket = "#00c100"; }
+                                        }
+
+                                        String cartTotal = "0";
+
+                                        for (int i = 0; i < cart.Count; i++)
+                                        {
+                                            cartTotal = (Convert.ToDouble(cartTotal.Replace(".", ",")) + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","))).ToString();
+                                            String selectStr = "";
+                                            String img = "";
+                                            if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()))
+                                            {
+                                                img = "/Images/Products/" + cart[i]["ProductID"] + "/" + cart[i]["Thumbnail"].ToString().Split(' ')[0];
+                                                if (cart[i]["Category"].ToString().Contains("Pasta") | cart[i]["Category"].ToString() == "Parti Malzemeleri") { selectStr = "kişilik"; }
+                                                else if (cart[i]["Category"].ToString() == "Kek/Kurabiye") { selectStr = "adet"; }
+                                            }
+                                            else { img = "/Images/MadeCakes/" + cart[i]["ProductID"] + "/" + cart[i]["ImagePath"].ToString().Split(' ')[0]; selectStr = "kişilik"; }
+
+                                            <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6; padding-bottom:5px; margin-bottom:5px;">
+                                                <div style="float:left; width:110px;">
+                                                    <img alt="ürün" class="sepetim-product-img" src="@img" style="width:100px; background:white; border:1px solid #e5e5e5; border-radius:3px; float:left;" />
+                                                </div>
+                                                <div style="float:left; width:155px;">
+                                                    <label style="float:left; font-size:15px; width:155px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight:500;">@cart[i]["Name"]</label>
+                                                </div>
+                                                <div style="float:left; width:175px;">
+                                                    <label style="float:left; font-size:13px; width:155px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@cart[i]["Select"] @selectStr</label>
+                                                </div>
+                                                <div style="float:left; width:178px;">
+                                                    <label style="float:left; font-weight:400; font-size:13px;"> @cart[i]["Count"] Adet</label>
+
+                                                    @{
+                                                        if (cart[i]["PagePrice"].ToString() == "0.00")
+                                                        {
+                                                            <label style="float:right; font-size:14px; padding-top:40px; font-weight:500; font-family:'Open Sans';">Pastane seçilmelidir</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label style="float:right; font-size:16px; padding-top:40px; font-weight:500; font-family:'Open Sans';">@uc.ArrangePrice(cart[i]["PagePrice"].ToString()) TL</label>
+                                                        }
+                                                    }
+                                                </div>
+
+
+                                                @{
+                                                    if (orderStarted == false)
+                                                    {
+                                                        <a onclick="DeleteChecker('@i')">
+                                                            <img alt="ürünü sepetten sil" src="~/Images/Site/close_icon2.png" class="header-remove-obj-img" />
+                                                        </a>
+                                                    }
+                                                }
+                                            </div>
+                                                    }
+
+                                                    <div style="width:100%; float:left; text-align:center; padding-top:5px; padding-bottom:10px; border-bottom:1px solid #e6e6e6;">
+                                                        <div style="float:left;">
+                                                            @{
+                                                                if (bakeryImg != "Seçilmedi")
+                                                                { <img alt="pastane resmi" src="@bakeryImg" style="width:50px; float:left; padding:2px; border:1px solid #cccccc; border-radius:3px;" /> }
+                                                                string totalPrice = uc.ArrangePrice(cartTotal);
+                                                                if (totalPrice == "0.00") { totalPrice = "Pastane Seçilmelidir."; }
+                                                            }
+                                                        </div>
+                                                        @{
+                                                            if (totalPrice != "Pastane Seçilmelidir.")
+                                                            {
+                                                                <label style="float:left; font-size:16px; font-weight:500; margin-left:10px; line-height:32px;">Toplam : </label>
+                                                                <label style="float:right; font-size:16px; font-weight:500; font-family:'Open Sans'; line-height:32px; padding-right:2px;">@totalPrice TL</label>
+                                                            }
+                                                        }
+                                                    </div>
+
+                                                    <div style="width:100%; float:left; text-align:center; padding:10px;">
+                                                        <a href="@Url.Action("Sepetim","Order")" class="black-gradient" style="padding:8px; width:100%; margin-top:10px; font-size:16px; font-weight:400; cursor:pointer; color:white; text-decoration:none; float:left; outline:none;">Sepete Git</a>
+                                                    </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div style="width:100%; float:left;">
+                                                                    <label style="width:100%; float:left; text-align:center; padding:5px; color:gray;">Sepetiniz Boş</label>
+                                                                </div>
+                                                            }
+                                }
+                            </div>
+
+                        </div>
+
+                        @{
+                            string cityDisp = "display:none";
+                            if (Session["city"] != null) { cityDisp = "display:inline"; }
+                        }
+
+                        <div style="float:left; width:70%; border:1px solid #eaeaea; padding:12px 20px; border-radius:40px; @cityDisp;" class="hidden-sm hidden-xs">
+                            <input placeholder="Ne Aramıştınız?" id="indexMainSearch" type="text" style="float:left; font-size:14px; width:80%;" />
+                            <img src="~/Images/Site/search_icon.png" style="float:right; width:20px;" />
+                        </div>
+
+                        <a  href="@Url.Action("SiparisTakibi","Home")">
+                            <div class="header-utility-sub tooltip2" style="float:right; cursor:pointer;">
+                                <img id="siparis-takibi-img" alt="sipariş takibi" src="~/Images/Site/siparis_takibi_icon_header.png" style="width:25px; cursor:pointer; margin-top:13px;" />
+                                <span class="tooltiptext2">Sipariş Takibi</span>
+                            </div>
+                        </a>
+
+                    </div>
+
+                    <div id="main-logo-wrapper" class="col-md-2 col-sm-3 col-xs-6" style="float:left; margin-top:20px; margin-bottom:10px; text-align:center; padding:0px;">
+                        @{
+                            String logolink = Url.Action("Index", "Home");
+                            if (Session["city"] != null) { logolink = "/" + (string)Session["city"].ToString().Replace("İ", "I"); }
+                        }
+                        <a href="@logolink"><img alt="icaked ana logo" src="~/Images/Site/main_logo.png" id="main_logo" /></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @{
+        if (Session["city"] != null)
+        {
+            <div class="container-fluid" style="float:left; width:100%;">
+                <div id="header-lower-menu" style="border-top:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0;">
+                    <div class="container" style="padding:0px 15px;">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+                            @Html.Partial("_Navbar")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+</div>

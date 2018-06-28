@@ -1,0 +1,90 @@
+﻿@model EventApp.Models.Partner
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Details</title>
+</head>
+<body>
+    <div>
+        <h4>Partner</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Introduction)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Introduction)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.CompanyLogo)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.CompanyLogo)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Facebook)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Facebook)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Twitter)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Twitter)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Instagram)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Instagram)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Linkedin)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Linkedin)
+            </dd>
+    
+            <dt>
+                @Html.DisplayNameFor(model => model.Website)
+            </dt>
+    
+            <dd>
+                @Html.DisplayFor(model => model.Website)
+            </dd>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>

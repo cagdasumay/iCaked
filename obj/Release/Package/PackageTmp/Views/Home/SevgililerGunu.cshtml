@@ -1,0 +1,157 @@
+﻿@using Cake.Controllers
+@using System.Data
+@using System.Globalization
+
+@{
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+    DataTable madeCakes = dc.DBQueryGetter("select * from MadeCakes where Visible = 'yes' and UserID <> '00000000-0000-0000-0000-000000000000' and Name like '%sevgili%' or Name like '%kalp%' or Name like N'%aşk%' or Category = N'Sevgili Pastaları'");
+    DataTable products = dc.DBQueryGetter("select * from Products where Approved = 'yes' and Category = 'Pasta' and Name like '%sevgili%' or Name like '%kalp%'");
+    DataTable bakeries = dc.DBQueryGetter("select * from Bakeries");
+
+    madeCakes = dc.sortByDate(madeCakes);
+    String selectStr = "";
+
+    for (int i = 0; i < madeCakes.Rows.Count; i++) { selectStr = selectStr + " UserID = '" + madeCakes.Rows[i]["UserID"] + "' or "; }
+    selectStr = selectStr.Substring(0, selectStr.Length - 4);
+
+    DataTable users = dc.DBQueryGetter("select * from Users where " + selectStr + "");
+
+    List<DataRow> cakeUsers = new List<DataRow>();
+    for (int i = 0; i < madeCakes.Rows.Count; i++)
+    {
+        for (int i2 = 0; i2 < users.Rows.Count; i2++) { if (users.Rows[i2]["UserID"].ToString().ToLower() == madeCakes.Rows[i]["UserID"].ToString().ToLower()) { cakeUsers.Add(users.Rows[i2]); } }
+    }
+
+    ViewBag.Title = "Sevgililer Günü Pastaları";
+    ViewBag.Description = "Sevgililer günü için tasarlanan en güzel pastaları burada bulabilir, anında butik pasta siparişi verip sevdiklerinize güzel bir sürpriz yapabilirsiniz.";
+    ViewBag.Keywords = "Sevgililer Günü Pastaları, sevgililer günü pastası, sevgililer günü pastası siparişi, pasta siparişi, butik pasta, butik pasta siparişi, tasarım pasta";
+}
+
+<div class="container-fluid" style="margin-top:-60px; margin-bottom:-100px; background-size:contain; padding-bottom:200px;">
+    <div class="container" style="margin-top:30px; padding:0px;">
+
+        <h1 id="tasarimlarh1" style="width:100%; float:left; text-align:center; margin-top:90px; font-size:40px; margin-bottom:50px; color:red;">Sevgililer Günü Pastaları</h1>
+
+        <label style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:80px;">
+            iCaked kullanıcıları tarafından sevgililer günü ile ilgili tasarlanmış 3 boyutlu tüm butik pastalar burada sergilenmektedir.
+            <br />
+
+            <span id="tasarimlar-upper-description">
+                Beğendiğiniz tasarım pasta fotoğrafına tıklayarak daha yakından inceleyebilirsiniz.
+                Dilerseniz beğendiğiniz pastayı editörde açıp tasarım pasta üzerinde değişiklik yapabilir veya sepete ekle butonuyla anında online pasta siparişi verebilirsiniz.
+                Bunun yanı sıra pasta tasarımcılarının tüm pastalarını inceleyebilir, üye olarak beğendiğiniz tasarımcıları takibe alabilirsiniz.
+                iCaked kullanıcıları tarafından tasarlanan yüzlerce tasarım pasta burada…
+            </span>
+        </label>
+
+        <div class="row" style="padding:0px; width:100%; float:left;">
+
+            <div style="width:100%; float:left; background:white; padding:0px;">
+                <div style="width:100%; float:left; padding:0px 3%;">
+
+                    <input class="hidden-xs" onkeyup="searchValentines(this)" type="text" style="float:left;  color:#3f2518; border:1px solid #e6e6e6; font-size:16px; border-radius:3px; padding:10px; width:300px;" placeholder="Tasarım Ara" />
+
+                    <select onchange="sortValentines(this)" style="margin-left:5px; color:#3f2518; float:right; border:1px solid #e6e6e6; border-radius:3px; padding:10px 0px; padding-left:5px; font-size:18px;">
+                        <option disabled selected>Sıralama</option>
+                        <option value="newest">En Yeniler</option>
+                        <option value="popular">En Beğenilenler</option>
+                        <option value="priceAsc">Fiyata Göre Azalan</option>
+                        <option value="priceDesc">Fiyata Göre Artan</option>
+                    </select>
+
+                    <select onchange="filterValentines(this)" style="margin-left:15px; margin-right:5px; color:#3f2518; float:right; border:1px solid #e6e6e6; border-radius:3px; padding:10px 0px; padding-left:5px; font-size:18px;">
+                        <option value="all">Tüm Ürünler</option>
+                        <option value="design">Tasarım Pastalar</option>
+                        <option value="product">Yaş Pastalar</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 col-sm-12 col-xs-12" style="padding:10px 0px; margin-top:30px; float:left; min-height:350px;" id="filter-design-wrapper">
+                    @{
+                        if (products.Rows.Count > 0)
+                        {
+                            for (int i = 0; i < products.Rows.Count; i++)
+                            {
+                                DataRow urun = products.Rows[i]; String product_thumbnail = "/Images/Products/" + urun["ProductID"] + "/" + (urun["Thumbnail"].ToString().Split(' '))[0];
+                                String price = urun["Price"].ToString().Split(' ')[0];
+                                price = uc.ArrangePrice(price);
+
+                                DataRow bakery = null;
+                                for (int i2 = 0; i2 < bakeries.Rows.Count; i2++)
+                                {
+                                    if (bakeries.Rows[i2]["BakeryID"].ToString().ToLower() == urun["BakeryID"].ToString().ToLower()) { bakery = bakeries.Rows[i2]; }
+                                }
+
+                                String productCategory = uc.cleanseUrlString(urun["Category"].ToString());
+                                String productBakery = uc.cleanseUrlString(bakery["Name"].ToString());
+                                String productName = uc.cleanseUrlString(urun["Name"].ToString()) + "-" + urun["ProductID"].ToString().Split('-')[0];
+
+                                String bakery_img = "/Images/Bakery/" + bakery["Thumbnail"];
+                                String product_cat = urun["Category"].ToString().Replace("Ç", "C");
+
+                                if (urun["DesignProduct"].ToString() == "yes") { product_cat = "butik-pasta"; }
+
+                                <div class="col-md-4 col-sm-4 col-xs-6 sortAllProduct" style="padding:2.81%; padding-top:10px;" data-type="product" data-province="@bakery["Province"]" data-name="@urun["Name"]" data-price="@price.Split('.')[0]" data-category="@product_cat" data-date="@Convert.ToDateTime(urun["AddDate"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-likes="@urun["Fav"]">
+
+                                    <div class="product-div">
+
+                                        <div style="padding-right:0px;">
+                                            <a  style="color:black; cursor:pointer; position:relative; width:100%; float:left;" href="@Url.Action("Product","Bakery", new { category = productCategory, bakeryName = productBakery, productName = productName })">
+                                                <img alt="pastane resmi" src="@bakery_img" style="width:75px; position:absolute; top:10px; right:10px; border:none; box-shadow:none; background:none;" />
+                                                <img alt="pastane ürünü" src="@product_thumbnail" style="width:100%; float:left; border-radius:0px;" />
+                                            </a>
+                                            <div class="index-sub-product-div" style="border-radius:0px; padding:15px 0px; border:none; border-bottom:1px solid #e6e6e6;">
+                                                <label style="padding-bottom:0px; text-align:center; font-size:18px; font-weight:500;">@urun["Name"]</label>
+                                                <label class="product-description" style="font-size:12px; text-align:center; padding-bottom:5px;">@urun["Description"].ToString().Split('~')[0]</label>
+                                                <label style="text-align:center;">@price <span style="font-size:12px;">TL</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                        if (madeCakes.Rows.Count > 0)
+                        {
+                            for (int i = 0; i < madeCakes.Rows.Count; i++)
+                            {
+                                DataRow cake = madeCakes.Rows[i];
+                                String img = "/Images/MadeCakes/" + cake["MadeID"] + "/designImg-275x275.png";
+                                // String img = "/Images/MadeCakes/" + cake["MadeID"] + "/" + (cake["ImagePath"].ToString().Split(' '))[0];
+
+                                String designType = uc.cleanseUrlString(cake["Type"].ToString().Replace("\r\n", ""));
+                                String designName = uc.cleanseUrlString(cake["Name"].ToString()) + "-" + cake["MadeID"].ToString().Split('-')[0];
+
+                                String profileName = "";
+
+                                try
+                                {
+                                    profileName = uc.cleanseUrlString(cakeUsers[i]["Name"].ToString()) + "-" + uc.cleanseUrlString(cakeUsers[i]["Surname"].ToString()) + "-" + cakeUsers[i]["UserID"].ToString().Split('-')[0];
+                                }
+                                catch (Exception e) { }
+
+                                <div class="col-md-4 col-sm-4 col-xs-6 design-product filter-design" data-type="design" data-price="@cake["PriceInterval"].ToString()" data-name="@cake["Name"]" data-size="@cake["SizeOptions"]" data-category="@cake["Category"]" data-date="@Convert.ToDateTime(cake["DateTime"]).ToString("MM.dd.yyyy HH:mm:ss", CultureInfo.InvariantCulture)" data-likes="@cake["Likes"]" style="padding:10px 2px; margin-bottom:30px; padding-bottom:30px; float:left;">
+
+                                    <div style="width:100%; float:left;">
+                                        <div style="padding-right:8%; padding-left:8%;">
+                                            <a  href="@Url.Action("Tasarim","Home", new { type = designType, designName = designName })">
+                                                <img alt="tasarım pasta resmi" src="@img" style="width:100%; float:left; transition:ease-in-out 0.1s; cursor:pointer;" onclick="$(this).parent().parent().parent().submit()" />
+                                            </a>
+                                            <div class="index-sub-product-div" style="border-radius:0px; padding:10px 0px; border:none; border-bottom:1px solid #e6e6e6;">
+                                                <label style="padding-bottom:0px; text-align:center; font-size:18px; font-weight:500;">@cake["Name"]</label>
+                                                <label class="product-description" style="font-size:12px; text-align:center; padding-bottom:5px;">@cake["SizeOptions"] kişilik</label>
+                                                @*<a href="@Url.Action("UserProfile","Account", new { profileName = profileName })" class="design-sublabel" style="text-align:center;">@cakeUsers[i]["Name"] @cakeUsers[i]["Surname"]</a>*@
+                                                <label style="text-align:center; font-size:18px; padding-top:0px;">@uc.ArrangePrice(cake["PriceInterval"].ToString()) <span style="font-size:12px;">TL</span></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

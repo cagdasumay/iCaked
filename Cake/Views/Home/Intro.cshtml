@@ -1,0 +1,192 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using Cake.Models
+
+@{
+    ViewBag.Title = "iCaked - 3D Cake Design";
+    ViewBag.Description = "Design cake and cake is the right place for your order. Design your own pastry with 3D cake design editor and order online cake now";
+    ViewBag.Keywords = "cake, ankara cake order, istanbul cake order, cake design, birthday cake, party baskets, design cake order, boutique cake order";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    DatabaseController dc = new DatabaseController();
+}
+
+<script src="~/scripts/UtilityScripts/instafeed.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#MainZip").autocomplete({
+            delay: 300,
+            position: { my: "right+0 top+20", at: "right bottom" },
+            source: '/Home/ZipComplete',
+            data: { key: $(this).val() },
+            minLength: 2,
+            open: function () { $('ul.ui-autocomplete').addClass('opened') },
+            close: function () {
+                $('ul.ui-autocomplete')
+                  .removeClass('opened')
+                  .css('display', 'block');
+            },
+            autoFocus: true
+            //close: function (event, ui) {
+            //    if (!$("ul.ui-autocomplete").is(":visible")) {
+            //        $("ul.ui-autocomplete").show();
+            //    }
+            //}
+        }).data("ui-autocomplete")._renderItem = function (ul, item) {
+            item.value = item.zip + ", " + item.city + ", " + item.state;
+            item.label = item.zip + ", " + item.city + ", " + item.state;
+            var acItem = "<li>" +
+                            "<a style='color:initial; text-decoration:none;' href='home/index?id=" + item.zip + "'>" +
+                                "<div style='width:100%; float:left; border-bottom:1px solid #e6e6e6; padding:5px 0px; font-family:Raleway; cursor:pointer;'>" +
+                                    "<label style='float:left; font-family:Open Sans; font-size:16px;'>" + item.zip + ", " + item.city + ", " + item.state + "</label>" +
+                                "</div>" +
+                           " </a>" +
+                          "</li>";
+
+            return $(acItem)
+                .data("item.autocomplete", item)
+                .appendTo(ul);
+        };
+    });
+
+</script>
+
+<div class="container-fluid">
+
+    <div class="col-md-12 col-sm-12 introBG" style="background:url('/Images/HD/introWP.png'); height:710px; background-position:center center;">
+
+        <div style="width:100%; float:left; text-align:center; padding-top:150px; color:white; text-shadow:1px 1px 1px black;">
+            <h1 style="font-size:55px;">Design Your Cake Online</h1>
+            <label style="width:100%; float:left; text-align:center; font-size:24px; padding-top:20px;">Design your dream cake in 3D editor and order from the bakery you want. <br /> But first we need you to select location</label>
+        </div>
+
+        <div style="width:100%; float:left; text-align:center; margin-top:50px;">
+            <input type="text" id="MainZip" placeholder="Enter location or zipcode" style="width:60%; margin:auto; padding:15px 20px; font-size:16px; border-radius:20px; box-shadow: 0px 1px 5px -1px #2f2f2f;" />
+        </div>
+
+        @{
+            if (TempData["notFound"] != null)
+            {
+                bool temp = (bool)TempData["notFound"];
+                <label style="width:100%; float:left; text-align:center; font-size:20px; padding-top:20px; color:white; text-shadow:0px 1px 1px black;">We are sorry to tell you we could not find any bakeries that we work with in your area.</label>
+            }
+        }
+
+    </div>
+
+    <div id="index-sub-slider-container" class="container-fluid hidden-xs" style="padding:75px 0px; float:left; width:100%; text-align:center; padding-top:40px;">
+        <div class="container">
+            <div style="width:100%; float:left; text-align:center; margin-bottom:10px;">
+                <h1 style="width:100%; float:left; font-size:40px; font-weight:500;">You Cake It, We Bake It !</h1>
+                <label style="width:60%; padding-top:30px;">
+                    You can design your own cake using our 3D editor and order it from the bakery you want
+                </label>
+            </div>
+
+            <div class="col-md-4 col-sm-4 col-xs-12" style="text-align:center; margin-top:30px;">
+                <img src="/Images/Site/index_mid2.png" style="width:70%;" />
+                <h2 style="width:100%; float:left; padding-top:20px; font-weight:600; font-size:20px;">Design Your Cake Online</h2>
+                <label style="width:250px; padding-top:20px;">Design your dream cake by using our specialized cake editor</label>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12" style="text-align:center; margin-top:30px;">
+                <img src="/Images/Site/index_mid1.png" style="width:70%;" />
+                <h2 style="width:100%; float:left; padding-top:20px; font-weight:600; font-size:20px;">Select Bakery</h2>
+                <label style="width:250px; padding-top:20px;">Select bakery from your area</label>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12" style="text-align:center; margin-top:30px;">
+                <img src="/Images/Site/index_mid3.png" style="width:70%;" />
+                <h2 style="width:100%; float:left; padding-top:20px; font-weight:600; font-size:20px;">Order !</h2>
+                <label style="width:250px; padding-top:20px;">Order your design or order from the products of the bakery you selected</label>
+            </div>
+
+            <div id="ilan_div" style="width:100%; float:left; margin-top:100px;">
+
+                <div onmouseenter="changeImage(this, 'over')" onmouseleave="changeImage(this, 'out')" class="col-md-3 col-sm-4 col-xs-6 ailemiz-ilan">
+                    <a target="_blank" href="/" style="width:100%; float:left;">
+                        <div style="width:60%; margin-left:20%; float:left;">
+                            <img class="ilanCakeImg" src="https://www.icaked.com/Images/MadeCakes/d79fa505-3908-44a0-9d98-94fbe2f6f49d/designImg-275x275.png">
+                            <img class="ilanChildImg" src="/Landing/OnlineTasarla/img/p2.png" style="margin-top: -100%; display: block;">
+                        </div>
+                        <div class="ailemiz-ilan-desc">
+                            <label>Angela Kelley - 22</label>
+                            <label>That's a wonderful cake for my birthday!</label>
+                        </div>
+                    </a>
+                </div>
+
+                <div onmouseenter="changeImage(this, 'over')" onmouseleave="changeImage(this, 'out')" class="col-md-3 col-sm-4 col-xs-6 ailemiz-ilan">
+                    <a target="_blank" href="/" style="width:100%; float:left;">
+                        <div style="width:60%; margin-left:20%; float:left;">
+                            <img class="ilanCakeImg" src="https://www.icaked.com/Images/MadeCakes/d2e1ae5c-74aa-49be-ba26-556d27e0f0d9/designImg-275x275.png">
+                            <img class="ilanChildImg" src="/Landing/OnlineTasarla/img/p1.png" style="margin-top: -100%; display: none;">
+                        </div>
+                        <div class="ailemiz-ilan-desc">
+                            <label>Sandy Armstrong - 37</label>
+                            <label>It's so sweet for my new house celebration.</label>
+                        </div>
+                    </a>
+                </div>
+
+                <div onmouseenter="changeImage(this, 'over')" onmouseleave="changeImage(this, 'out')" class="col-md-3 col-sm-4 col-xs-6 ailemiz-ilan">
+                    <a target="_blank" href="/" style="width:100%; float:left;">
+                        <div style="width:60%; margin-left:20%; float:left;">
+                            <img class="ilanCakeImg" src="https://www.icaked.com/Images/MadeCakes/0a7561cb-f447-4c6f-8df9-65a8c18959d7/designImg-275x275.png">
+                            <img class="ilanChildImg" src="/Landing/OnlineTasarla/img/p3.png" style="margin-top: -100%; display: block;">
+                        </div>
+                        <div class="ailemiz-ilan-desc">
+                            <label>Oliver Wilson - 26</label>
+                            <label>This emoji cake was a big suprise for my girl friend.</label>
+                        </div>
+                    </a>
+                </div>
+
+                <div onmouseenter="changeImage(this, 'over')" onmouseleave="changeImage(this, 'out')" class="col-md-3 col-sm-4 col-xs-6 ailemiz-ilan">
+                    <a target="_blank" href="/" style="width:100%; float:left;">
+                        <div style="width:60%; margin-left:20%; float:left;">
+                            <img class="ilanCakeImg" src="https://www.icaked.com/Images/MadeCakes/10457d52-9169-40fb-9431-d82f1636f745/designImg-275x275.png">
+                            <img class="ilanChildImg" src="/Landing/OnlineTasarla/img/p4.png" style="margin-top: -100%; display: block;">
+                        </div>
+                        <div class="ailemiz-ilan-desc">
+                            <label>Caleb Welch - 45</label>
+                            <label>My son liked the football concept on his birthday cake.</label>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div class="container" style="padding:0px;">
+            <div class="col-md-7 col-sm-6 col-xs-12" style="padding:10px; margin:40px 0px; border:3px solid #f5f5f5; background:white;">
+                <script type="text/javascript">
+
+                var feed = new Instafeed({
+                    get: 'user',
+                    userId: '3951242541',
+                    accessToken: '3951242541.3ec9dee.004f6aa09b944c9fb9fc0ce3ed5e153b',
+                    limit: 8,
+                    template: '<a  href="{{link}}" class="col-md-3 col-sm-6 col-xs-6" style="float:left; padding:0px; float:left;"> \
+                            <div style="width:90%; margin-left:5%; margin-top:10px; margin-bottom:5px; float:left;"> \
+                            <img src="{{image}}" style="float:left; width:100%;" /> \
+                                <div style="width:100%; float:left; margin-bottom:15px;"> \
+                                    <img class="insta-icons" src="/Images/Site/ins_like_icon.png" style="float:left; " /><span style="float:left; margin-left:5px;">{{likes}}</span> \
+                                    <span style="float:right;">{{comments}}</span><img class="insta-icons" src="/Images/Site/ins_comment_icon.png" style="float:right; margin-right:5px;" /> \
+                                </div> \
+                            </div> \
+                        </a>'
+                });
+                feed.run();
+                </script>
+                <div id="instafeed"></div>
+            </div>
+            <div class="col-md-4 col-md-offset-1 col-sm-6 col-xs-12" style="padding:10px; margin-top:40px; border:3px solid #f5f5f5; background:White;">
+                <iframe style="width:100%; float:left; height:250px;" src="https://www.youtube.com/embed/5rZ5IXUMDIs" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+</div>

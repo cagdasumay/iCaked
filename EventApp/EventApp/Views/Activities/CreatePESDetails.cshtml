@@ -1,0 +1,627 @@
+﻿@using EventApp.Models
+@model EventApp.Models.SurveyActivityQuestion
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Etkinlik Sonrası Anket";
+
+    Guid EventID = (Guid)ViewData["SurveyEventID"];
+
+    Activity ThisSurvey = (Activity)ViewData["ThisSurvey"];
+    List<SurveyQuestionType> QuesitonTypes = (List<SurveyQuestionType>)ViewData["QuesitonTypes"];
+    string PageDisplay = (string)ViewData["PageDisplay"];
+
+    List<string> SavedChoices = (List<string>)ViewData["SavedChoices"];
+    List<int> OrderSavedChoices = (List<int>)ViewData["OrderSavedChoices"];
+    string ChoiceError = (string)ViewData["ChoiceError"];
+    int MC1ChoiceCount = 0;
+    if (SavedChoices != null)
+    {
+        MC1ChoiceCount = SavedChoices.Count;
+    }
+
+    List<string> SavedChoicesMCM = (List<string>)ViewData["SavedChoicesMCM"];
+    List<int> OrderSavedChoicesMCM = (List<int>)ViewData["OrderSavedChoicesMCM"];
+    int MCMChoiceCount = 0;
+    if (SavedChoicesMCM != null)
+    {
+        MCMChoiceCount = SavedChoicesMCM.Count;
+    }
+
+    List<SurveyActivityQuestion> SortedSurveyQuestions = (List<SurveyActivityQuestion>)ViewData["SortedSurveyQuestions"];
+    int QNumber = SortedSurveyQuestions.Count;
+    int OrderNumber = QNumber + 1;
+    List<int> OptionNumberOfQuestions = (List<int>)ViewData["OptionNumberOfQuestions"];
+    List<SurveyQuestionOption> QuestionOptions = (List<SurveyQuestionOption>)ViewData["QuestionOptions"];
+    List<string> TypeOfQuestionByOrder = (List<string>)ViewData["TypeOfQuestionByOrder"];
+
+    string QuestionError = (string)ViewData["QuestionError"];
+
+    string FromPageSurvey = (string)Session["FromPageSurvey"];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    function radioChange(input) {
+        if (input == '1') { $(".radioChange2, .radioChange3").slideUp(200); setTimeout(function () { $(".radioChange1").slideDown(200); }, 210); }
+        else if (input == '2') { $(".radioChange1, .radioChange3").slideUp(200); setTimeout(function () { $(".radioChange2").slideDown(200); }, 210); }
+        else if (input == '3') { $(".radioChange1, .radioChange2").slideUp(200); setTimeout(function () { $(".radioChange3").slideDown(200); }, 210); }
+    }
+
+    $(document).ready(function () {
+        $("#QuestionTypeSelect").change(function () {
+            var type = $("#QuestionTypeSelect").val();
+            $("#back-btn").attr("href", "/Polls/CreatePoll?QuestionTypeSelect=" + type);
+        });
+
+        setTimeout(function () { $(this).scrollTop(0); }, 1);
+    });
+
+</script>
+
+@{
+    if (PageDisplay == "Default")
+    {
+        <style>
+            .radioChange1, .radioChange2, .radioChange3 {
+                display: none;
+            }
+        </style>
+    }
+    else if (PageDisplay == "Classic")
+    {
+        <style>
+            .radioChange2, .radioChange3, .radiochange4 {
+                display: none;
+            }
+        </style>
+    }
+    else if (PageDisplay == "MC1Select")
+    {
+        <style>
+            .radioChange1, .radioChange3, .radiochange4 {
+                display: none;
+            }
+        </style>
+    }
+    else if (PageDisplay == "MCMSelect")
+    {
+        <style>
+            .radioChange1, .radioChange2, .radiochange4 {
+                display: none;
+            }
+        </style>
+    }
+}
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("PESurveyOrg", "Activities")">Etkinlik Değerlendirme Anketi</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+
+                @{
+                    if (FromPageSurvey == "EditSurvey")
+                    {
+                        <li>
+                            <a href="@Url.Action("EditSurvey","Activities", new { SurveyEventID = EventID })">@ThisSurvey.Name</a>
+                            <i class="fa fa-circle"></i>
+                        </li>
+                            <li>
+                                <span>Yeni Soru</span>
+                            </li>
+                    }
+                    else if (FromPageSurvey == "CreateSurvey")
+                    {
+                        <li>
+                            <span>Yeni Anket</span>
+                        </li>
+                    }
+                }
+
+
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title" style="float: left;">
+            @ThisSurvey.Name
+            @{
+                if (FromPageSurvey == "EditSurvey")
+                {
+                    <small>Yeni Soru Ekle</small>
+                }
+                else if (FromPageSurvey == "CreateSurvey")
+                {
+                    <small>Sorularını Girin</small>
+                }
+            }
+        </h1>
+        @{
+            if (FromPageSurvey == "EditSurvey")
+            {
+                <h1>
+                    <a href="@Url.Action("EditSurvey","Activities", new { SurveyEventID = EventID })" style="float: right; margin-left: 5px;" class="btn green">
+                        Düzenlemeyi Bitir
+                        <i class="fa fa-check"></i>
+                    </a>
+                </h1>
+            }
+            else if (FromPageSurvey == "CreateSurvey")
+            {
+                <h1>
+                    @{
+                        if (QNumber > 0)
+                        {
+                            <a href="@Url.Action("SurveyDisplayOrg","Activities", new { SurveyEventID = EventID })" style="float: right; margin-left: 5px;" class="btn green">
+                                Anketi Tamamla
+                                <i class="fa fa-check"></i>
+                            </a>
+                        }
+                    }
+                </h1>
+                        }
+
+
+        }
+
+        <div class="row">
+            <div class="col-md-12 ">
+                <!-- BEGIN SAMPLE FORM PORTLET-->
+                <div class="portlet light bordered">
+                    @{
+                        if (FromPageSurvey == "EditSurvey")
+                        {
+                            <div class="mt-element-step">
+                                <div class="row step-background-thin">
+                                    <div class="col-md-12 bg-grey-steel mt-step-col active">
+                                        <div class="mt-step-number">
+                                            <i class="fa fa-pencil"></i>
+                                        </div>
+                                        <div class="mt-step-title font-grey-cascade">Yeni Soru</div>
+                                        <div class="mt-step-content font-grey-cascade">Girin</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if (FromPageSurvey == "CreateSurvey")
+                        {
+                            <div class="mt-element-step">
+                                <div class="row step-background-thin">
+                                    <div class="col-md-6 bg-grey-steel mt-step-col">
+                                        <div class="mt-step-number">1</div>
+                                        <div class="mt-step-title font-grey-cascade">Anket Bilgilerini</div>
+                                        <div class="mt-step-content font-grey-cascade">Girin</div>
+                                    </div>
+                                    <div class="col-md-6 bg-grey-steel mt-step-col active">
+                                        <div class="mt-step-number">2</div>
+                                        <div class="mt-step-title font-grey-cascade">Anket Sorularını</div>
+                                        <div class="mt-step-content font-grey-cascade">Oluşturun</div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <div class="portlet-body form">
+                        <form role="form">
+                            <div class="form-body" style="padding-top: 0px;">
+
+                                @{
+                                    using (Html.BeginForm("CreatePoll", "Polls", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                    {
+                                        <div class="form-horizontal radiochange4">
+                                            <div class="form-group form-md-line-input" style="margin-bottom: 0px;">
+                                                <label class="col-md-offset-2 col-sm-offset-2 col-xs-offset-1 col-md-3 control-label" style="padding-left: 0px; padding-bottom: 5px; text-align: left;" for="form_control_1"> <b>@OrderNumber. Soru için</b> Soru Tipi Seçin</label>
+                                                <div class="col-md-8 col-md-offset-2 col-sm-offset-2 col-xs-offset-1" style="margin-bottom: 0px;">
+                                                    <div class="form-group form-md-line-input" style="padding-top: 0px; margin-bottom: 0px;">
+                                                        <div class="md-radio-list">
+
+                                                            <div class="md-radio">
+                                                                <input type="radio" id="radio50" name="QuestionTypeSelect" class="md-radiobtn" value="@QuesitonTypes[1].Id">
+                                                                <label onclick="radioChange('1')" for="radio50">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> @QuesitonTypes[1].Name
+                                                                </label>
+                                                            </div>
+                                                            <div class="md-radio">
+                                                                <input type="radio" id="radio51" name="QuestionTypeSelect" class="md-radiobtn" value="@QuesitonTypes[0].Id">
+                                                                <label onclick="radioChange('2')" for="radio51">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> @QuesitonTypes[0].Name
+                                                                </label>
+                                                            </div>
+                                                            <div class="md-radio">
+                                                                <input type="radio" id="radio52" name="QuestionTypeSelect" class="md-radiobtn" value="@QuesitonTypes[2].Id">
+                                                                <label onclick="radioChange('3')" for="radio52">
+                                                                    <span></span>
+                                                                    <span class="check"></span>
+                                                                    <span class="box"></span> @QuesitonTypes[2].Name
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                <div class="form-horizontal" style="margin-top: 0px; padding-top: 0px; border-top: 0px;">
+                                    @{
+                                        using (Html.BeginForm("SaveClassicPES", "Activities", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            <div class="form-group form-md-line-input radioChange1" style="margin-bottom: 0px; padding-top: 0px;">
+                                                <div class="form-group form-md-line-input" style="padding-top: 0px; margin-bottom: 0px;">
+                                                    <div class="md-radio-list">
+                                                        <div class="form-group form-md-line-input form-md-floating-label" style="padding-top: 0px;">
+                                                            <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-11" style="padding-top: 15px;">
+                                                                @Html.TextAreaFor(model => model.Quesiton, new { @class = "form-control", @type = "text", @id = "form_control_1" })
+                                                                @Html.ValidationMessageFor(model => model.Quesiton, "", new { @class = "text-danger" })
+                                                                @{
+                                                                    if (QuestionError == "QuestionError")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">Soru Girmeniz Gerekmektedir</label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label for="form_control_1">Soruyu Buraya Girin</label>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row radioChange1" style="margin-bottom: 20px;">
+                                                <div class="col-md-offset-8 col-md-4 col-sm-offset-9 col-sm-3 col-xs-offset-8 col-xs-4">
+                                                    @{
+                                                        TempData["CancelClassic"] = ThisSurvey.Id;
+                                                        TempData["SurveyID"] = ThisSurvey.Id;
+                                                        if (QuestionError != "QuestionError")
+                                                        {
+                                                            <div style="display: none">
+                                                                <a href="@Url.Action("CancelClassicPES","Activities")" id="CompleteConference" class="btn btn-outline" style="color: #e73d4a; border-color: #e73d4a; background-color: white;">
+                                                                    İptal
+                                                                </a>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a href="@Url.Action("CancelClassicPES","Activities")" id="CompleteConference" class="btn btn-outline" style="color: #e73d4a; border-color: #e73d4a; background-color: white;">
+                                                                İptal
+                                                            </a>
+                                                        }
+                                                    }
+
+                                                    <button href="@Url.Action("SaveClassicPES","Activities")" name="SurveyId" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline green button-next">
+                                                        Kaydet
+                                                    </button>
+                                                </div>
+                                            </div>
+                                                        }
+                                    }
+
+                                    @{
+                                        using (Html.BeginForm("SaveMC1SelectPES", "Activities", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            <div class="form-group form-md-line-input radioChange2" style="margin-bottom: 0px; padding-top: 0px;">
+                                                <div class="form-group form-md-line-input" style="padding-top: 0px; margin-bottom: 0px;">
+                                                    <div class="md-radio-list">
+                                                        <div class="form-group form-md-line-input form-md-floating-label" style="padding-top: 0px;">
+                                                            <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-10" style="padding-top: 15px;">
+                                                                @Html.TextAreaFor(model => model.Quesiton, new { @class = "form-control", @type = "text", @id = "form_control_1" })
+                                                                @Html.ValidationMessageFor(model => model.Quesiton, "", new { @class = "text-danger" })
+                                                                @{
+                                                                    if (QuestionError == "QuestionError")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">Soru Girmeniz Gerekmektedir</label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label for="form_control_1">Soruyu Buraya Girin</label>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                @{
+                                                    if (MC1ChoiceCount > 0)
+                                                    {
+                                                        for (int i = 0; i < MC1ChoiceCount; i++)
+                                                        {
+                                                            <div class="form-group" style="margin-bottom: 0px;">
+                                                                <div>
+                                                                    <label class="control-label col-md-offset-2 col-md-10 col-sm-offset-2 col-xs-offset-1  col-sm-10 col-xs-11" style="text-align: left; padding-top: 0px;">
+                                                                        @SavedChoices[i]
+                                                                        <a href="@Url.Action("DelChoiceMC1PES","Activities", new { DeleteChoice = OrderSavedChoices[i].ToString(), DelSurveyID = ThisSurvey.Id })" name="DelSurveyId" value="@ThisSurvey.Id" class="btn btn-success white" style="padding-top: 0px; padding-bottom: 4px; color: #e73d4a; padding-left: 2px;">
+                                                                            <i class="fa fa-times"></i>
+                                                                        </a>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+
+                                            <div class="form-group form-md-line-input radioChange2" style="margin-bottom: 0px; padding-top: 0px;">
+                                                <div class="form-group form-md-line-input" style="padding-top: 0px; margin-bottom: 0px;">
+                                                    <div class="md-radio-list">
+                                                        <div class="form-group form-md-line-input form-md-floating-label" style="padding-top: 0px;">
+                                                            <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-10" name="Choice" id="Choice" style="padding-top: 15px;">
+                                                                @*Buranın değiştirilmesi gerekecek. 2 tane question olmaz*@
+                                                                @Html.TextArea("Choice", new { @class = "form-control", @type = "text", @id = "form_control_1" })
+                                                                @Html.ValidationMessageFor(model => model.Quesiton, "", new { @class = "text-danger" })
+                                                                @{
+                                                                    if (ChoiceError == "Correct")
+                                                                    {
+                                                                        <label for="form_control_1">Seçenek Girin</label>
+                                                                    }
+                                                                    else if (ChoiceError == "No Choices")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">En az 2 tane seçenek girin</label>
+                                                                    }
+                                                                    else if (ChoiceError == "Only Choice")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">1'den fazla seçenek girmeniz gerekli</label>
+                                                                    }
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row radioChange2" style="margin-bottom: 20px;">
+                                                <div class="col-md-offset-5 col-md-7 col-sm-offset-7 col-sm-5 col-xs-12 radioChange2">
+                                                    <button href="@Url.Action("SaveMC1SelectPES","Activities")" name="CancelSurveyID" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline" style="color: #e73d4a; border-color: #e73d4a; background-color: white;">
+                                                        İptal
+                                                    </button>
+                                                    @{ TempData["SurveyID"] = ThisSurvey.Id;}
+                                                    <button href="@Url.Action("SaveMC1SelectPES","Activities")" name="ContSurveyId" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline green button-next">
+                                                        Yeni Seçenek
+                                                    </button>
+                                                    <button href="@Url.Action("SaveMC1SelectPES","Activities")" name="SurveyId" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline green button-next">
+                                                        Kaydet
+                                                    </button>
+                                                </div>
+                                            </div>
+                                                        }
+                                    }
+
+                                    @{
+                                        using (Html.BeginForm("SaveMCMSelectPES", "Activities", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                                        {
+                                            <div class="form-group form-md-line-input radioChange3" style="margin-bottom: 0px; padding-top: 0px;">
+                                                <div class="form-group form-md-line-input" style="padding-top: 0px; margin-bottom: 0px;">
+                                                    <div class="md-radio-list">
+                                                        <div class="form-group form-md-line-input form-md-floating-label" style="padding-top: 0px;">
+                                                            <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-10" style="padding-top: 15px;">
+                                                                @Html.TextAreaFor(model => model.Quesiton, new { @class = "form-control", @type = "text", @id = "form_control_1" })
+                                                                @Html.ValidationMessageFor(model => model.Quesiton, "", new { @class = "text-danger" })
+                                                                @{
+                                                                    if (QuestionError == "QuestionError")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">Soru Girmeniz Gerekmektedir</label>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <label for="form_control_1">Soruyu Buraya Girin</label>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div>
+                                                @{
+                                                    if (MCMChoiceCount > 0)
+                                                    {
+                                                        for (int i = 0; i < MCMChoiceCount; i++)
+                                                        {
+                                                            <div class="form-group" style="margin-bottom: 0px;">
+                                                                <div>
+                                                                    <label class="control-label col-md-offset-2 col-md-10 col-sm-offset-2 col-xs-offset-1  col-sm-10 col-xs-11" style="text-align: left; padding-top: 0px;">
+                                                                        @SavedChoicesMCM[i]
+                                                                        <a href="@Url.Action("DelChoiceMCMPES","Activities", new { DeleteChoice = OrderSavedChoicesMCM[i].ToString(), DelSurveyID = ThisSurvey.Id })" name="DelSurveyId" value="@ThisSurvey.Id" class="btn btn-success white" style="padding-top: 0px; padding-bottom: 4px; color: #e73d4a; padding-left: 2px;">
+                                                                            <i class="fa fa-times"></i>
+                                                                        </a>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+
+                                            <div class="form-group form-md-line-input radioChange3" style="margin-bottom: 0px; padding-top: 0px;">
+                                                <div class="form-group form-md-line-input" style="padding-top: 0px; margin-bottom: 0px;">
+                                                    <div class="md-radio-list">
+                                                        <div class="form-group form-md-line-input form-md-floating-label" style="padding-top: 0px;">
+                                                            <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-10" name="Choice" id="Choice" style="padding-top: 15px;">
+                                                                @*Buranın değiştirilmesi gerekecek. 2 tane question olmaz*@
+                                                                @Html.TextArea("Choice", new { @class = "form-control", @type = "text", @id = "form_control_1" })
+                                                                @Html.ValidationMessageFor(model => model.Quesiton, "", new { @class = "text-danger" })
+                                                                @{
+                                                                    if (ChoiceError == "Correct")
+                                                                    {
+                                                                        <label for="form_control_1">Seçenek Girin</label>
+                                                                    }
+                                                                    else if (ChoiceError == "No Choices")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">En az 2 tane seçenek girin</label>
+                                                                    }
+                                                                    else if (ChoiceError == "Only Choice")
+                                                                    {
+                                                                        <label for="form_control_1" style="color: #e73d4a">1'den fazla seçenek girmeniz gerekli</label>
+                                                                    }
+                                                                }
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row radioChange3" style="margin-bottom: 20px;">
+                                                <div class="col-md-offset-5 col-md-7 col-sm-offset-7 col-sm-5 col-xs-12 radioChange3">
+                                                    <button href="@Url.Action("SaveMCMSelectPES","Activities")" name="CancelSurveyID" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline" style="color: #e73d4a; border-color: #e73d4a; background-color: white;">
+                                                        İptal
+                                                    </button>
+                                                    @{ TempData["SurveyID"] = ThisSurvey.Id;}
+                                                    <button href="@Url.Action("SaveMCMSelectPES","Activities")" name="ContSurveyId" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline green button-next">
+                                                        Yeni Seçenek
+                                                    </button>
+                                                    <button href="@Url.Action("SaveMCMSelectPES","Activities")" name="SurveyId" value="@ThisSurvey.Id" id="CompleteConference" class="btn btn-outline green button-next">
+                                                        Kaydet
+                                                    </button>
+                                                </div>
+                                            </div>
+                                                        }
+                                    }
+
+                                    <div class="form-horizontal" style="margin-top: 0px; padding-top: 0px; border-top: 0px;">
+
+                                        @{
+                                            if (QNumber > 0)
+                                            {
+                                                <div class="form-actions">
+                                                    <div class="row">
+                                                        <div class="col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8 col-xs-offset-1 col-xs-10">
+                                                            @{
+
+                                                                for (int i = 0; i < QNumber; i++)
+                                                                {
+                                                                    if (TypeOfQuestionByOrder[i] == "Klasik")
+                                                                    {
+                                                                        <div style="color: #ed6b75; font-weight: bold; margin-top:10px; padding-top: 5px;">
+                                                                            @SortedSurveyQuestions[i].Order. Soru
+                                                                            <a href="@Url.Action("DeleteQuestionPES","Activities", new { SurveyID = ThisSurvey.Id, QuestionID = SortedSurveyQuestions[i].Id })" name="DelSurveyId" value="@ThisSurvey.Id" class="btn btn-outline" style="color: #e73d4a; text-align: right; float: right; padding-top: 0px; padding-bottom: 0px; background-color: white;">
+                                                                                Kaldır
+                                                                            </a>
+                                                                            <a href="@Url.Action("EditClassicPES","Activities",  new { QQQ = SortedSurveyQuestions[i].Id, EditQFrom = "CreateSurveyDetails" })" name="DelSurveyId" value="@ThisSurvey.Id" class="btn btn-outline" style="color: #337ab7; text-align: right; float: right; padding-top: 0px; padding-bottom: 0px; background-color: white;">
+                                                                                Düzenle
+                                                                            </a>
+
+                                                                        </div>
+                                                                        <div style="font-weight: bold;">@SortedSurveyQuestions[i].Quesiton</div>
+                                                                        <div style="border-bottom: 2px solid #b7b5b5; padding-top: 20px; padding-bottom: 5px;"></div>
+                                                                    }
+                                                                    else if (TypeOfQuestionByOrder[i] == "Çoktan seçmeli tek seçim")
+                                                                    {
+                                                                        <div style="color: #ed6b75; font-weight: bold; margin-top:10px; padding-top: 5px;">
+                                                                            @SortedSurveyQuestions[i].Order. Soru (Tekli Seçim)
+                                                                            <a href="@Url.Action("DeleteQuestionPES","Activities", new { SurveyID = ThisSurvey.Id, QuestionID = SortedSurveyQuestions[i].Id })" name="DelSurveyId" value="@ThisSurvey.Id" class="btn btn-outline" style="color: #e73d4a; text-align: right; float: right; padding-top: 0px; padding-bottom: 0px; background-color: white;">
+                                                                                Kaldır
+                                                                            </a>
+                                                                            <a href="@Url.Action("EditMCPES","Activities", new { QQQ = SortedSurveyQuestions[i].Id, MCFrom = "CreateSurveyDetails" })" class="btn btn-outline" style="color: #337ab7; text-align: right; float: right; padding-top: 0px; padding-bottom: 0px; background-color: white;">
+                                                                                Düzenle
+                                                                            </a>
+                                                                        </div>
+                                                                        <div style="font-weight: bold;">@SortedSurveyQuestions[i].Quesiton</div>
+                                                                        <div class="md-radio-list" style="padding-bottom: 5px;">
+                                                                            @{
+                                                                                for (int j = QuestionOptions.Count - 1; j >= 0; j--)
+                                                                                {
+                                                                                    if (QuestionOptions[j].SurveyActivityQuestionID == SortedSurveyQuestions[i].Id)
+                                                                                    {
+                                                                                        <div class="md-checkbox">
+                                                                                            <input checked type="checkbox" id="" class="md-checkbox">
+                                                                                            <label for="" style="cursor: default">
+                                                                                                <span></span>
+                                                                                                <span class="check"></span>
+                                                                                                <span class="box"></span> @QuestionOptions[j].Option
+                                                                                            </label>
+                                                                                        </div>
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        </div>
+                                                                                }
+                                                                                else if (TypeOfQuestionByOrder[i] == "Çoktan seçmeli çoklu seçim")
+                                                                                {
+                                                                                    <div style="color: #ed6b75; font-weight: bold; margin-top:10px; padding-top: 5px;">
+                                                                                        @SortedSurveyQuestions[i].Order. Soru (Çoklu Seçim)
+                                                                                        <a href="@Url.Action("DeleteQuestionPES","Activities", new { SurveyID = ThisSurvey.Id, QuestionID = SortedSurveyQuestions[i].Id })" name="DelSurveyId" value="@ThisSurvey.Id" class="btn btn-outline" style="color: #e73d4a; text-align: right; float: right; padding-top: 0px; padding-bottom: 0px; background-color: white;">
+                                                                                            Kaldır
+                                                                                        </a>
+                                                                                        <a href="@Url.Action("EditMCPES","Activities", new { QQQ = SortedSurveyQuestions[i].Id, MCFrom = "CreateSurveyDetails" })" class="btn btn-outline" style="color: #337ab7; text-align: right; float: right; padding-top: 0px; padding-bottom: 0px; background-color: white;">
+                                                                                            Düzenle
+                                                                                        </a>
+                                                                                    </div>
+                                                                                    <div style="font-weight: bold;">@SortedSurveyQuestions[i].Quesiton</div>
+                                                                                    <div class="md-radio-list" style="padding-bottom: 5px;">
+                                                                                        @{
+                                                                                            for (int j = QuestionOptions.Count - 1; j >= 0; j--)
+                                                                                            {
+                                                                                                if (QuestionOptions[j].SurveyActivityQuestionID == SortedSurveyQuestions[i].Id)
+                                                                                                {
+                                                                                                    <div class="md-checkbox">
+                                                                                                        <input checked type="checkbox" id="" class="md-checkbox">
+                                                                                                        <label for="" style="cursor: default">
+                                                                                                            <span></span>
+                                                                                                            <span class="check"></span>
+                                                                                                            <span class="box"></span> @QuestionOptions[j].Option
+                                                                                                        </label>
+                                                                                                    </div>
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    </div>
+                                                                                                }
+                                                                                            }
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                                                            }
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

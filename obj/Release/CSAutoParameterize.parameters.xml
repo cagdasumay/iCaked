@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="GPDB-Web.config Connection String" description="GPDB Connection String used in web.config by the application to access the database." defaultValue="Server=tcp:infinia.database.windows.net,1433;Initial Catalog =GPDB; Persist Security Info=False;User ID=infinia; Password=15Feposea; MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout = 30;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\Cagdas\ Umay\\Documents\\Visual\ Studio\ 2015\\Projects\\Cake\\Cake\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='GPDB']/@connectionString" />
+  </parameter>
+  <parameter name="CakeDB-Web.config Connection String" description="CakeDB Connection String used in web.config by the application to access the database." defaultValue="Server=tcp:infinia.database.windows.net,1433;Data Source=infinia.database.windows.net;Initial Catalog=Cake;Persist Security Info=False;User ID=infinia;Password=15Feposea;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\Cagdas\ Umay\\Documents\\Visual\ Studio\ 2015\\Projects\\Cake\\Cake\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='CakeDB']/@connectionString" />
+  </parameter>
+</parameters>

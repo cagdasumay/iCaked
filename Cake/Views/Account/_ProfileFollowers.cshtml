@@ -1,0 +1,112 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    UtilityController uc = new UtilityController();
+    DatabaseController dc = new DatabaseController();
+    DataRow user = (DataRow)Session["userinfo"];
+
+    DataTable followers = dc.DBQueryGetter("select * from Follows where UserID = '" + user["UserID"] + "'");
+    DataTable followings = dc.DBQueryGetter("select * from Follows where FollowerID = '" + user["UserID"] + "'");
+
+    DataTable users = dc.DBQueryGetter("select * from Users");
+    followers.Columns.Add("Name",typeof(string)); followers.Columns.Add("Surname", typeof(string)); followers.Columns.Add("Thumbnail", typeof(string));
+    followings.Columns.Add("Name", typeof(string)); followings.Columns.Add("Surname", typeof(string)); followings.Columns.Add("Thumbnail", typeof(string));
+
+    for (int i = 0; i < users.Rows.Count; i++)
+    {
+        for(int i2 = 0; i2 < followers.Rows.Count; i2++)
+        {
+            if(followers.Rows[i2]["UserID"].ToString().ToLower() == users.Rows[i]["UserID"].ToString().ToLower())
+            {
+                followers.Rows[i2]["Name"] = users.Rows[i]["Name"]; followers.Rows[i2]["Surname"] = users.Rows[i]["Surname"]; followers.Rows[i2]["Thumbnail"] = users.Rows[i]["Thumbnail"]; break;
+            }
+        }
+
+        for (int i2 = 0; i2 < followings.Rows.Count; i2++)
+        {
+            if (followings.Rows[i2]["UserID"].ToString().ToLower() == users.Rows[i]["UserID"].ToString().ToLower())
+            {
+                followings.Rows[i2]["Name"] = users.Rows[i]["Name"]; followings.Rows[i2]["Surname"] = users.Rows[i]["Surname"]; followings.Rows[i2]["Thumbnail"] = users.Rows[i]["Thumbnail"]; break;
+            }
+        }
+    }
+}
+
+<div class="container" style="padding:0px; width:100%; float:left;">
+    <div class="row" style="padding:0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+            <div style="width:100%; float:left; border-bottom:1px solid #3f2518; margin-bottom:30px !important; color:#3f2518; padding-top:15px;">
+                <label onclick="toggleFollowers('openFollowers')" id="followers-label" class="follow-active follow-default" style="">Followers @followers.Rows.Count</label>
+                <label onclick="toggleFollowers('openFollowings')" id="following-label" class="follow-default" style="">Following @followings.Rows.Count</label>
+            </div>
+
+            <div style="width:100%; float:left;" id="followersWrapper">
+                @{
+                    if (followers.Rows.Count != 0)
+                    {
+                        for (int i = 0; i < followers.Rows.Count; i++)
+                        {
+                            DataRow follower = followers.Rows[i];
+                            String followerImg = "/Images/Users/" + follower["Thumbnail"];
+                            String profileName = uc.cleanseUrlString(follower["Name"].ToString()) + "-" + uc.cleanseUrlString(follower["Surname"].ToString()) + "-" + follower["UserID"].ToString().Split('-')[0];
+                            <div class="col-md-2 col-sm-3 col-xs-6" style="padding:0px 5px;">
+                                <div class="followers-div">
+                                    <a style="color:black;" href="@Url.Action("UserProfile","Account", new { profileName = profileName })">
+                                        <div style="width:100%; float:left; text-align:center;">
+                                            <img src="@followerImg" style="width:60%; border-radius:500px; border:2px solid #3f2518; padding:5px; background:white;" />
+                                        </div>
+                                        <div style="width:100%; float:left; margin-top:10px;">
+                                            <label style="width:100%; float:left; text-align:center; text-transform:capitalize; font-weight:500;">@follower["Name"] @follower["Surname"]</label>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="float:left; width:100%; text-align:center;">
+                            <img src="~/Images/Site/empty_cart_icon.png" style="width:60px; margin-bottom:20px; margin-top:100px;" />
+                            <label style="float:left; width:100%; text-align:center; font-size:20px; color:#3f2518;">You don't have any followers yet.</label>
+                        </div>
+                    }
+                }
+            </div>
+
+            <div style="width:100%; float:left; display:none;" id="followingWrapper">
+                @{
+                    if (followings.Rows.Count != 0)
+                    {
+                        for (int i = 0; i < followings.Rows.Count; i++)
+                        {
+                            DataRow following = followings.Rows[i];
+                            String followingImg = "/Images/Users/" + following["Thumbnail"];
+                            String profileName = uc.cleanseUrlString(following["Name"].ToString()) + "-" + uc.cleanseUrlString(following["Surname"].ToString()) + "-" + following["UserID"].ToString().Split('-')[0];
+                            <div class="col-md-2 col-sm-3 col-xs-6" style="padding:0px 5px;">
+                                <div class="followers-div">
+                                    <a style="color:black;" href="@Url.Action("UserProfile","Account", new { profileName = profileName })">
+                                        <div style="width:100%; float:left; text-align:center;">
+                                            <img src="@followingImg" style="width:60%; border-radius:500px; border:2px solid #3f2518; padding:5px; background:white;" />
+                                        </div>
+                                        <div style="width:100%; float:left; margin-top:10px;">
+                                            <label style="width:100%; float:left; text-align:center; text-transform:capitalize; font-weight:500;">@following["Name"] @following["Surname"]</label>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="float:left; width:100%; text-align:center;">
+                            <img src="~/Images/Site/empty_cart_icon.png" style="width:60px; margin-bottom:20px; margin-top:100px;" />
+                            <label style="float:left; width:100%; text-align:center; font-size:20px; color:#3f2518;">You don't follow anyone yet</label>
+                        </div>
+                    }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

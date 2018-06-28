@@ -1,0 +1,158 @@
+﻿@using System.Data
+
+@{
+    List<DataTable> dt_list = (List<DataTable>)ViewData["ObjectNames"];
+    DataTable cakes = dt_list[0];
+
+    List<DataRow> geometric = new List<DataRow>();
+    List<DataRow> numbers = new List<DataRow>();
+    List<DataRow> special = new List<DataRow>();
+    List<DataRow> hobby = new List<DataRow>();
+
+    for (int i = 0; i < cakes.Rows.Count; i++)
+    {
+        DataRow cakeRow = cakes.Rows[i];
+        if (cakeRow["Category"].ToString().Contains("Geometrik")) { geometric.Add(cakeRow); }
+        if (cakeRow["Category"].ToString().Contains("Sayılar")) { numbers.Add(cakeRow); }
+        if (cakeRow["Category"].ToString().Contains("Özel")) { special.Add(cakeRow); }
+        if (cakeRow["Category"].ToString().Contains("Hobi")) { hobby.Add(cakeRow); }
+    }
+}
+
+<div id="cake-all-dropdown" class="cake-dropdown" style="padding:0px; float:left; width:100%;">
+    <div class="mobile-cake-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll cake-draggable">
+        @{
+            for (int i = 0; i < cakes.Rows.Count; i++)
+            {
+                DataRow cakeRow = cakes.Rows[i];
+                String img_str = "";
+                if (cakeRow["ImagePath"] != null)
+                {
+                    if (String.IsNullOrEmpty(cakeRow["ImagePath"].ToString()) == false) { img_str = "/Objects/Images/" + cakeRow["ImagePath"]; }
+                    else { img_str = "/Images/Site/no_image.png"; }
+                }
+                else { img_str = "/Images/Site/no_image.png"; }
+                <div class="add-cake category-cake-draggable" data-bakery="@cakeRow["BakeryID"]" data-minSize="@cakeRow["MinSize"]" data-maxSize="@cakeRow["MaxSize"]" data-stepSize="@cakeRow["StepSize"]" data-obj="@cakeRow["ObjectName"]" data-keywords="@cakeRow["Keywords"]" style="background-image:url('@img_str');">
+                    <label style="width:100%; float:left; font-size:12px; padding-top:5px; text-align:center;" data-tr="For Min. @cakeRow["MinSize"] people" data-eng="For min. @cakeRow["MinSize"] people"></label>
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-cake-down-btn mobile-nav" style="border-bottom:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="cake-geometric-dropdown" class="cake-dropdown" style="display:none; padding:0px;">
+    @*<div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterCakes(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>*@
+    <div class="mobile-cake-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll cake-draggable">
+        @{
+            for (int i = 0; i < geometric.Count; i++)
+            {
+                DataRow cakeRow = geometric[i];
+                String img_str = "";
+                if (cakeRow["ImagePath"] != null)
+                {
+                    if (String.IsNullOrEmpty(cakeRow["ImagePath"].ToString()) == false) { img_str = "/Objects/Images/" + cakeRow["ImagePath"]; }
+                    else { img_str = "/Images/Site/no_image.png"; }
+                }
+                else { img_str = "/Images/Site/no_image.png"; }
+                <div class="add-cake category-cake-draggable" data-bakery="@cakeRow["BakeryID"]" data-minSize="@cakeRow["MinSize"]" data-maxSize="@cakeRow["MaxSize"]" data-stepSize="@cakeRow["StepSize"]" data-obj="@cakeRow["ObjectName"]" data-keywords="@cakeRow["Keywords"]" style="background-image:url('@img_str');">
+                    <label style="width:100%; float:left; font-size:12px; padding-top:5px; text-align:center;" data-tr="For Min. @cakeRow["MinSize"] people" data-eng="For min. @cakeRow["MinSize"] people"></label>
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-cake-down-btn mobile-nav" style="border-bottom:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="cake-numbers-dropdown" class="cake-dropdown" style="display:none; padding:0px;">
+    <div class="mobile-cake-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll cake-draggable">
+        @{
+            for (int i = 0; i < numbers.Count; i++)
+            {
+                DataRow cakeRow = numbers[i];
+                String img_str = "";
+                if (cakeRow["ImagePath"] != null)
+                {
+                    if (String.IsNullOrEmpty(cakeRow["ImagePath"].ToString()) == false) { img_str = "/Objects/Images/" + cakeRow["ImagePath"]; }
+                    else { img_str = "/Images/Site/no_image.png"; }
+                }
+                else { img_str = "/Images/Site/no_image.png"; }
+                <div class="add-cake category-cake-draggable" data-bakery="@cakeRow["BakeryID"]" data-minSize="@cakeRow["MinSize"]" data-maxSize="@cakeRow["MaxSize"]" data-stepSize="@cakeRow["StepSize"]" data-obj="@cakeRow["ObjectName"]" data-keywords="@cakeRow["Keywords"]" style="background-image:url('@img_str');">
+                    <label style="width:100%; float:left; font-size:12px; padding-top:5px; text-align:center;" data-tr="For Min. @cakeRow["MinSize"] people" data-eng="For min. @cakeRow["MinSize"] people"></label>
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-cake-down-btn mobile-nav" style="border-bottom:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="cake-special-dropdown" class="cake-dropdown" style="display:none; padding:0px;">
+    <div class="mobile-cake-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll cake-draggable">
+        @{
+            for (int i = 0; i < special.Count; i++)
+            {
+                DataRow cakeRow = special[i];
+                String img_str = "";
+                if (cakeRow["ImagePath"] != null)
+                {
+                    if (String.IsNullOrEmpty(cakeRow["ImagePath"].ToString()) == false) { img_str = "/Objects/Images/" + cakeRow["ImagePath"]; }
+                    else { img_str = "/Images/Site/no_image.png"; }
+                }
+                else { img_str = "/Images/Site/no_image.png"; }
+                <div class="add-cake category-cake-draggable" data-bakery="@cakeRow["BakeryID"]" data-minSize="@cakeRow["MinSize"]" data-maxSize="@cakeRow["MaxSize"]" data-stepSize="@cakeRow["StepSize"]" data-obj="@cakeRow["ObjectName"]" data-keywords="@cakeRow["Keywords"]" style="background-image:url('@img_str');">
+                    <label style="width:100%; float:left; font-size:12px; padding-top:5px; text-align:center;" data-tr="For Min. @cakeRow["MinSize"] people" data-eng="For min. @cakeRow["MinSize"] people"></label>
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-cake-down-btn mobile-nav" style="border-bottom:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="cake-hobby-dropdown" class="cake-dropdown" style="display:none; padding:0px;">
+    <div class="mobile-cake-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll cake-draggable">
+        @{
+            for (int i = 0; i < hobby.Count; i++)
+            {
+                DataRow cakeRow = hobby[i];
+                String img_str = "";
+                if (cakeRow["ImagePath"] != null)
+                {
+                    if (String.IsNullOrEmpty(cakeRow["ImagePath"].ToString()) == false) { img_str = "/Objects/Images/" + cakeRow["ImagePath"]; }
+                    else { img_str = "/Images/Site/no_image.png"; }
+                }
+                else { img_str = "/Images/Site/no_image.png"; }
+                <div class="add-cake category-cake-draggable" data-bakery="@cakeRow["BakeryID"]" data-minSize="@cakeRow["MinSize"]" data-maxSize="@cakeRow["MaxSize"]" data-stepSize="@cakeRow["StepSize"]" data-obj="@cakeRow["ObjectName"]" data-keywords="@cakeRow["Keywords"]" style="background-image:url('@img_str');">
+                    <label style="width:100%; float:left; font-size:12px; padding-top:5px; text-align:center;" data-tr="For Min. @cakeRow["MinSize"] people" data-eng="For min. @cakeRow["MinSize"] people"></label>
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-cake-down-btn mobile-nav" style="border-bottom:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>

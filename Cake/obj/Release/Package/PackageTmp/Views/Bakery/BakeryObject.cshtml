@@ -1,0 +1,131 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow bakery = (DataRow)ViewData["bakeryinfo"];
+    String whois = (String)ViewData["whatIsThePermission"];
+
+    DataTable objects = new DataTable();
+
+    objects = dc.DBQueryGetter("select * from Objects where BakeryID = '" + bakery["BakeryID"] + "'");
+
+}
+
+<div class="col-md-4 col-sm-12 col-xs-12" style="padding:0px; border-right: 1px solid #cccccc; margin-bottom:20px; float:left;">
+
+    <label style="float:left; font-size:30px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px solid #e6e6e6; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">Objeler</label>
+
+    @using (Html.BeginForm("AddBakeryObject", "Bakery", FormMethod.Post, new { enctype = "multipart/form-data", id = "bakery-object-form" }))
+    {
+        <label style="font-size:16px; height:20px; line-height:20px; margin-bottom:15px !important; padding-left:135px; float:left; width:100%;" id="bakery-object-name"></label>
+        <div class="bakery-product-div">
+            <label style="margin-left:28px;">Obje Kategori* : </label>
+            <select style="width:150px;" id="bakery-object-category" name="bakery-object-category">
+                <option>object</option>
+                <option>cake</option>
+                <option>side</option>
+                <option>random</option>
+            </select>
+        </div>
+                    <div class="bakery-product-div">
+                        <label style="margin-left:86px;">Obje* : </label>
+                        <input type="file" class="multiple" name="objectFile" id="objectFile" onchange="objUploadChange(this)" style="width:150px; margin-bottom:0px;" multiple />
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-left:50px;">Obje Rengi : </label>
+                        <input readonly id="bakery-object-color" name="bakery-object-color" class="jscolor" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-left:53px;">Obje Fiyatı : </label>
+                        <input placeholder="Örn. 8.99 TL" id="bakery-object-price" name="bakery-object-price" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;">
+                        <label style="margin-left:10px;">Obje Keywordleri : </label>
+                        <input placeholder="Örn. american football ball sports" id="bakery-object-keywords" name="bakery-object-keywords" style="width:150px; margin-bottom:0px;">
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;" id="bakery-obj-img-div">
+                        <label style="margin-left:47px;">Obje Resmi : </label>
+                        <img src="" id="object-image-display" style="width:90px; height:90px; margin-bottom:10px; float:left; border:1px solid #cccccc; padding:5px; border-radius:3px;" />
+                        <input type="file" name="objectImage" id="objectImage" style="width:150px; margin-bottom:0px; margin-left:147px;" />
+                    </div>
+
+                    <div class="bakery-product-div" style="margin-top:10px;" id="bakery-obj-texture-div">
+                        <label style="margin-left:29px;">Obje Kaplama : </label>
+                        <img src="" id="object-texture-display" style="width:90px; height:90px; margin-bottom:10px; float:left; border:1px solid #cccccc; padding:5px; border-radius:3px;" />
+                        <input type="file" name="objectTexture" id="objectTexture" style="width:150px; margin-bottom:0px; margin-left:147px;" />
+                    </div>
+
+                    <label style="width:100%; float:left; text-align:left; font-size:12px; font-weight:400; color:red; display:none; padding-left:135px;" id="bakery-object-validation-label"></label>
+                    <label style="width:100%; float:left; font-size:12px; font-weight:400; margin-top:10px;">* doldurulması zorunludur.</label>
+
+                    <div class="bakery-product-div">
+                        <input style="margin-top:10px; width:100px; float:left;" id="bakery-object-submit" onclick="validateObjUpload()" class="yukle_gradient" type="submit" value="Upload" />
+                        <input style="margin-top:10px; width:100px; float:left; display:none;" id="bakery-object-edit-submit" class="yukle_gradient" type="submit" value="Edit" />
+                        <label style="margin-top:10px; width:100px; float:right; text-align:center; line-height:21px; display:none;" id="bakery-object-close" onclick="bakeryObjClose()" class="yukle_gradient">Close</label>
+                    </div>
+    }
+</div>
+
+<div class="col-md-8 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left; padding-right:0px;">
+
+    <table style="float:left; width:100%; margin-top:20px; font-size:12px;" id="bakery-objects-table">
+        <thead>
+            <tr>
+                <td style="font-weight:600;">İsim</td>
+                <td style="font-weight:600;">Kategori</td>
+                <td style="font-weight:600;">Dosya İsmi</td>
+                <td style="font-weight:600;">Eylem</td>
+                <td style="font-weight:600;">Onay</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                for (int i = 0; i < objects.Rows.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            <label style="float:left; font-weight:400;">@objects.Rows[i]["ObjectName"]</label>
+                            @{
+                                if (String.IsNullOrEmpty(objects.Rows[i]["Properties"].ToString()) == false)
+                                {
+                                    String bg = "#" + objects.Rows[i]["Properties"].ToString().Substring(objects.Rows[i]["Properties"].ToString().IndexOf("<color>") + 7, 6);
+                                    <div class="obj-color-thumbnail" style="cursor:pointer; width:16px; height:16px; background:@bg; float:right; border:1px solid #cccccc; border-radius:2px; margin-top:2px; margin-left:5px;"></div>
+                                    <div class="color-popup"><label style="background:@bg; border:1px solid #cccccc; width:100%; text-align:center; padding:5px;">@bg</label></div>
+                                }
+
+                                if (String.IsNullOrEmpty(objects.Rows[i]["TexturePath"].ToString()) == false)
+                                {
+                                    String texturePath = "/Objects/Textures/" + objects.Rows[i]["TexturePath"];
+                                    <img class="obj-texture-thumbnail" style="float:right; width:15px; margin-top:3px; margin-left:5px; cursor:pointer;" src="~/Images/Site/obj_texture_icon.png" />
+                                    <img src="@texturePath" class="texture-popup" />
+                                }
+
+                                if (String.IsNullOrEmpty(objects.Rows[i]["ImagePath"].ToString()) == false)
+                                {
+                                    String imgPath = "";
+                                    if (objects.Rows[i]["Type"].ToString() == "cake") { imgPath = "/Objects/Images/" + objects.Rows[i]["ImagePath"]; }
+                                    else { imgPath = "/Objects/Images/" + objects.Rows[i]["ImagePath"]; }
+                                    <img class="obj-img-thumbnail" style="float:right; width:20px; cursor:pointer;" src="~/Images/Site/image_icon.png" />
+                                    <img src="@imgPath" class="img-popup" />
+                                }
+                            }
+                        </td>
+                        <td>@objects.Rows[i]["Type"]</td>
+                        <td>@objects.Rows[i]["ObjectPath"]</td>
+                        <td>
+                            @{ String color = objects.Rows[i]["Properties"].ToString().Substring(objects.Rows[i]["Properties"].ToString().IndexOf("<color>") + 7, 6); }
+                            <img class="yukle_gradient bakery-obj-edit" onclick="bakeryObjEdit(this)" data-objkeywords="@objects.Rows[i]["Keywords"]" data-objapproved="@objects.Rows[i]["Approved"]" data-objprice="@objects.Rows[i]["Price"]" data-objcolor="@color" data-objname="@objects.Rows[i]["ObjectName"]" data-objpath="@objects.Rows[i]["ObjectPath"]" data-objtype="@objects.Rows[i]["Type"]" data-objid="@objects.Rows[i]["ObjectID"]" style="margin-bottom:0px !important; padding:3px; width:20px;" src="~/Images/Site/edit_icon.png" />
+                            <img class="yukle_gradient bakery-obj-delete" src="~/Images/Site/close_icon.png" data-objname="@objects.Rows[i]["ObjectName"]" data-objid="@objects.Rows[i]["ObjectID"]" onclick="bakeryObjDelete(this)" style="margin-bottom:0px !important; padding:5px; width:20px;" />
+                        </td>
+                        <td>@objects.Rows[i]["Approved"]</td>
+                    </tr>
+                                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,252 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@functions {
+    public double CalculateCartTotal()
+    {
+        List<DataRow> cart = (List<DataRow>)Session["cart"];
+
+        Double total = 0;
+        for (int i = 0; i < cart.Count; i++)
+        {
+            if (cart[i]["PagePrice"] != null)
+            {
+                if (String.IsNullOrEmpty(cart[i]["PagePrice"].ToString()) == false)
+                {
+                    total = total + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","));
+                }
+            }
+        }
+
+        return total;
+    }
+}
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataTable addresses = new DataTable();
+    List<string> minPacketAddresses = new List<string>();
+    List<string> minPacketColors = new List<string>();
+
+    if (Session["userAddresses"] == null)
+    {
+        if (Session["userinfo"] != null)
+        {
+            addresses = dc.DBQueryGetter("select * from UserAddresses where UserID = '" + ((DataRow)Session["userinfo"])["UserID"] + "'");
+            Session["userAddresses"] = addresses;
+        }
+    }
+    else
+    {
+        addresses = (DataTable)Session["userAddresses"];
+    }
+
+    double total = CalculateCartTotal(); bool checkMinPacket = false;
+
+    if(Session["orderBakery"] != null) { checkMinPacket = true; }
+
+    if(addresses.Rows.Count > 0 & Session["orderBakery"] != null)
+    {
+        for(int i = 0; i < addresses.Rows.Count; i++)
+        {
+            DataRow dr_address = addresses.Rows[0];
+            DataRow min = dc.DBQueryGetter("select * from BakeryNetwork where Province = '" + dr_address["Province"] + "' and District = '" + dr_address["District"] + "'").Rows[0];
+            if(total < Convert.ToDouble(min["MinPacket"].ToString().Replace(".", ","))) { minPacketColors.Add("red"); minPacketAddresses.Add("You are below of your bakeries min. packet by ( " + min["MinPacket"].ToString() + " TL )"); }
+            else { minPacketColors.Add("green"); minPacketAddresses.Add("Min. packet to your address " + min["MinPacket"].ToString() + " TL."); }
+        }
+    }
+
+    List<DataRow> cart = (List<DataRow>)Session["cart"]; bool partyOnly = true;
+    for (int i = 0; i < cart.Count; i++)
+    {
+        if (cart[i]["Category"].ToString() != "Parti Malzemeleri") { partyOnly = false; }
+    }
+
+    DataRow bakery = null;
+
+    if (Session["orderBakery"] != null)
+    {
+        bakery = (DataRow)Session["orderBakery"];
+    }
+
+    bool bakeryDeliver = true;
+    if (Session["bakeryDeliver"] != null) { bakeryDeliver = (bool)Session["bakeryDeliver"]; }
+
+    bool subeTeslim = true;
+    if (bakery != null) { if (bakery["BakeryDelivery"].ToString() == "no") { subeTeslim = false; } }
+
+    String[] cities = new String[] { "Adana", "Adiyaman", "Afyonkarahisar", "Ağri", "Aksaray", "Amasya", "Ankara", "Antalya", "Ardahan", "Artvin", "Aydin", "Balikesir", "Bartin", "Batman", "Bayburt", "Bilecik", "Bingöl", "Bitlis", "Bolu", "Burdur", "Bursa", "Çanakkale", "Çankiri", "Çorum", "Denizli", "Diyarbakir", "Düzce", "Edirne", "Elaziğ", "Erzincan", "Erzurum", "Eskişehir", "Gaziantep", "Giresun", "Gümüşhane", "Hakkari", "Hatay", "Iğdir", "Isparta", "İstanbul", "İzmir", "Kahramanmaraş", "Karabük", "Karaman", "Kars", "Kastamonu", "Kayseri", "Kilis", "Kirikkale", "Kirklareli", "Kirşehir", "Kocaeli", "Konya", "Kütahya", "Malatya", "Manisa", "Mardin", "Mersin", "Muğla", "Muş", "Nevşehir", "Niğde", "Ordu", "Osmaniye", "Rize", "Sakarya", "Samsun", "Şanliurfa", "Siirt", "Sinop", "Şirnak", "Sivas", "Tekirdağ", "Tokat", "Trabzon", "Tunceli", "Uşak ", "Van", "Yalova", "Yozgat", "Zonguldak" };
+    String[] cityIds = new String[] { "81", "80", "79", "78", "14", "77", "76", "75", "7", "74", "73", "72", "8", "10", "13", "71", "70", "69", "68", "67", "66", "65", "64", "63", "62", "61", "1", "60", "59", "58", "57", "56", "55", "54", "53", "52", "51", "6", "50", "48", "47", "36", "4", "12", "46", "45", "44", "3", "11", "43", "42", "41", "40", "39", "38", "37", "35", "49", "34", "33", "32", "31", "30", "2", "29", "28", "27", "19", "26", "25", "9", "24", "23", "22", "21", "20", "18", "17", "5", "16", "15", };
+
+}
+
+@{
+            if (Session["packetWarningAddress"] != null)
+            {
+                if ((bool)Session["packetWarningAddress"] == true)
+                {
+            <div style="width:100%; float:left; margin-top:20px; margin-bottom:20px;">
+                <label style="width:100%; float:left; text-align:center; color:red;padding:20px 0px; font-size:14px; background: rgba(255, 0, 0, 0.04);">Seçtiğiniz pastanenin adresinize tanımladığı minimum paket tutarının altındasınız. <br /> Sepetinize başka ürünler ekleyin veya başka bir pastane veya adres seçin.</label>
+            </div>
+        }
+    }
+}
+
+<div class="container" style="padding:0px; width:100%; float:left;">
+
+    <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12" style="padding:0px; margin-bottom:20px;">
+        <a style="color:black; text-decoration:none; float:left;" href="@Url.Action("Sepetim","Order")">
+            <div class="gray-gradient" style="text-align:center; cursor:pointer; float:right; padding:5px 15px;">
+                <img src="~/Images/Site/left_white.png" style="width:6px; margin-right:7px; padding-bottom:3px; cursor:pointer;" />
+                <label style="cursor:pointer; font-size:14px;">Previous Step</label>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12" style="border:1px solid #e6e6e6; padding:0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; border-bottom:1px solid #e6e6e6;">
+            <label style="width:100%; float:left; text-align:center; padding:25px 0px;">Select your registered address or add a new address</label>
+        </div>
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+            @{
+                if (bakeryDeliver == false)
+                {
+                    <div style="width:100%; float:left;">
+                        <label style="width:100%; float:left; text-align:center; color:red;padding:20px 0px; font-size:14px; background: rgba(255, 0, 0, 0.04);">The address you selected is not in the sending network of pasta selected. <br /> Please choose a new address.</label>
+                    </div>
+                }
+
+                if (addresses.Rows.Count > 0)
+                {
+
+                    for (int i = 0; i < addresses.Rows.Count; i++)
+                    {
+                        DataRow adres = addresses.Rows[i]; string link = "";
+
+                        <div style="width:100%; float:left; padding:20px; border-bottom:1px dashed #e6e6e6;">
+                            @{
+                                if (Session["orderBakery"] != null & addresses.Rows.Count > 0)
+                                {
+                                    if (minPacketColors[i] == "red") { link = ""; }
+                                    else { link = Url.Action("SelectAddress", "Order", new { idx = i.ToString() }); }
+                                }
+                                else
+                                {
+                                    link = Url.Action("SelectAddress", "Order", new { idx = i.ToString() });
+                                }
+                            }
+
+                                <div style="float:left; width:70%;">
+                                    @*@{
+                                        if (Session["orderBakery"] != null & addresses.Rows.Count > 0)
+                                        { <span style="float:left; width:100%; font-size:16px; font-weight:500; margin-bottom:10px; color:@minPacketColors[i];">@minPacketAddresses[i]</span> }
+                                    }*@
+
+                                    <div style="width:100%; float:left;">
+                                        <span style="float:left; font-size:13px; font-weight:600;">@adres["ProvinceName"], @adres["DistrictName"], @adres["TownName"], @adres["NeighborhoodName"]</span>
+                                    </div>
+
+                                    <span style="padding-top:5px; float:left; width:100%; font-size:12px; color:gray;">@adres["SpecificAddress"]</span>
+                                    <span style="padding-top:5px; float:left; width:100%; font-size:12px; color:gray;">@adres["Description"]</span>
+                                </div>
+                            <a class="black-gradient" style="color:black; text-decoration:none; float:right; padding:7px 15px;" href="@link">
+                                @{
+                                    if (Session["orderBakery"] != null & addresses.Rows.Count > 0)
+                                    {
+                                        if (minPacketColors[i] == "red")
+                                        { <span class="disabled-link" style="font-size:14px; float:left; color:white;">Select</span> }
+                                        else
+                                        { <span class="" style="font-size:14px; float:left; color:white;">Select</span> }
+                                    }
+                                    else
+                                    { <span class="" style="font-size:14px; float:left; color:white;">Select</span> }
+                                    <img src="~/Images/Site/btn-right-arrow.png" style="float:right; width:10px; margin-left:10px; margin-top:5px;" />
+                                }
+                            </a>
+                        </div>
+
+                                        }
+                                    }
+
+                                    if (subeTeslim == true)
+                                    {
+                                        <a class="orderAddressDiv" href="@Url.Action("SelectAddress","Order", new { idx = "subeTeslim" })" style="float:left; color:initial; text-decoration:none; width:100%; padding:20px; border-bottom:1px solid #e6e6e6;">
+                                            <div style="float:left; border:none;">
+                                                <label style="float:left; width:100%; line-height:35px; ">I'm going to get it from the pastry.</label>
+                                                @{
+                                                    if (bakery == null)
+                                                    {
+                                                        <label style="float:left; width:100%; font-size:12px;">The bakery you choose may not support this option.</label>
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="black-gradient" style="color:black; text-decoration:none; float:right; padding:7px 15px;">
+                                                <span class="" style="font-size:14px; float:left; color:white;">Select</span>
+                                                <img src="~/Images/Site/btn-right-arrow.png" style="float:right; width:10px; margin-left:10px; margin-top:5px;" />
+                                            </div>
+                                        </a>
+                                                    }
+
+                                                    //  if (anonAddressExists == false)
+                                                    //  {
+                                                    @*<div style="width:100%; float:left; padding:20px; ">
+                                                        <label onclick="$('#add_address_div').slideToggle(300);" style="float:left; margin-top:0px; font-size:16px;" class="go_gradient">Yeni Adres Ekle</label>
+                                                    </div>*@
+
+                                                    <div id="add_address_div" style="width:100%; float:left; padding:25px;">
+                                                        @using (Html.BeginForm("AnonAddress", "Order", FormMethod.Post, new { id = "anonAddressForm" }))
+                                                        {
+                                                            <div style="width:100%; float:left;">
+                                                                <label style="float:left; width:100%; font-weight:600;">Add New Address</label>
+                                                                <div style="width:100%; float:left; margin-top:20px;">
+                                                                    <select id="anonProvinceAddress" name="anonProvinceAddress" onchange="appendDistricts('#anonDistrictAddress', $(this).val()); $(this).css('border-color', '#cccccc');" style="float:left; padding:10px 20px; width:100%; border:none; border:1px solid #e6e6e6; border-radius:30px;">
+                                                                        <option selected disabled>Select Province</option>
+                                                                        @{
+                                                                            for (int i = 0; i < cities.Length; i++)
+                                                                            {
+                                                                                if (cityIds[i] == "76" | cityIds[i] == "48")
+                                                                                {
+                                                                                    <option value="@cityIds[i]">@cities[i]</option> }
+                                                                                else
+                                                                                { }
+                                                                            }
+                                                                        }
+                                                                    </select>
+                                                                </div>
+                                                                <div style="width:100%; float:left; margin-top:10px;">
+                                                                    <select onchange="appendNeighborhoods('#anonNeighborhoodAddress', $(this).val(), '@checkMinPacket.ToString()'); $(this).css('border-color', '#cccccc');" id="anonDistrictAddress" name="anonDistrictAddress" style="float:left; padding:10px 20px; width:100%; border:none; border:1px solid #e6e6e6; border-radius:30px;">
+                                                                        <option selected disabled>Select District</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div style="width:100%; float:left; margin-top:10px; ">
+                                                                    <select onchange="$(this).css('border-color', '#cccccc');" id="anonNeighborhoodAddress" name="anonNeighborhoodAddress" style="float:left; padding:10px 20px; width:100%; border:none; border:1px solid #e6e6e6; border-radius:30px;">
+                                                                        <option selected disabled>Select Town</option>
+                                                                    </select>
+                                                                </div>
+                                                                <label id="minPacketAddress" style="float:left; width:100%; text-align:center; font-size:14px; margin-left:10px; line-height:28px; padding-top:10px;"></label>
+                                                            </div>
+                                                            <div style="width:100%; float:left; margin-top:10px;">
+                                                                <textarea onkeyup="validateKeyup(this)" id="anonOpenAddress" name="anonOpenAddress" maxlength="1000" style="width:100%; font-size:14px; padding:15px 20px; height:100px; border:1px solid #e6e6e6; border-radius:20px; outline:none; float:left; resize:none;" placeholder="Detailed Address (max.1000)"></textarea>
+                                                            </div>
+                                                            <div style="width:100%; float:left; margin-top:10px;">
+                                                                <textarea onkeyup="validateKeyup(this)" id="anonAddressDescription" name="anonAddressDescription" maxlength="1000" style="width:100%; font-size:14px; padding:15px 20px; height:100px; border:1px solid #e6e6e6; border-radius:20px; outline:none; float:left; resize:none;" placeholder="Address Description (max.1000)"></textarea>
+                                                            </div>
+                                                            <div style="width:100%; float:left; margin-top:20px;">
+                                                                @{
+                                                                    if (Session["userinfo"] != null)
+                                                                    {
+                                                                        <div style="float:left; line-height:34px; margin-bottom:15px; width:100%; float:left;">
+                                                                            <input id="registerAnonAddress" name="registerAnonAddress" type="checkbox"  class="css-checkbox2" style="float:left; margin-top:7px; width:20px; height:20px; margin-right:10px; margin-left:10px;" />
+                                                                            <label for="registerAnonAddress" style="float:left; font-weight:500;" class="css-label2">Add my saved addresses</label>
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                                <input onclick="validateAnonAddress()" id="addAnonAddressButton" type="submit" class="black-gradient" value="SAVE AND CONTINUE" style="float:right; letter-spacing:1px; font-size:14px; width:100%; text-align:center;" />
+                                                            </div>
+                                                                    }
+                                                    </div>
+                                                                    //  }
+            }
+        </div>
+    </div>
+</div>

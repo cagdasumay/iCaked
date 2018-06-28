@@ -1,0 +1,21 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataTable orders = dc.DBQueryGetter("select * from OrderLogs");
+    DataTable bakeries = dc.DBQueryGetter("select * from ForeignBakeries");
+}
+
+<div class="container">
+
+    <div style="width:100%; float:left; text-align:center; margin-top:100px;">
+        <label onclick="sendDailyMails()" id="sendDailyMails-btn" class="black-gradient" style="margin-bottom:30px !important;">Günlük Sipariş Maillerini Gönder</label>
+        <div id="sendDailyMails-loading-div" style="width:100%; float:left; text-align:center; display:none;">
+            <label id="sendDailyMails-loading" style="text-align:center; font-size:16px;">Mailler Gönderiliyor...</label>
+            <img src="~/Images/Site/loading_mini.gif" style="width:15px; margin-left:15px;" />
+        </div>
+        <label id="sendDailyMails-ok" style="width:100%; display:none; float:left; text-align:center; color:green; font-size:16px;">Mailler Gönderilmiştir.</label>
+    </div>
+
+</div>

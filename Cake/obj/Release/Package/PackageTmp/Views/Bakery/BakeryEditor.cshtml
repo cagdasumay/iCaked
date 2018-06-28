@@ -1,0 +1,155 @@
+﻿@using System.Data
+
+<script src="~/scripts/UtilityScripts/Tween.js"></script>
+<script src="~/scripts/UtilityScripts/hammer.min.js"></script>
+
+<script>
+
+    var screenScale = 0.7; if (isMobile()) { screenScale = 0.9; } else { screenScale = 0.7; }
+
+    $(window).resize(function () {
+        if (isMobile()) { screenScale = 0.9; } else { screenScale = 0.7; }
+        $("#canvas-sizer").height($(window).height() * screenScale);
+
+        if (isMobile() == true) { $(".draggable-div").css(".max-height", $("#canvas-sizer").height() - 155); }
+        else {
+            $(".draggable-div").css("max-height", $("#canvas-sizer").height() - 85);
+        }
+    });
+
+    /******************** Legendary Ready function ********************/
+
+    $(document).ready(function () {
+
+        $("#canvas-sizer").height($(window).height() * screenScale);
+
+        pasta.init({ sizerId: "canvas-sizer", containerId: "canvas-container" });
+
+        var isFullScreen = false;
+
+        $("#fullscreen_icon").click(function () {
+            isFullScreen = !isFullScreen;
+            $("#canvas-sizer").toggleClass("fullScreen"); $("#canvas-sizer").resize();
+            toggleFullScreen(document.body);
+        });
+
+        $(document).keyup(function (e) {
+            if (e.keyCode == 27) {
+                e.preventDefault();
+                if (isFullScreen) { $("#canvas-sizer").toggleClass("fullScreen"); $("#canvas-sizer").resize(); isFullScreen = false; }
+            }
+        });
+
+        if (isMobile()) {
+            $("html, body").animate({ scrollTop: $('#canvas-sizer').offset().top }, 100);
+            $("#fullscreen_icon").trigger("click");
+        }
+
+        orientationAlert();
+
+        $(window).on("orientationchange", function (event) {
+            orientationAlert();
+        })
+
+        if (isMobile() == true) {
+            var hammertime = new Hammer(document.getElementsByTagName("canvas")[0]);
+
+            hammertime.get('pinch').set({ enable: true, direction: Hammer.DIRECTION_ALL });
+
+            hammertime.on('pinch', function (ev) {
+
+                pasta.pinch("pinch", ev);
+            });
+
+            hammertime.on('pan', function (ev) {
+                if (selectedObjName == null) {
+                    pasta.pan(ev.velocityX, ev.velocityY);
+                }
+            });
+        }
+        else {
+            $(".mobile-nav").hide();
+        }
+
+        if (isMobile() == false) {
+            $("#canvas-sizer").on("mouseover", function () {
+                $("html,body").addClass("noScroll");
+            });
+
+            $("#canvas-sizer").on("mouseleave", function () {
+                $("html,body").removeClass("noScroll");
+            });
+        }
+        else {
+            $("#editor-main-container").css("padding", "0px");
+            $("#canvas-sizer,canvas,#canvas-container").css("width", "100%");
+            $("#canvas-sizer,canvas,#canvas-container").css("height", "100%");
+        }
+    });
+
+    function objectCloser(){}
+
+    function orientationAlert() {
+        var elem = "";
+        if (window.orientation != undefined) { elem = window.orientation.toString(); } else { elem = window.screen.orientation.type; }
+
+        if (elem.toLowerCase().indexOf("portrait") > -1 | elem == "0") {
+            $(".loading").show();
+            $("#loading-img").attr("src", "/Images/Site/orientation.png");
+            $("#loading-img").css("width", "250px");
+        }
+        else {
+            $(".loading").hide();
+            $("#loading-img").attr("src", "/Images/Site/loadmore.gif");
+            $("#loading-img").css("width", "40px");
+        }
+    }
+
+    function isMobile() {
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            return true;
+        }
+        else { return false; }
+    }
+</script>
+
+<div id="editor-main-container" class="container" style="padding:0px;">
+
+    <div class="row">
+
+        <div id="canvas-sizer" class="main-floating col-md-12" style="padding:0px;">
+            <div id="editor-controls-div">
+
+                <div class="cam-widget">
+                    <a id="home-button"><img src="~/Images/Site/home.png" style="border-bottom-right-radius:5px; border-top-right-radius:5px; border-right:1px solid #d6d6d6;" /></a>
+                    <a id="rotate-y-2"><img src="~/Images/Site/down.png" /></a>
+                    <a id="rotate-y-1"><img src="~/Images/Site/up.png" /></a>
+                    <a id="rotate-x-2"><img src="~/Images/Site/right.png" /></a>
+                    <a id="rotate-x-1"><img src="~/Images/Site/left.png" style="border-bottom-left-radius:5px; border-top-left-radius:5px;" /></a>
+                </div>
+
+                <div class="zoom-widget">
+                    <a id="zoom-in"><img src="~/Images/Site/plus.png" style="border-bottom-right-radius:5px; border-top-right-radius:5px; border-right:1px solid #d6d6d6;" /></a>
+                    <a id="zoom-out"><img src="~/Images/Site/minus.png" style="border-bottom-left-radius:5px; border-top-left-radius:5px; " /></a>
+                </div>
+            </div>
+
+            <div id="canvas-container">
+
+                @{
+                    if (ViewData["bakery"] != null)
+                    {
+                        DataRow bakery = (DataRow)ViewData["bakery"];
+                        <img src="~/Images/Site/Bakery/@bakery["Thumbnail"]" style="width:75px; position:absolute; bottom:10px; left:15px; -webkit-filter: drop-shadow(1px 1px 1px #cccccc);" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/Site/fullscreen_icon.png" id="fullscreen_icon" style="width:20px; position:absolute; bottom:10px; left:10px; cursor:pointer;" />
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/scripts/cakeScripts/Cake3D/pasta.js"></script>

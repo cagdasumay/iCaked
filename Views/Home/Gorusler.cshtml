@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "Butik Pastalar – Pastanı Tasarla ve Pasta Siparişi Ver";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.Description = "Bizim için görüşleriniz çok değerli. Dilediğiniz tasarım pasta figürünü koyabilmemiz için veya bilgi almak istediğiniz herhangi bir konuda bizimle irtibata geçebilirsiniz.";
+    ViewBag.Keywords = "Tasarım pasta siparişi, Görüşleriniz, Pasta Siparişi görüşleriniz, Sipariş Geri Dönüş, Sipariş Detayları";
+
+    bool feedbackTaken = false;
+
+    if (TempData["feedbackTaken"] != null) { feedbackTaken = true; } else { feedbackTaken = false; }
+}
+
+<div class="container-fluid" >
+    <div class="container" style="background:white; padding:3%; padding-bottom:150px; padding-top:100px;">
+        <div class="row">
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:70px;">
+
+                @{
+                    if (feedbackTaken == false)
+                    {
+                        using (Html.BeginForm("FeedbackForm", "Home"))
+                        {
+                            <h1 style="width:100%; float:left; font-size:22px; text-align:center;">Görüş ve önerileriniz bizim için değerlidir.</h1>
+                            <h2 style="width:100%; float:left; padding:10px 0px; font-size:16px; text-align:center; padding-bottom:30px;">Aşağıdaki form aracılığıyla bizimle iletişime geçebilirsiniz.</h2>
+
+                            <div id="feedbackFormMain">
+                                <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="100" id="feedbackFormName" name="feedbackFormName" type="text" placeholder="İsim Soyisim" />
+                                <input onkeyup="validateKeyup(this)" autocomplete="off" maxlength="200" id="feedbackFormEmail" name="feedbackFormEmail" type="text" placeholder="E-Posta" />
+                                <textarea onkeyup="validateKeyup(this)" autocomplete="off" maxlength="1500" id="feedbackFormContent" name="feedbackFormContent" placeholder="Görüş ve Önerileriniz"></textarea>
+                                <div style="width:100%; float:left;">
+                                    <input id="feedbackFormSubmit" class="black-gradient" type="submit" onclick="validateFeedbackForm()" value="Gönder" style="border:none; border-radius:30px;" />
+                                    <img alt="form yükleniyor" id="feedbackFormLoading" src="~/Images/Site/loading_mini.gif" style="width:20px; border-radius:50px; float:left; margin-top:18px; display:none;" />
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="width:100%; float:left; padding:150px 0px;">
+                            <div style="width:100%; float:left; text-align:center; padding-bottom:40px;">
+                                <img alt="mesajınız alınmıştır" src="~/Images/Site/success_icon.png" style="width:50px; border-radius:50px; box-shadow: 0px 1px 5px 0px #909090;" />
+                            </div>
+                            <label style="width:100%; float:left; text-align:center; font-size:18px;">Bildiriminiz alınmıştır. Teşekkür ederiz.</label>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

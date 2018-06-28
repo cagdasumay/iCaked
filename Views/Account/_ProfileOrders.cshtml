@@ -1,0 +1,56 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using System.Web.Script.Serialization;
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataRow user = (DataRow)ViewData["userinfo"];
+    DataTable orders = dc.DBQueryGetter("select * from OrderLogs where UserID = '" + user["UserID"] + "'");
+}
+
+<div class="container" style="padding:0px; width:100%; float:left;">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+            <label style="float:left; font-size:20px; padding:15px 0px; width:100%; color:#3f2518; border-bottom:1px solid #3f2518; margin-bottom:30px !important;">Siparişlerim</label>
+            <table style="float:left; width:100%; margin-top:20px; font-size:12px; text-align:center; font-family:'Open Sans'; color:gray;" id="profile-orders-table" class="row-border">
+                <thead style="color:black; background:#f0f0f0;">
+                    <tr>
+                        <td style="font-weight:600;">Tarih</td>
+                        <td style="font-weight:600;">Pastane</td>
+                        <td style="font-weight:600;">Sipariş Numarası</td>
+                        <td style="font-weight:600;">Fiyat</td>
+                        <td style="font-weight:600;">Ödeme</td>
+                        <td style="font-weight:600;">Eylem</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        for (int i = 0; i < orders.Rows.Count; i++)
+                        {
+                            DataRow order = orders.Rows[i];
+
+                            String odeme = "Onaylanmadı"; String odemeStyle = "red;";
+                            if(order["PaymentApproved"].ToString() == "yes") { odeme = "Onaylandı"; odemeStyle = "green;"; }
+
+                            DataRow pastane = dc.DBQueryGetter("select * from Bakeries where BakeryID = '" + order["BakeryID"] + "'").Rows[0];
+
+                            <tr>
+                                <td><label>@order["DateTime"]</label></td>
+                                <td><label>@pastane["Name"]</label></td>
+                                <td><label>@order["OrderNumber"]</label></td>
+                                <td><label>@order["TotalPrice"] TL</label></td>
+                                <td style="background:@odemeStyle color:white; text-align:center; width:100px;">
+                                    <label style="width:100px; float:left;">@order["PaymentType"]</label>
+                                    <label style="width:100px; float:left;">@odeme</label>
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Detaylar", "BakeryOrderSub", "Bakery", new { orderID = order["OrderID"].ToString() }, new { target = "_blank", @class = "cart_gradient", style = "color:white; font-size:12px;" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

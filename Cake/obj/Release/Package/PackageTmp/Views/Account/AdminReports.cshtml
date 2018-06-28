@@ -1,0 +1,211 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using System.Globalization
+
+@{
+    DatabaseController dc = new DatabaseController();
+    DataTable orders = dc.DBQueryGetter("select * from OrderLogs");
+}
+
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min"></script>
+<script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.j"></script>
+<script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.2.2/css/buttons.dataTables.min.css" />
+
+<script type="text/javascript">
+
+    var dataset;
+
+    function getDataSet() {
+        $.ajax({
+            url: "/Database/GetDataSet?bakery=" + $("#reportBakery").val() + "&orderStart=" + $("#orderStart").val() + "&orderEnd=" + $("#orderEnd").val() + "&deliveryStart=" + $("#deliveryStart").val() + "&deliveryEnd=" + $("#deliveryEnd").val() + "&priceStart=" + $("#priceStart").val() + "&priceEnd=" + $("#priceEnd").val() + "&reportPaymentType=" + $("#reportPaymentType").val() + "&reportOrderStatus=" + $("#reportOrderStatus").val() + "&reportPaymentStatus=" + $("#reportPaymentStatus").val() + "",
+            type: 'GET',
+            cache: false,
+            success: function (result) {
+                dataset = result;
+                initializeTable();
+            }
+        });
+    }
+
+    function initializeTable() {
+        if ($("#admin-report-table").hasClass("dataTable")) { $("#admin-report-table").DataTable().destroy(); }
+        $("#admin-report-table").DataTable({
+            data: dataset,
+            columns: [
+                { title: "Sipariş Tarihi" },
+                { title: "Teslimat Tarihi" },
+                { title: "Sipariş Numarası" },
+                { title: "Durum" },
+                { title: "Fiyat" },
+                { title: "Ödeme Şekli" },
+                { title: "Ödeme Durumu" }
+            ],
+            dom: 'Bfrtip',
+            buttons: [
+            {
+                extend: 'excelHtml5',
+                title: 'iCaked - Rapor (' + new Date().toLocaleDateString() + ')'
+            },
+            {
+                extend: 'pdfHtml5',
+                title: 'iCaked - Rapor (' + new Date().toLocaleDateString() + ')'
+            }
+            ]
+        });
+    }
+
+    $(document).ready(function () {
+        //getDataSet();
+
+        $("#orderEnd").datepicker({
+            firstDay: 1,
+            dateFormat: "dd/mm/yy",
+            dayNames: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+            dayNamesMin: ["paz", "pzt", "sal", "çar", "per", "cum", "cmt"],
+            monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            monthNamesShort: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+        });
+
+        $("#deliveryEnd").datepicker({
+            firstDay: 1,
+            dateFormat: "dd/mm/yy",
+            dayNames: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+            dayNamesMin: ["paz", "pzt", "sal", "çar", "per", "cum", "cmt"],
+            monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            monthNamesShort: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+        });
+
+        $("#deliveryStart").datepicker({
+            firstDay: 1,
+            dateFormat: "dd/mm/yy",
+            dayNames: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+            dayNamesMin: ["paz", "pzt", "sal", "çar", "per", "cum", "cmt"],
+            monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            monthNamesShort: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            maxDate: '0',
+            onSelect: function () {
+                //var dt2 = $('#deliveryEnd');
+                //var startDate = $(this).datepicker('getDate');
+                //startDate.setDate(startDate.getDate());
+                //dt2.datepicker('option', 'minDate', startDate);
+                $("#deliveryStart").css("border-color","#cccccc");
+            }
+        });
+
+        $("#orderStart").datepicker({
+            firstDay: 1,
+            dateFormat: "dd/mm/yy",
+            dayNames: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+            dayNamesMin: ["paz", "pzt", "sal", "çar", "per", "cum", "cmt"],
+            monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            monthNamesShort: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            maxDate: '0',
+            onSelect: function () {
+                //var dt2 = $('#orderEnd');
+                //var startDate = $(this).datepicker('getDate');
+                //startDate.setDate(startDate.getDate());
+                //dt2.datepicker('option', 'minDate', startDate);
+                $("#orderStart").css("border-color", "#cccccc");
+            }
+        });
+    });
+</script>
+
+<style>
+    #bakery-report-table th {
+        text-align: center;
+    }
+</style>
+
+<div class="col-md-12 col-sm-12 col-xs-12" style="margin-bottom:40px; float:left; padding:0px;">
+
+    <div style="width:100%; float:left; border-bottom:1px dashed #3f2518; margin-bottom:30px !important; padding:15px 0px; padding-top:0px;">
+        <label style="float:left; font-size:18px;   text-align:left; color:#3f2518; line-height:initial;">Raporlar</label>
+    </div>
+
+    @*<label style="float:left; width:100%; text-align:center; padding-top:50px;">Bu bölüm henüz geliştirme aşamasındadır.</label>*@
+
+    <div style="width:100%; float:left;">
+        <label style="float:left; width:100%; padding:10px 0px;">Lütfen çıkarmak istediğiniz raporun kısıtlamalarını aşağıdan seçip <b>rapor al</b> butonuna tıklayın. Eğer aşağıda çıkan tablo doğru ise excel formatında indirebilirsiniz.</label>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <label style="font-weight:500; margin-right:28px; float:left; padding-top:5px; color:#3f2518;">Pastane: </label>
+            <select type="text" id="reportBakery" name="reportBakery" style="border:1px solid #cccccc; border-radius:3px; width:232px; padding:5px;">
+                <option value="all">Hepsi</option>
+                <option value="CB5EDC14-85FD-40AD-A79A-82D6CA460CD9">Liva</option>
+                <option value="488BD6DC-555D-4933-A3EA-9F20E44E05D5">Pasta Sanatı</option>
+                <option value="98E94E0A-C764-4F99-A2F1-F4915631A891">Can Süs</option>
+                <option value="811C68DA-EDAD-4DE6-977E-B20F1CD1C833">BiKavanoz</option>
+            </select>
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <label style="font-weight:500; margin-right:28px; float:left; padding-top:5px; color:#3f2518;">Sipariş Zamanı: </label>
+            <input readonly type="text" id="orderStart" placeholder="İlk Tarih" style="border:1px solid #cccccc; border-radius:3px; width:110px; padding:5px;" /> -
+            <input readonly onchange="validateChange(this)" type="text" id="orderEnd" placeholder="Son Tarih" style="border:1px solid #cccccc; border-radius:3px; width:110px; padding:5px;" /> arası
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <label style="font-weight:500; margin-right:15px; float:left; padding-top:5px; color:#3f2518;">Teslimat Zamanı: </label>
+            <input readonly type="text" id="deliveryStart" placeholder="İlk Tarih" style="border:1px solid #cccccc; border-radius:3px; width:110px; padding:5px;" /> -
+            <input readonly onchange="validateChange(this)" type="text" id="deliveryEnd" placeholder="Son Tarih" style="border:1px solid #cccccc; border-radius:3px; width:110px; padding:5px;" /> arası
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <label style="font-weight:500; margin-right:48px; float:left; padding-top:5px; color:#3f2518;">Fiyat Aralığı: </label>
+            <input onkeyup="validateKeyup(this)" onchange="validateChange(this)" type="number" min="0" id="priceStart" placeholder="Örn. 10.00" style="border:1px solid #cccccc; border-radius:3px; width:110px; padding:5px;" /> -
+            <input onkeyup="validateKeyup(this)" onchange="validateChange(this)" type="number" min="0" id="priceEnd" placeholder="Örn 20.00" style="border:1px solid #cccccc; border-radius:3px; width:110px; padding:5px;" /> arası
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px; ">
+            <label style="font-weight:500; margin-right:48px; float:left; padding-top:5px; color:#3f2518;">Ödeme Tipi: </label>
+            <select type="text" id="reportPaymentType" name="reportPaymentType" style="border:1px solid #cccccc; border-radius:3px; width:232px; padding:5px;">
+                <option value="all">Hepsi</option>
+                <option value="POS">İnternet Üzerinden</option>
+                <option value="Şubede Ödeme">Şubede Ödeme</option>
+                <option value="Kapıda Nakit Ödeme">Kapıda Nakit Ödeme</option>
+                <option value="Kapıda Kredi Kartı / Banka Kartı ile Ödeme">Kapıda Kredi Kartı / Banka Kartı ile Ödeme</option>
+                <option value="Kapıda Ticket Restaurant Yemek Kartı ile Ödeme">Kapıda Ticket Restaurant Yemek Kartı ile Ödeme</option>
+                <option value="Kapıda Ticket Restaurant Yemek Çeki ile Ödeme">Kapıda Ticket Restaurant Yemek Çeki ile Ödeme </option>
+                <option value="Kapıda Sodexo Yemek Kartı ile Ödeme">Kapıda Sodexo Yemek Kartı ile Ödeme</option>
+                <option value="Kapıda Sodexo Yemek Çeki ile Ödeme">Kapıda Sodexo Yemek Çeki ile Ödeme</option>
+                <option value="Kapıda Multinet ile Ödeme">Kapıda Multinet ile Ödeme</option>
+                <option value="Kapıda SetCard ile Ödeme">Kapıda SetCard ile Ödeme</option>
+            </select>
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <label style="font-weight:500; margin-right:18px; float:left; padding-top:5px; color:#3f2518;">Ödeme Durumu: </label>
+            <select type="text" id="reportPaymentStatus" name="reportPaymentStatus" style="border:1px solid #cccccc; border-radius:3px; width:232px; padding:5px;">
+                <option value="all">Hepsi</option>
+                <option value="yes">Ödendi</option>
+                <option value="no">Ödenmedi</option>
+            </select>
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <label style="font-weight:500; margin-right:23px; float:left; padding-top:5px; color:#3f2518;">Sipariş Durumu: </label>
+            <select type="text" id="reportOrderStatus" name="reportOrderStatus" style="border:1px solid #cccccc; border-radius:3px; width:232px; padding:5px;">
+                <option selected value="all">Hepsi</option>
+                <option value="Bekliyor">Bekliyor</option>
+                <option value="Hazırlanıyor">Hazırlanıyor</option>
+                <option value="Hazır">Hazır</option>
+                <option value="Teslim Edildi">Teslim Edildi</option>
+                <option value="Teslim Edilemedi">Teslim Edilemedi</option>
+            </select>
+        </div>
+
+        <div style="width:100%; float:left; margin-top:20px;">
+            <button class="go_gradient" onclick="validateBakeryReport()" style="font-size:14px; font-weight:500; border:none; margin-top:0px; margin-left:272px;">Rapor Al</button>
+        </div>
+    </div>
+
+    <div style="width:100%; float:left; padding-top:20px; margin-top:20px; border-top:1px dashed #3f2518;">
+        <table id="admin-report-table" style="width:100%; float:left; text-align:center; margin-top:30px; font-size:13px; font-family:'Open Sans';" class="row-border"></table>
+    </div>
+</div>

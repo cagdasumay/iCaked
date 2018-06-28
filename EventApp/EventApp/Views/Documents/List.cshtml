@@ -1,0 +1,148 @@
+﻿@model EventApp.Models.Document
+@using EventApp.Models
+
+@{
+    ViewBag.Title = "Dokümanlar";
+    List<Document> documents = (List<Document>)ViewData["Documents"];
+    List<string> Types = (List<string>)ViewData["Types"];
+}
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("List", "Documents")">Dokümanlar</a>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title">
+            Doküman Listesi
+        </h1>
+
+        @{
+            if (documents.Count > 0)
+            {
+                <div class="row">
+                    <div class="portlet light portlet-fit bordered" style="background-color: #f0f0f0">
+                        <div class="portlet-body" style="padding-top: 0px !important;">
+                            <div class="mt-element-list">
+                                <div class="mt-list-container list-simple" style="background-color: #ffffff">
+                                    <ul>
+                                        @{
+                                            for (int i = 0; i < documents.Count; i++)
+                                            {
+                                                <li class="mt-list-item">
+                                                    <div class="list-icon-container">
+                                                        @{
+                                                            if (Types[i] == "PDF")
+                                                            {
+                                                                <i class="fa fa-file-pdf-o"></i>
+                                                            }
+                                                            else if (Types[i] == "Power Point Sunumu (.pptx)")
+                                                            {
+                                                                <i class="fa fa-file-powerpoint-o"></i>
+                                                            }
+                                                            else if (Types[i] == "Excel Dosyası (.xlsx)")
+                                                            {
+                                                                <i class="fa fa-file-excel-o"></i>
+                                                            }
+                                                            else if (Types[i] == "Excel Dosyası (.xlsm)")
+                                                            {
+                                                                <i class="fa fa-file-excel-o"></i>
+                                                            }
+                                                            else if (Types[i] == "Word Dosyası (.docx)")
+                                                            {
+                                                                <i class="fa fa-file-word-o"></i>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <div class="list-item-content">
+                                                        <h3>
+                                                            @{
+                                                                if (Types[i] == "PDF")
+                                                                {
+                                                                    @*<a href="@Url.Action("DisplayDocument","Documents",new { docID = @documents[i].Id })">
+                                                                        @documents[i].Name
+                                                                    </a>*@
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".pdf")" target="_blank">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (Types[i] == "Power Point Sunumu (.pptx)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".pptx")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (Types[i] == "Excel Dosyası (.xlsx)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".xlsx")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (Types[i] == "Excel Dosyası (.xlsm)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".xlsm")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                                else if (Types[i] == "Word Dosyası (.docx)")
+                                                                {
+                                                                    <a href="@Url.Content("~/Documents/" + @documents[i].Id + ".docx")">
+                                                                        @documents[i].Name
+                                                                    </a>
+                                                                }
+                                                            }
+                                                        </h3>
+                                                    </div>
+                                                </li>
+                                                                }
+                                        }
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="row">
+                                                                        <div class="portlet light portlet-fit bordered" style="background-color: #f0f0f0">
+                                                                            <div class="portlet-body" style="padding-top: 0px !important; text-align: center;">
+                                                                                <h1>
+                                                                                    Kayıtlı Doküman Bulunmamaktadır...
+                                                                                </h1>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+        }
+
+        
+
+        <!-- END : LISTS -->
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

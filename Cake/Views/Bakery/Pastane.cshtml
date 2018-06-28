@@ -1,0 +1,117 @@
+﻿@using System.Data
+@using Cake.Controllers
+@using Cake.Models
+
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    if (ViewData["header"] != null)
+    {
+        Header h = (Header)ViewData["Header"];
+        ViewBag.Title = h.title;
+        ViewBag.description = h.description;
+        ViewBag.Keywords = h.keywords;
+    }
+
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+    DataTable pastaneler = new DataTable();
+    if (Session["city"] != null)
+    {
+        String code = (string)Session["city"]; String city = dc.getNameFromId(code, "Province");
+        pastaneler = dc.MemoryCacheByQuery("select * from ForeignBakeries where Province like '%" + code + "%'");
+    }
+    else
+    {
+        pastaneler = dc.MemoryCacheByQuery("select * from ForeignBakeries");
+    }
+
+    List<DataRow> big = new List<DataRow>();
+    List<DataRow> butik = new List<DataRow>();
+
+    for (int i = 0; i < pastaneler.Rows.Count; i++) { if (pastaneler.Rows[i]["isButik"].ToString() == "yes") { butik.Add(pastaneler.Rows[i]); } else { big.Add(pastaneler.Rows[i]); } }
+}
+
+<div class="container">
+
+    <div class="row" style="padding:0px;">
+
+        <div style="width:100%; float:left; margin-top:60px; text-align:left;">
+            @*<img src="~/Images/Site/pastaneler_icon.png" style="width:30px; margin-right:7px; vertical-align:sub;" />*@
+            <h1 style="font-size:40px; text-align:center; font-weight:400; color:#3f2518; float:left; width:100%; padding-bottom:50px; ">Bakeries we work with</h1>
+        </div>
+
+        <label style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:80px;">
+            The pastry you want with iCaked is now a click away.
+            <br />
+            You can order instant online cake by choosing whichever pancakes we work with.
+            You can examine the products by choosing your pastry to reach all the products of the pastries and order the pastry.
+        </label>
+
+        <div class="col-md-12 col-sm-12 col-xs-12 pastaneler-grid" style="float:left; padding:2px; background:#f0f0f0; margin-bottom:200px;" id="pastane-div-wrapper-grid">
+            <div class="row">
+                @{
+                    for (int i = 0; i < big.Count; i++)
+                    {
+                        DataRow bakery = big[i];
+                        String img = "/Images/Bakery/" + bakery["Thumbnail"];
+                        String bakeryDelivery = "Var"; String bdStyle = "color:green;";
+                        String homeDelivery = "Var"; String hdStyle = "color:green;";
+                        String isOpen = "Açık"; String ioStyle = "color:green;";
+                        if (bakery["BakeryDelivery"].ToString() == "no") { bakeryDelivery = "Yok"; bdStyle = "color:red;"; }
+                        if (bakery["HomeDelivery"].ToString() == "no") { homeDelivery = "Yok"; hdStyle = "color:red;"; }
+                        if (bakery["isOpen"].ToString() == "0") { isOpen = "Kapalı"; ioStyle = "color:red;"; }
+                        String offset = "";
+                        if (i == 0) { double temp = (12 - (big.Count * 2)) / 2; if (temp >= 1) { offset = "col-md-offset-" + temp; } }
+
+                        <div class="col-md-12 col-sm-12 col-xs-12 pastane-elem" style="background:white; text-align:center; cursor:pointer; padding:15px 0px; float:left;">
+                            <div class="col-md-1 col-sm-2 hidden-xs" style="float:left; padding-right:0px;">
+                                <img alt="pastane resmi" src="@img" style="width:75px;" />
+                            </div>
+                            <div class="col-md-11 col-sm-10 col-xs-12" style="float:left;">
+                                <div style="width:100%; float:left; text-align:center;">
+                                    <h2 style="float:left; text-align:center; color:black; font-weight:400; font-size:30px; margin:0px; line-height:45px;">@bakery["Name"] <span style="font-size:16px; line-height:50px; float:right; padding-left:10px;"> - @dc.getNameFromId(bakery["Province"].ToString(), "Province")</span></h2>
+                                    <img alt="pastane menüsünü aç" src="~/Images/Site/down.png" onclick="$(this).parent().parent().parent().find('.bakeryInfoDiv').slideToggle(300)" style="float:left; padding:0px 12px; width:36px; margin-top:18px;" />
+
+                                    @{
+                                        if (Session["city"] != null)
+                                        {
+                                            <a style="float:right;" href="@Url.Action("Pastane","Account", new { profileName = uc.cleanseUrlString(bakery["Name"].ToString()) })" data-populerite="@bakery["Ranking"].ToString().Replace(",",".")" data-lezzet="@bakery["Taste"].ToString().Replace(",",".")" data-uygulama="@bakery["Editor"].ToString().Replace(",",".")">
+                                                <label style="float:right; padding:10px 20px; margin-top:4px; font-size:14px;" class="black-gradient">Go to Bakery</label>
+                                            </a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <div class="bakeryInfoDiv" style="width:100%; float:left; padding:10px 0px; margin-top:10px; text-align:center; font-size:12px; border-top:1px solid #e6e6e6; display:none;">
+                                    <div style="float:left; width:110px;">
+                                        <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Status :</label>
+                                        <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Min. Packet :</label>
+                                        <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Earliest Delivery :</label>
+                                        <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Pay at Bakery :</label>
+                                        <label style="float:left; width:100%; color:#3f2518; font-weight:500; text-align:left; padding:3px 0px;">Pay at Door :</label>
+                                    </div>
+                                    <div style="float:left; width:50%;">
+                                        <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; @ioStyle">@isOpen</label>
+                                        <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px;">@bakery["MinPacket"] TL</label>
+                                        <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px;">@bakery["EarliestDelivery"] Hours</label>
+                                        <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; @bdStyle">@bakeryDelivery</label>
+                                        <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; @hdStyle">@homeDelivery</label>
+                                    </div>
+                                    <div style="width:100%;">
+                                        <label style="float:left; width:100%; font-weight:500; color:#3f2518; text-align:left; padding:3px 0px;">Address :</label>
+                                        <label style="float:left; width:100%; font-weight:500; text-align:left; padding:3px 0px; font-size:16px;">@bakery["SpecificAddress"]</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                                        }
+
+                }
+            </div>
+        </div>
+    </div>
+</div>

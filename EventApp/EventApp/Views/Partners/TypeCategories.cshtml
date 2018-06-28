@@ -1,0 +1,250 @@
+﻿@using EventApp.Models
+@model EventApp.Models.PartnerEventCategory
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Sponsorlar";
+
+    List<PartnerEventCategory> newcategories = (List<PartnerEventCategory>)ViewData["newcategories"];
+    List<PartnerEventCategory> SavedCategories = (List<PartnerEventCategory>)ViewData["SavedCategories"];
+
+    string Error = (string)ViewData["Error"];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    function AddNewCategory() {
+        $(".AddNewContinue").slideDown(200);
+
+    }
+
+</script>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("PartnerListEditable", "Partners")">Sponsorlar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Kategoriler</span>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title">
+            Sponsorluk Tipi
+            <small>Oluştur</small>
+        </h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet-body">
+                        <div class="mt-element-step">
+                            <div class="row step-background-thin">
+                                <div class="col-md-12 col-sm-12 col-xs-12 col-lg-12 bg-grey-steel mt-step-col active">
+                                    <div class="mt-step-number"></div>
+                                    <div class="mt-step-title font-grey-cascade" style="padding-right: 10px !important; text-align: center;">Sponsorluk Kategorilerini Oluştur</div>
+                                    <div class="mt-step-content font-grey-cascade" style="padding-right: 10px !important; text-align: center;">Sponsorluk Derecesi Listelenme Sırası ile İlgililidir (Derecesi küçük olanlar listede yukarıda yer alacaktır)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @using (Html.BeginForm("AddCategory", "Partners", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div style="border-bottom: 1px solid #eee; margin-bottom:10px;">
+                                @{
+                                    if (SavedCategories.Count > 0)
+                                    {
+                                        <div class="form-horizontal">
+                                            <h3 class="block col-md-offset-3">Kayıtlı Sponsorluk Tipleri</h3>
+                                            @{
+                                                for (int i = 0; i < SavedCategories.Count; i++)
+                                                {
+                                                    <div class="form-group" style="margin-bottom: 0px;">
+                                                        <div name="DeleteSpeaker" id="DeleteSpeaker" value=@SavedCategories[i].Name>
+                                                            <label value=@SavedCategories[i].Id class="control-label col-md-offset-3 col-md-3" style="text-align: left; padding-top: 0px;">
+                                                                <i class="fa fa-check" style="color: #32c5d2;"></i>
+                                                                @SavedCategories[i].Rating) @SavedCategories[i].Name
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <div class="col-md-offset-6 col-md-2 col-sm-2 col-xs-2">
+                                                <a href="@Url.Action("AddCompany","Partners")" id="continue-btn" class="btn btn-outline green button-next">Devam</a>
+                                            </div>
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <a onclick="AddNewCategory()" name="AddCategory" id="AddCategory" class="btn green">Yeni Oluştur</a>
+                                            </div>
+                                        </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-horizontal">
+                                                        <h3 class="block col-md-offset-3">Kayıtlı Sponsorluk Tipleri</h3>
+                                                        <div class="form-group" style="margin-bottom: 10px;">
+                                                            <div>
+                                                                <label class="control-label col-md-offset-3 col-md-5" style="text-align: left; padding-top: 10px;">
+                                                                    Kayıtlı Sponsorluk Tipleri Bulunmamaktadır
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row" style="margin-bottom: 10px;">
+                                                        <div class="col-md-offset-8 col-md-2 col-sm-2 col-xs-2">
+                                                            <a onclick="AddNewCategory()" name="AddCategory" id="AddCategory" class="btn green">Yeni Oluştur</a>
+                                                        </div>
+                                                    </div>
+                                                }
+                                }
+                            </div>
+                                    }
+
+                        @using (Html.BeginForm("AddCategory", "Partners", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            String disp = "";
+                            if(newcategories.Count == 0) { disp = "display:none;"; }
+
+                            @Html.AntiForgeryToken()
+                            <div class="AddNewContinue" style="border-bottom: 1px solid #eee; margin-bottom:10px; @disp">
+                                @{
+                                    if (newcategories.Count > 0)
+                                    {
+                                        <div class="form-horizontal">
+                                            <h3 class="block col-md-offset-3">Eklenen Sponsorluk Tipleri</h3>
+                                            @{
+                                                for (int i = 0; i < newcategories.Count; i++)
+                                                {
+                                                    <div class="form-group" style="margin-bottom: 0px;">
+                                                        <div name="DeleteSpeaker" id="DeleteSpeaker" value=@newcategories[i].Name>
+                                                            <label value=@newcategories[i].Id class="control-label col-md-offset-3 col-md-3" style="text-align: left; padding-top: 0px;">
+                                                                @newcategories[i].Rating. @newcategories[i].Name
+                                                                <button type="submit" id="continue-btn" class="btn btn-success white" style="padding-top: 0px; padding-bottom: 4px; color: #e73d4a; padding-left: 2px;" name="Delete" value=@newcategories[i].Name>
+                                                                    <i class="fa fa-times"></i>
+                                                                </button>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                        <div class="row" style="margin-bottom: 10px;">
+                                            <div class="col-md-offset-6 col-md-6">
+                                                <button type="submit" id="continue-btn" class="btn btn-outline green button-next" name="AddCategory" value="Complete">Tamamla</button>
+                                            </div>
+                                        </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="form-horizontal">
+                                                        <h3 class="block col-md-offset-3">Eklenen Sponsorluk Tipleri</h3>
+                                                        <div class="form-group" style="margin-bottom: 10px;">
+                                                            <div>
+                                                                <label class="control-label col-md-offset-3 col-md-5" style="text-align: left; padding-top: 0px;">
+                                                                    Yeni Kayıt Oluşturulmadı
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                }
+                            </div>
+                                        }
+
+                        @using (Html.BeginForm("AddCategory", "Partners", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            String disp = "";
+                            if (newcategories.Count == 0) { disp = "display:none;"; }
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal AddNewContinue" style="@disp">
+                                
+                                <h3 class="block col-md-offset-3">Yeni Sponsorluk Tipi</h3>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Sponsorluk Kategorisi</label>
+                                    <div class="col-md-6">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Kategori Derecelendirmesi</label>
+                                    <div class="col-md-6">
+                                        @Html.EditorFor(model => model.Rating, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Rating, "", new { @class = "text-danger" })
+                                        @{
+                                            if (Error == "Error")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Both Category Name & Rating is Required </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                                
+
+                                <div class="row">
+                                    <div class="col-md-offset-3 col-md-2 col-sm-2 col-xs-2">
+                                        <a href="@Url.Action("Home","Home")" id="continue-btn" class="btn btn-outline red button-next">İptal</a>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <button type="submit" id="continue-btn" class="btn btn-outline green button-next" name="AddCategory" value="Add New">Yeni Oluştur</button>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 col-xs-2">
+                                        <button type="submit" id="continue-btn" class="btn btn-outline green button-next" name="AddCategory" value="Complete">Tamamla</button>
+                                    </div>
+                                </div>
+                            </div>
+                                            }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+
+
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

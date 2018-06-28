@@ -1,0 +1,249 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    ViewBag.Title = "Sipariş Detayları";
+    Layout = "/Views/Shared/_Layout.cshtml";
+
+    DatabaseController dc = new DatabaseController();
+    BakeryController bc = new BakeryController();
+
+    DataRow order = (DataRow)ViewData["bakeryCurrentOrder"];
+    DataRow bakery = dc.DBQueryGetter("select * from Bakeries where BakeryID = '" + order["BakeryID"] + "'").Rows[0];
+
+    List<DataRow>
+    products = new List<DataRow>
+        ();
+    for (int i = 0; i < order["ProductIDs"].ToString().Split(' ').Length; i++)
+    {
+        try
+        {
+            products.Add(dc.DBQueryGetter("select * from Products where ProductID = '" + order["ProductIDs"].ToString().Split(' ')[i] + "'").Rows[0]);
+        }
+        catch (Exception e) { }
+    }
+
+    DataRow madeProduct = null; int madeIDx = 0;
+    if (String.IsNullOrEmpty(order["MadeID"].ToString()) == false)
+    {
+        madeProduct = dc.DBQueryGetter("select * from MadeCakes where MadeID = '" + order["MadeID"] + "'").Rows[0];
+        for (int i = 0; i < order["ProductIDs"].ToString().Split(' ').Length; i++) { if (order["MadeID"].ToString().ToLower() == order["ProductIDs"].ToString().Split(' ')[i].ToString().ToLower()) { madeIDx = i; break; } }
+    }
+}
+
+<div id="orderSub-bigPic">
+    <img onclick="$(this).parent().fadeOut(300)" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+    <img id="orderSub-bigPic-mainImg" src="" style="width:100%;" />
+</div>
+
+<div class="container" style="padding:0px;">
+    <div class="row" style="padding:0px; margin:50px 0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+
+            @{
+                if (String.IsNullOrEmpty(order["MadeID"].ToString()) == false)
+                {
+                    if (Session["userinfo"] != null)
+                    {
+                        using (Html.BeginForm("AddPhotosToDesign", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div style="width:100%; float:left; margin-bottom:50px;">
+                                <label style="width:100%; float:left; font-size:18px; padding-bottom:15px; font-weight:500;">Bu siparişin fotoğraflarını ürünün sayfasına ekleyin</label>
+                                <label style="width:100%; float:left; font-size:14px; padding-bottom:15px;">Siparişiniz elinize ulaştıysa ve siparişin geldiği halinin fotoğraflarını sitemizde sergilemek isterseniz aşağıdaki buton aracılığıyla yükleyebilirsiniz.</label>
+                                <input accept="image/*" type="file" id="designImages" name="designImages" style="float:left;" multiple />
+                                <input type="hidden" name="designId" value="@order["MadeID"].ToString()" />
+                                <div style="width:100%; float:left;">
+                                    @{
+                                        if (TempData["photosTaken"] != null)
+                                        {
+                                            <label id="addDesignPhotosThanks" style="float:left; width:100%; padding-top:15px; color:green; font-size:14px;">Teşekkürler eklediğiniz fotoğraflar alınmıştır. Onaylandıktan sonra tasarımın sayfasında sergilenecektir.</label>
+                                        }
+                                    }
+                                    <label id="addDesignPhotosAlert" style="float:left; display:none; width:100%; padding-top:15px; color:red; font-size:13px;">Lütfen fotoğraf seçiniz</label>
+                                    <input type="submit" class="go_gradient" onclick="validateAddDesignPhotos()" value="Gönder" style="float:left; margin-top:15px; padding:5px 20px;" />
+                                </div>
+                            </div>
+                                                }
+                                            }
+                                        }
+            }
+
+            <label style="float:left; font-size:24px; padding:15px 0px; padding-top:0px; width:100%; text-align:left; color:#3f2518; line-height:initial;">Sipariş Bilgileri</label>
+
+            <div style="width:100%; border:2px solid #d6d6d6; padding:20px; float:left;">
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Pastane : </label>
+                    <label class="bakery-ordersub-infos">@bakery["Name"]</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Sipariş Numarası : </label>
+                    <label class="bakery-ordersub-infos">@order["OrderNumber"]</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Sipariş Tarihi : </label>
+                    <label class="bakery-ordersub-infos">@order["DateTime"]</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Teslimat Tarihi : </label>
+                    <label class="bakery-ordersub-infos">@order["DeliveryDateTime"].ToString().Replace("/", ".")</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Toplam Fiyat : </label>
+                    <label class="bakery-ordersub-infos">@order["TotalPrice"] TL</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Ödeme Şekli : </label>
+                    <label class="bakery-ordersub-infos">@order["PaymentType"]</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Ödeme Onayı : </label>
+                    @{
+                        String odemeOnayi = "ÖDENMEDİ";
+                        if (order["PaymentApproved"].ToString() == "yes") { odemeOnayi = "ÖDENDİ"; }
+                    }
+                    <label class="bakery-ordersub-infos">@odemeOnayi</label>
+                </div>
+                <div style="width:100%; float:left; float:left; margin-bottom:10px; ">
+                    <label class="bakery-ordersub-titles">Sipariş Durumu : </label>
+                    <label class="bakery-ordersub-infos">@order["Status"]</label>
+                </div>
+                <div style="width:100%; float:left; float:left;">
+                    <label class="bakery-ordersub-titles">Sipariş Notları : </label>
+                    <label class="bakery-ordersub-infos">@order["Note"]</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; margin-top:30px; float:left;">
+
+            <label style="float:left; font-size:24px; padding:15px 0px; padding-top:0px; width:100%; text-align:left; color:#3f2518; line-height:initial;">İletişim Bilgileri</label>
+
+            <div style="width:100%; border:2px solid #d6d6d6; padding:20px; float:left;">
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">İsim - Soyisim : </label>
+                    <label class="bakery-ordersub-infos" style="text-transform:capitalize;">@order["ContactName"] @order["ContactSurname"]</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">E-Posta : </label>
+                    <label class="bakery-ordersub-infos">@order["ContactEmail"]</label>
+                </div>
+                <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                    <label class="bakery-ordersub-titles">Telefon : </label>
+                    <label class="bakery-ordersub-infos">@order["ContactPhone"]</label>
+                </div>
+                @{
+                    if (String.IsNullOrEmpty(order["AddressID"].ToString()) == false)
+                    {
+                        DataTable adres = dc.DBQueryGetter("select * from UserAddresses where ID = '" + order["AddressID"] + "'");
+                        if (adres.Rows.Count == 0)
+                        {
+                            adres = dc.DBQueryGetter("select * from AnonAddresses where ID = '" + order["AddressID"] + "'");
+                        }
+
+                        if (adres.Rows.Count != 0)
+                        {
+                            DataRow ra = adres.Rows[0];
+                            <div style="width:100%; float:left; float:left;">
+                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                    <label class="bakery-ordersub-titles">Adres : </label>
+                                    <label class="bakery-ordersub-infos">@ra["ProvinceName"], @ra["DistrictName"], @ra["TownName"], @ra["NeighborhoodName"]</label>
+                                </div>
+                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                    <label class="bakery-ordersub-titles">Açık Adres : </label>
+                                    <label class="bakery-ordersub-infos">@ra["SpecificAddress"]</label>
+                                </div>
+                                <div style="width:100%; float:left;">
+                                    <label class="bakery-ordersub-titles">Adres Açıklaması : </label>
+                                    <label class="bakery-ordersub-infos">@ra["Description"]</label>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px; margin-top:30px; float:left;">
+
+            <label style="float:left; font-size:24px; padding:15px 0px; padding-top:0px; width:100%; text-align:left; color:#3f2518; line-height:initial;">Ürün Bilgileri</label>
+
+            <div style="width:100%; border:2px solid #d6d6d6; padding:20px; float:left;">
+
+                @{
+                    if (madeProduct != null)
+                    {
+                        <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6; margin-bottom:10px; padding-bottom:20px;">
+                            <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                    <label class="bakery-ordersub-titles">Adet : </label>
+                                    <label class="bakery-ordersub-infos">@order["ProductNumbers"].ToString().Split(' ')[madeIDx] adet</label>
+                                </div>
+                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                    <label class="bakery-ordersub-titles">Ürün İsmi : </label>
+                                    <label class="bakery-ordersub-infos">@madeProduct["Name"]</label>
+                                </div>
+                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                    <label class="bakery-ordersub-titles">Ürün İçeriği : </label>
+                                    <label class="bakery-ordersub-infos">@order["Inside"]</label>
+                                </div>
+                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                    <label class="bakery-ordersub-titles">Ürün Fiyatı : </label>
+                                    <label class="bakery-ordersub-infos">@order["ProductPrices"].ToString().Split(' ')[madeIDx] TL</label>
+                                </div>
+                            </div>
+                            <div style="width:100%; float:left; float:left;">
+                                @{
+                                    for (int i2 = 0; i2 < madeProduct["ImagePath"].ToString().Split(' ').Length; i2++)
+                                    {
+                                        string productImg = "/Images/MadeCakes/" + madeProduct["MadeID"] + "/" + madeProduct["ImagePath"].ToString().Split(' ')[i2];
+                                        <img onclick="openBigPic(this)" src="@productImg" style="width:150px; cursor:pointer; float:left; margin-right:10px;" />
+                                    }
+                                }
+                            </div>
+                        </div>
+                                    }
+
+                                    for (int i = 0; i < products.Count; i++)
+                                    {
+
+                                        <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6; margin-bottom:10px; padding-bottom:20px;">
+                                            <div style="width:100%; float:left; margin-bottom:10px; float:left;">
+
+                                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                                    <label class="bakery-ordersub-titles">Adet : </label>
+                                                    <label class="bakery-ordersub-infos">@order["ProductNumbers"].ToString().Split(' ')[i] adet</label>
+                                                </div>
+                                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                                    <label class="bakery-ordersub-titles">Ürün İsmi : </label>
+                                                    <label class="bakery-ordersub-infos">@products[i]["Name"]</label>
+                                                </div>
+                                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                                    <label class="bakery-ordersub-titles">Ürün Boyutu : </label>
+                                                    <label class="bakery-ordersub-infos">@bc.getProductSize(products[i]["ProductID"].ToString(), order["ProductPrices"].ToString()) kişilik</label>
+                                                </div>
+                                                <div style="width:100%; float:left; margin-bottom:10px;">
+                                                    <label class="bakery-ordersub-titles">Ürün Fiyatı : </label>
+                                                    <label class="bakery-ordersub-infos">@order["ProductPrices"].ToString().Split(' ')[i] TL</label>
+                                                </div>
+                                            </div>
+                                            <div style="width:100%; float:left; float:left;">
+                                                @{
+                                                    for (int i2 = 0; i2 < products[i]["Thumbnail"].ToString().Split(' ').Length; i2++)
+                                                    {
+                                                        string productImg = "/Images/Products/" + products[i]["ProductID"] + "/" + products[i]["Thumbnail"].ToString().Split(' ')[i2];
+                                                        if (String.IsNullOrEmpty(products[i]["Thumbnail"].ToString().Split(' ')[i2]) == false)
+                                                        {
+                                                            <img onclick="openBigPic(this)" src="@productImg" style="width:150px;   cursor:pointer; float:left; margin-right:10px;" />
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

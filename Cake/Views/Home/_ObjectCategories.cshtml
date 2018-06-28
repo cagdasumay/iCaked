@@ -1,0 +1,265 @@
+﻿@using System.Data
+
+@{
+    List<DataTable> dt_list = (List<DataTable>)ViewData["ObjectNames"];
+    DataTable objects = dt_list[1]; DataTable mixed = dt_list[6];
+
+    List<DataRow> hobby = new List<DataRow>();
+    List<DataRow> nature = new List<DataRow>();
+    List<DataRow> celebration = new List<DataRow>();
+    List<DataRow> baby = new List<DataRow>();
+    List<DataRow> child = new List<DataRow>();
+    List<DataRow> cartoon = new List<DataRow>();
+    List<DataRow> food = new List<DataRow>();
+    List<DataRow> job = new List<DataRow>();
+    List<DataRow> other = new List<DataRow>();
+
+    for (int i = 0; i < objects.Rows.Count; i++)
+    {
+        DataRow objectRow = objects.Rows[i];
+        if (objectRow["Category"].ToString().Contains("Hobi")) { hobby.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Doğa")) { nature.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Kutlama")) { celebration.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Bebek")) { baby.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Çocuk")) { child.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Çizgi Film")) { cartoon.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Yiyecek")) { food.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Meslek")) { job.Add(objectRow); }
+        if (objectRow["Category"].ToString().Contains("Diğer")) { other.Add(objectRow); }
+    }
+}
+
+<div id="object-all-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < objects.Rows.Count; i++)
+            {
+                String img_str = "/Objects/Images/" + objects.Rows[i]["ImagePath"];
+                <div class="add-obj" data-minSize="@objects.Rows[i]["MinSize"]" data-maxSize="@objects.Rows[i]["MaxSize"]" data-stepSize="@objects.Rows[i]["StepSize"]" data-obj="@objects.Rows[i]["ObjectName"]" data-keywords="@objects.Rows[i]["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+            for (int i = 0; i < mixed.Rows.Count; i++)
+            {
+                String img_str = "/Objects/Images/" + mixed.Rows[i]["ImagePath"];
+                <div data-isMixed="true" data-minSize="@mixed.Rows[i]["MinSize"]" data-maxSize="@mixed.Rows[i]["MaxSize"]" data-stepSize="@mixed.Rows[i]["StepSize"]" class="add-obj" data-obj="@mixed.Rows[i]["ObjectName"]" data-keywords="@mixed.Rows[i]["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-hobby-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < hobby.Count; i++)
+            {
+                DataRow objectRow = hobby[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]"  data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-nature-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < nature.Count; i++)
+            {
+                DataRow objectRow = nature[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-celebration-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < celebration.Count; i++)
+            {
+                DataRow objectRow = celebration[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-baby-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < baby.Count; i++)
+            {
+                DataRow objectRow = baby[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-child-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < child.Count; i++)
+            {
+                DataRow objectRow = child[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-cartoon-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < cartoon.Count; i++)
+            {
+                DataRow objectRow = cartoon[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-food-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < food.Count; i++)
+            {
+                DataRow objectRow = food[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-job-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < job.Count; i++)
+            {
+                DataRow objectRow = job[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>
+
+<div id="object-other-dropdown" class="objectbar-dropdown " style="display:none; padding: 0px; padding-top: 0px;">
+    <div style="width:100%; float:left; padding:3px; border-bottom:1px solid #cccccc;">
+        <input onkeyup="filterObjects(this)" type="text" placeholder="Arama" data-eng="Search" data-tr="Arama" style="width:100%; float:left; border-radius:3px; padding:5px;" />
+    </div>
+    <div class="mobile-obj-up-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/up.png" />
+    </div>
+    <div class="draggable-div scroll obj-draggable">
+        @{
+            for (int i = 0; i < other.Count; i++)
+            {
+                DataRow objectRow = other[i];
+                String img_str = "/Objects/Images/" + objectRow["ImagePath"];
+                <div class="add-obj" data-minSize="@objectRow["MinSize"]" data-maxSize="@objectRow["MaxSize"]" data-stepSize="@objectRow["StepSize"]" data-obj="@objectRow["ObjectName"]" data-keywords="@objectRow["Keywords"]" style="width:50%; background:url('@img_str'); height:70px; background-size:contain;">
+                </div>
+            }
+        }
+    </div>
+    <div class="mobile-obj-down-btn mobile-nav" style="border-top:1px solid #cccccc;">
+        <img src="~/Images/Site/down.png" />
+    </div>
+</div>

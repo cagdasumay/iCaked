@@ -1,0 +1,64 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DatabaseController dc = new DatabaseController();
+    bool bakeryExists = Session["orderBakery"] != null;
+
+    String type = "";
+    List<DataRow> cart = (List<DataRow>)Session["cart"];
+    for (int i = 0; i < cart.Count; i++)
+    {
+        if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()) == false) { type = cart[i]["Type"].ToString(); }
+    }
+
+    bool contentRequired = (bool)Session["contentRequired"];
+    bool bakeryRequired = (bool)Session["bakeryRequired"];
+    String backTo = "BackToBakery";
+    if(bakeryRequired == false) { backTo = "BackToAddress"; }
+}
+
+        <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12" style="padding:0px; float:left; margin-bottom:30px;">
+            <a style="color:black; text-decoration:none;" href="@Url.Action(backTo,"Order")">
+                <div class="gray-gradient" style="text-align:center; cursor:pointer; float:left; padding:5px 15px;">
+                    <img src="~/Images/Site/left_white.png" style="width:6px; margin-right:7px; margin-bottom:3px; cursor:pointer;" />
+                    <label style="cursor:pointer; font-size:14px;">Previous Step</label>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-md-offset-3 col-sm-6 col-sm-offset-3 col-xs-12" style="border:1px solid #e6e6e6; padding:0px; margin-bottom:50px;">
+            <label style="width:100%; float:left; padding:25px 0px; border-bottom:1px solid #e6e6e6; text-align:center;">Select Content Of Your Cake</label>
+            @{
+                if (bakeryExists)
+                {
+
+                    DataRow bakery = (DataRow)Session["orderBakery"];
+                    DataTable contents = dc.DBQueryGetter("select * from BakeryContents where BakeryID = '" + bakery["BakeryID"] + "' and Type = 'cake'");
+                    using (Html.BeginForm("SelectContent", "Order"))
+                    {
+                        <label style="width:100%; float:left; padding-top:20px; font-weight:600; font-size:14px; text-align:center;">Contents presented by @bakery["Name"]</label>
+                        <div style="width:100%; float:left; text-align:center; padding:20px 0px;">
+                            <select name="designContent" id="designContent" onchange="$('#confirm_content').attr('href', '/Order/SelectContent?id=' + $(this).val())" style="width:200px; border:1px solid #e6e6e6; padding:10px 20px; font-size:16px; border-radius:30px;">
+                                @{
+                                    for (int i = 0; i < contents.Rows.Count; i++)
+                                    {
+                                        DataRow content = contents.Rows[i];
+                                        <option value="@content["ID"]">@content["Inside"]</option>
+                                    }
+                                }
+                            </select>
+                            <div style="width:100%; float:left; text-align:center; margin-top:20px;">
+                                <input type="submit" id="confirm_content" class="black-gradient" style="color:white; width:200px; font-size:14px; letter-spacing:1px;" value="SEÇ VE DEVAM ET" />
+                            </div>
+
+                        </div>
+                                        }
+                                    }
+                                    else
+                                    {
+
+                                    }
+            }
+        </div>
+

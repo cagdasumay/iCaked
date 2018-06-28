@@ -1,0 +1,203 @@
+﻿@using EventApp.Models
+@model EventApp.Models.Activity
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Anketler";
+
+    Guid EAID = (Guid)ViewData["SurveyActivityID"];
+    List<Activity> RegisteredActivities = (List<Activity>)ViewData["RegisteredActivities"];
+    Event EventInfo = (Event)ViewData["EventInfo"];
+    string SurveyName = (string)ViewData["SurveyName"];
+    Guid SurveyID = (Guid)ViewData["SurveyID"];
+    Guid RelatedActivity = (Guid)ViewData["RealtedActivity"];
+    string EventSelected = (string)ViewData["EventSelected"];
+    string DateError = (string)ViewData["DateError"];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        setTimeout(function () { $(this).scrollTop(0); }, 1);
+    });
+</script>
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("SurveyListEditable", "Activities")">Anketler</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <a href="@Url.Action("EditSurvey","Activities", new { SurveyEventID = EAID })">@SurveyName</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Düzenle</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title">
+            @SurveyName
+            <small>Bilgilerini Düzenle</small>
+        </h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet box green">
+                    <div class="portlet-title">
+                        <div class="caption">
+                            <i class="icon-pencil font-white"></i>
+                            <span class="caption-subject font-white sbold">@SurveyName</span>
+                        </div>
+                    </div>
+                    <div class="portlet-body">
+
+                        @using (Html.BeginForm("EditSurveyInfo", "Activities", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">İlgili Etkinlik</label>
+                                    <div class="col-md-5">
+                                        <select name="SelectedActivity" id="SelectedActivity" class="form-control form-control-solid col-md-3 col-sm-3 col-xs-6">
+                                            @{
+                                                if (EventSelected == "Event")
+                                                {
+                                                    <option selected value=@EventInfo.Id>@EventInfo.Name</option>
+                                                    for (int j = 0; j < RegisteredActivities.Count; j++)
+                                                    {
+                                                        <option value=@RegisteredActivities[j].Id>@RegisteredActivities[j].Name</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <option value=@EventInfo.Id>@EventInfo.Name</option>
+                                                    for (int j = 0; j < RegisteredActivities.Count; j++)
+                                                        {
+                                                            if (RelatedActivity == RegisteredActivities[j].Id)
+                                                            {
+                                                                <option selected value=@RegisteredActivities[j].Id>@RegisteredActivities[j].Name</option>;
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value=@RegisteredActivities[j].Id>@RegisteredActivities[j].Name</option>
+                                                            }
+                                                        }
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Anket İsmi</label>
+                                    <div class="col-md-5">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Bitiş Tarihi & Saati</label>
+                                    <div class="col-md-5">
+                                        <div class="input-group date form_datetime">
+                                            @Html.EditorFor(model => model.EndDate, new { htmlAttributes = new { @class = "form-control string" } })
+                                            @Html.ValidationMessageFor(model => model.EndDate, "", new { @class = "text-danger" })
+                                            <span class="input-group-btn">
+                                                <button class="btn default date-set" type="button">
+                                                    <i class="fa fa-calendar"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                        @{
+                                            if (DateError == "DateError")
+                                            {
+                                                <div>
+                                                    <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Bitiş Tarihi & Saati Girin </span>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Anket Konusu</label>
+                                    <div class="col-md-5">
+                                        @Html.TextAreaFor(model => model.Content, new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-offset-3 col-md-9">
+
+                                        <a href="@Url.Action("EditSurvey", "Activities", new { SurveyEventID = EAID})" id="continue-btn" class="btn btn-success">
+                                            Geri
+                                        </a>
+
+                                        <button type="submit" id="register-submit-btn" class="btn btn-outline green button-next">
+                                            @{ 
+                                                TempData["SurveyID"] = SurveyID;
+                                            }
+                                            Düzenle
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                                                }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+
+
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

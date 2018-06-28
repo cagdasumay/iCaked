@@ -1,0 +1,397 @@
+﻿@using Cake.Controllers
+@using System.Data
+
+@{
+    DatabaseController dc = new DatabaseController();
+    UtilityController uc = new UtilityController();
+
+    bool orderStarted = false;
+    if (ViewData["orderStarted"] != null) { orderStarted = true; }
+
+    String what = "Profil";
+    if (Session["userinfo"] != null) { if (((DataRow)Session["userinfo"])["Role"].ToString().Trim().ToLower() == "admin") { what = "Admin Paneli"; } }
+
+    string cartDisplay = "none;";
+
+    if (Session["cartOpen"] != null)
+    {
+        cartDisplay = "none"; Session["cartOpen"] = null;
+    }
+}
+
+<div id="userContract" class="col-md-6 col-sm-6 col-xs-9" style="position:fixed; left:0; right:0; top:0; bottom:0; margin:auto; border-radius:5px; display:none; z-index:100000; background:white; border:1px solid #d6d6d6; box-shadow: 0 5px 10px rgba(0,0,0,.2); padding:10px; font-size:12px; height:500px;">
+    <img alt="sözleşmeyi kapat" onclick="$(this).parent().fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+    <label style="width:100%; float:left; overflow:auto; height:480px; overflow-x:hidden; text-align:justify;">
+        <br /> <br />
+        1. Confirmation of the Contract <br />
+        <br /> You can become a member of the iCaked.com system by filling out the user registration form or through web sites that are accessible via www.iCaked.com or via social media network memberships (Facebook, Twitter, Pinterest and the like). Every iCaked.com user, INFINIA Engineering Ltd. Sti. ("The Agreement") which it has concluded with the User Agreement ("iCaked.com").
+        <br /> <br />
+        2. Services <br />
+        <br /> iCaked.com offers the users of iCaked.com the possibility of ordering food products and decorating materials and disposable items from food products and iCaked.com from applications that can be developed on the internet, mobile phones, smart TV systems or similar platforms and related services.
+        <br /> <br />
+        3. ICaked.com User System <br />
+        <br /> • Every iCaked.com user has a "username" or e-mail address and a "password" that he or she will specify.
+        <br /> • The "username" is unique to every member as it is in their e-mail address, and the same username is not given to different members.
+        <br /> • Each user must enter his / her username or registered e-mail address and password in order to connect to iCaked.com's required systems. This process is described as entering the iCaked.com system.
+        <br /> • "Password" is only included in the relevant user's information. If the user's password is forgotten, iCaked.com will send a link on request to the user's email address registered on iCaked.com to create a new password. The identification and protection of the password is entirely at the user's own risk and iCaked.com is not liable for any problems or damages that may arise from using the password.
+        <br /> • iCaked.com will be able to notify users through promotions that they can use in the locations where their registered addresses are located on iCaked.com, and by email from new services or projects included in the iCaked.com system. In addition, users of iCaked.com will be able to access and share various promotions, campaigns and similar information through any communication channel they share with iCaked.com system, including social media channels.
+        <br /> • The name, address and phone number registered on the iCaked.com system that users have specified will be shared with the merchant delivering the order for quicker and correct delivery of the order.
+        <br /> • iCaked.com is not responsible for any problems or damages that may arise between the user and the member office due to the sharing of name, address and phone number registered in the system with the member business that delivers the order.
+        <br /> • The use of iCaked.com system has all the intellectual rights of the data and data that will be generated. ICaked.com may publish reports containing demographic information or use such information or reports themselves, and may share such reports and / or statistics with business partners and third parties, either freely or without charge, without disclosing user subscription information. These actions are not contrary to the iCaked.com Privacy Policy.
+        <br /> <br />
+        4. User Obligations <br />
+        <br /> While the user benefits from iCaked.com services,
+        <br /> • Only one e-mail can be defined for each User name created on iCaked.com, and that the information contained in the user registration form is correct and that the information is incorrect or incomplete (such as forgetting password) Or that third party liability is the sole responsibility of the user, in which case the membership of iCaked.com may be terminated;
+        <br /> • You are responsible for any actions you may take with your "Username" or registered email address;
+        <br /> • The copyright of the services and software provided by iCaked.com is owned by iCaked.com and you will not reproduce or distribute the software in any way;
+        <br /> • You will not use any design made through iCaked.com for any sale in different circulation and / or for any profitable transaction;
+        <br /> • Any personal opinions, ideas, expressions, files added to the iCaked.Cfm environment, personal information submitted by iCaked.com when using the services of iCaked.com, own responsibility for any design made in iCaked.com environment and any disputes between the user and the user ICaked.com is not liable in any way for these files, including but not limited to, iCaked.com is free to publish and publish these designs, opinions and opinions and also to edit and correct such designs, opinions and comments through moderators
+
+    </label>
+</div>
+
+@{
+    if (Session["en"] != null)
+    {
+        <div class="container-fluid" style="background:#f5f5f5; box-shadow:0px 1px 5px -2px gray; margin-bottom:3px;">
+            <div class="container">
+                <div id="google_translate_element"></div>
+                <script type="text/javascript">
+                    function googleTranslateElementInit() {
+                        new google.translate.TranslateElement({ pageLanguage: 'tr', includedLanguages: 'en', layout: google.translate.TranslateElement.FloatPosition.TOP_LEFT, gaTrack: true, gaId: 'UA-85211187-1' }, 'google_translate_element');
+                    }
+
+                    function fireEvent(element, event) {
+                        if (document.createEventObject) {
+                            var evt = document.createEventObject();
+                            return element.fireEvent('on' + event, evt)
+                        }
+                        else {
+                            var evt = document.createEvent("HTMLEvents");
+                            evt.initEvent(event, true, true); // event type,bubbling,cancelable
+                            return !element.dispatchEvent(evt);
+                        }
+                    }
+
+                    $(document).ready(function () {
+                        setTimeout(function () {
+                            var jObj = $('.goog-te-combo');
+                            var db = jObj.get(0);
+                            jObj.val("en");
+                            fireEvent(db, 'change');
+                        }, 1000);
+                    });
+                </script>
+                <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+            </div>
+        </div>
+    }
+}
+
+<div class="header_wrapper" style="background:white; float:left;">
+
+    <div class="container-fluid" style="width:100%; float:left; background:#2c2c2b;">
+        <div class="container">
+            <div class="header-upper-container">
+                <a class="hidden-xs" href="/istek-tasarim" style="float:left; margin-right:25px;">Design Request</a>
+                <a class="hidden-xs" href="/pastane" style="float:left; margin-right:25px;">Bakeries</a>
+
+                <a href="@Url.Action("Iletisim","Home")" style="float:right; margin-left:25px;">Contact</a>
+                <a href="@Url.Action("Hakkimizda","Home")" style="float:right; margin-left:25px;">About Us</a>
+                @*<a class="login-register-toggle login-register" style="float:right;">Üyelik</a>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" style="width:100%; float:left;">
+
+        <div class="container" id="header-container">
+            <div id="header-upper-menu" style="width:100%; float:left; ">
+                <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; padding:0px;">
+
+                    <div id="header-utility-wrapper" class="col-md-9 col-sm-9 col-xs-6" style="float:right; margin:20px 0px; padding:0px;">
+                        @{
+                            if (Session["userinfo"] == null & Session["bakeryinfo"] == null)
+                            {
+                                <div id="login-register-div" class="header-utility-sub" style="text-align:right; float:right; color:black; ">
+                                    <div class="login-register-toggle header-utility-sub tooltip2">
+                                        <img alt="kullanıcı ikon" class="kullanici-img" src="~/Images/Site/user_icon_header.png" style="width:25px; margin-top:11px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Membership</span>
+                                    </div>
+
+                                    <div id="account-floating-div">
+                                        <img alt="menüyü kapat" onclick="$(this).parent().fadeOut(300); $('.overall-mask').fadeOut(300);" style="cursor:pointer;" class="closeDialog" src="~/Images/Site/close_icon2.png" />
+                                        <div style="border-bottom:1px solid #b5b5b5; width:100%; float:left;">
+                                            <label class="account-button account-button-active" id="login-menu">Login</label>
+                                            <label class="account-button" id="register-menu">Register</label>
+                                        </div>
+                                        <div class="account-menu-div" id="login-floating-div">
+
+                                            <div id="login-sub-div" style="border:none;">
+                                                <div id="email-login-div" style="margin-top:30px;">
+                                                    <input id="email" name="email" autocomplete="off" class="input-text" type="text" placeholder="E-Mail" />
+                                                </div>
+                                                <div id="password-login-div">
+                                                    <input id="password_login" name="password_login" autocomplete="off" class="input-text" type="password" placeholder="Password" />
+                                                </div>
+                                                <div id="login-alert" style="border:none; height:20px;">
+                                                    <label id="login-alert-label" style="color:red; font-size:12px; line-height:20px; float:right; text-align:right; display:none;">All fields must be filled.</label>
+                                                    <img alt="giriş loading" id="login-loading" src="~/Images/Site/loading_mini.gif" style="float:right; padding-right:10px; width:30px; display:none;" />
+                                                </div>
+                                            </div>
+
+                                            <div id="forgot-password-sub-div" class="forgot" style="border:none;">
+                                                <label style="width:100%; text-align:center; padding:10px 0px;">Enter the e-mail address you used as a member. Your new password will be sent.</label>
+                                                <div id="forgot-email-div">
+                                                    <input id="forgot-email" name="forgot-email" autocomplete="off" class="input-text" type="text" placeholder="E-Posta" />
+                                                </div>
+                                                <div id="forgot-alert" style="border:none; height:20px;">
+                                                    <label id="forgot-alert-label" style="color:red; font-size:12px; line-height:20px; float:right; text-align:right; display:none;"></label>
+                                                    <img alt="şifremi unuttum loading" id="forgot-loading" src="~/Images/Site/loading_mini.gif" style="float:right; padding-right:10px; width:30px; display:none;" />
+                                                </div>
+                                            </div>
+
+                                            <div style="border:none;">
+                                                <input type="checkbox" id="rememberMe" name="rememberMe" style="float:left; width:15px; height:15px; margin-right:5px;" />
+                                                <label id="rememberMe-btn" onclick="$('#rememberMe').trigger('click');"> remember me </label>
+                                                <label id="forgot-password-button"> forgot password </label>
+                                            </div>
+                                            <div style="border:none;">
+                                                <input id="login-button" onclick="validateLogin()" type="submit" class="submit-button black-gradient" value="Login" />
+                                                <input id="forgot-button" onclick="validateForgot()" type="submit" class="forgot submit-button black-gradient" value="Send" />
+                                            </div>
+                                            @*<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+                                                </fb:login-button>*@
+                                        </div>
+                                        <div class="account-menu-div" id="register-floating-div" style="display:none;">
+                                            <div id="email-register-div" style="margin-top:30px;">
+                                                <input id="email_register" name="email_register" autocomplete="off" class="input-text" type="text" placeholder="E-Mail" />
+                                            </div>
+                                            <div id="name-register-div">
+                                                <input id="name_register" name="name_register" autocomplete="off" class="input-text" type="text" placeholder="Name" />
+                                            </div>
+                                            <div id="surname-register-div">
+                                                <input id="surname_register" name="surname_register" autocomplete="off" class="input-text" type="text" placeholder="Surname" />
+                                            </div>
+                                            <div id="password-register-div">
+                                                <input id="password_register" name="password_register" autocomplete="off" class="input-text" type="password" placeholder="Password" />
+                                            </div>
+                                            <div id="password-confirm-register-div">
+                                                <input id="password_confirm_register" name="password_confirm_register" autocomplete="off" class="input-text" type="password" placeholder="Password Again" />
+                                            </div>
+                                            <div id="register-alert" style="border:none; height:20px;">
+                                                <label id="register-alert-label" style="color:red; font-size:12px; line-height:20px; float:right; text-align:right; display:none;">All fields must be filled.</label>
+                                                <img alt="kayıt loading" id="register-loading" src="~/Images/Site/loading_mini.gif" style="float:right; padding-right:10px; width:30px; display:none;" />
+                                            </div>
+
+                                            <div style="width:100%; float:left; margin-bottom:10px; border:none; text-align:center;">
+                                                <label id="userContractLabel" onclick="$('#userContract').fadeToggle(300)" style="float:right; font-size:12px; cursor:pointer;">I have read and accepted the user agreement</label>
+                                                <input onchange="$(this).css('box-shadow','none');" id="acceptUserContract" type="checkbox" style="width:15px; height:15px; margin-right:7px; margin-top:1px;" />
+                                            </div>
+
+                                            <div style="border:none; margin-top:3px;">
+                                                <input id="register-button" onclick="validateRegister()" type="submit" class="submit-button black-gradient" value="Register" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (Session["userinfo"] != null)
+                            {
+                                <a id="logout" onclick="Logout()" style="">
+                                    <div class="logout-button header-utility-sub tooltip2" style="text-align:right; float:right; cursor:pointer; color:black; ">
+                                        <img alt="çıkış" class="kullanici-img" src="~/Images/Site/logout.png" style="width:20px; margin-top:15px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Logout</span>
+                                    </div>
+                                </a>
+                                <div class="header-utility-sub tooltip2" style="text-align:right; float:right; color:black; ">
+                                    <a href="/Profil" style="color:black;"><img class="kullanici-img" alt="kullanıcı icon" src="~/Images/Site/user_icon_header.png" style="width:25px; margin-top:11px; margin-left:30px;" /></a>
+                                    <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Profile</span>
+                                </div>
+                            }
+                            else if (Session["bakeryinfo"] != null)
+                            {
+                                String link = "/pastane/" + uc.cleanseUrlString(((DataRow)Session["bakeryinfo"])["Name"].ToString());
+                                <a id="logout" onclick="Logout()" style="">
+                                    <div class="logout-button header-utility-sub tooltip2" style="text-align:right; float:right; cursor:pointer; color:black; ">
+                                        <img alt="çıkış" class="kullanici-img" src="~/Images/Site/logout.png" style="width:20px; margin-top:15px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Logout</span>
+                                    </div>
+                                </a>
+                                <div class="header-utility-sub tooltip2" style="text-align:right; float:right; color:black; ">
+                                    <a href="@link" style="color:black;"><img class="kullanici-img" alt="kullanıcı icon" src="~/Images/Site/header_baker_icon.png" style="width:16px; margin-top:11px; margin-left:30px;" /></a>
+                                    <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Bakery</span>
+                                </div>
+                            }
+                            <div class="header-utility-sub" style="display:none;" id="login-hidden">
+                                <a id="logout" onclick="Logout()">
+                                    <div class="logout-button header-utility-sub tooltip2" style="text-align:right; float:right; cursor:pointer; color:black; ">
+                                        <img alt="çıkış" class="kullanici-img" src="~/Images/Site/logout.png" style="width:20px; margin-top:15px; margin-left:30px;" />
+                                        <span class="tooltiptext2" style="left:-17px; margin-left:0px;">Logout</span>
+                                    </div>
+                                </a>
+                                <div class="header-utility-sub" style="text-align:right; float:right; color:black; ">
+                                    <a href="/Profil" style="color:black;"><img class="kullanici-img" alt="kullanıcı icon" src="~/Images/Site/user_icon_header.png" style="width:25px; margin-top:11px; margin-left:30px;" /></a>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="sepetim-header" style="text-align:left; float:right; color:black; ">
+                            <div id="sepetim-header" class="sepetim-header header-utility-sub tooltip2" style="color:black; float:right; cursor:pointer;">
+                                <img id="sepetim-img" alt="sepetim" src="~/Images/Site/cart_icon_header.png" style="width:25px; margin-top:12px; margin-left:35px;" />
+                                <span class="tooltiptext2" style="margin-left:0px; left:-12px;">Cart</span>
+
+                                @{
+                                    if (Session["cart"] != null)
+                                    { <label id="new_product_label">@(((List<DataRow>)Session["cart"]).Count)</label> }
+                                }
+
+                            </div>
+                            <div id="sepetim-header-div" style="display:@cartDisplay">
+                                @{
+                                    if (Session["cart"] != null)
+                                    {
+                                        List<DataRow> cart = (List<DataRow>)Session["cart"];
+                                        bool bakerySelected = false; String minPacket = "green";
+                                        String bakeryImg = "Not Selected";
+                                        DataRow bakery = null;
+
+                                        for (int i = 0; i < cart.Count; i++)
+                                        {
+                                            if (cart[i]["Category"].ToString() != "Parti Malzemeleri")
+                                            {
+                                                if (String.IsNullOrEmpty(cart[i]["BakeryID"].ToString()) == false)
+                                                {
+                                                    bakerySelected = true;
+                                                    bakery = dc.MemoryCacheByQuery("select * from ForeignBakeries where BakeryID = '" + cart[i]["BakeryID"] + "'").Rows[0];
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (bakerySelected == true)
+                                        {
+                                            bakeryImg = "/Images/Bakery/" + bakery["Thumbnail"].ToString();
+
+                                            double cartSum = 0;
+                                            for (int i = 0; i < cart.Count; i++)
+                                            {
+                                                cartSum = cartSum + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","));
+                                            }
+                                            if (cartSum < Convert.ToDouble(bakery["MinPacket"].ToString().Replace(".", ","))) { minPacket = "#00c100"; }
+                                        }
+
+                                        String cartTotal = "0";
+
+                                        for (int i = 0; i < cart.Count; i++)
+                                        {
+                                            cartTotal = (Convert.ToDouble(cartTotal.Replace(".", ",")) + Convert.ToDouble(cart[i]["PagePrice"].ToString().Replace(".", ","))).ToString();
+                                            String selectStr = "";
+                                            String img = "";
+                                            if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()))
+                                            {
+                                                img = "/Images/Products/" + cart[i]["ProductID"] + "/" + cart[i]["Thumbnail"].ToString().Split(' ')[0];
+                                                if (cart[i]["Category"].ToString().Contains("Pasta") | cart[i]["Category"].ToString() == "Parti Malzemeleri") { selectStr = "kişilik"; }
+                                                else if (cart[i]["Category"].ToString() == "Kek/Kurabiye") { selectStr = "adet"; }
+                                            }
+                                            else { img = "/Images/MadeCakes/" + cart[i]["ProductID"] + "/" + cart[i]["ImagePath"].ToString().Split(' ')[0]; selectStr = "kişilik"; }
+
+                                            <div style="width:100%; float:left; border-bottom:1px solid #e6e6e6; padding-bottom:5px; margin-bottom:5px;">
+                                                <div style="float:left; width:110px;">
+                                                    <img alt="ürün" class="sepetim-product-img" src="@img" style="width:100px; background:white; border:1px solid #e5e5e5; border-radius:3px; float:left;" />
+                                                </div>
+                                                <div style="float:left; width:155px;">
+                                                    <label style="float:left; font-size:15px; width:155px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight:500;">@cart[i]["Name"]</label>
+                                                </div>
+                                                <div style="float:left; width:175px;">
+                                                    <label style="float:left; font-size:13px; width:155px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">@cart[i]["Select"] @selectStr</label>
+                                                </div>
+                                                <div style="float:left; width:178px;">
+                                                    <label style="float:left; font-weight:400; font-size:13px;"> @cart[i]["Count"] Many</label>
+
+                                                    @{
+                                                        if (cart[i]["PagePrice"].ToString() == "0.00")
+                                                        {
+                                                            <label style="float:right; font-size:14px; padding-top:40px; font-weight:500; font-family:'Open Sans';">Bakery must be selected</label>
+                                                        }
+                                                        else
+                                                        {
+                                                            <label style="float:right; font-size:16px; padding-top:40px; font-weight:500; font-family:'Open Sans';">@uc.ArrangePrice(cart[i]["PagePrice"].ToString()) TL</label>
+                                                        }
+                                                    }
+                                                </div>
+
+
+                                                @{
+                                                    if (orderStarted == false)
+                                                    {
+                                                        <a onclick="DeleteChecker('@i')">
+                                                            <img alt="ürünü sepetten sil" src="~/Images/Site/close_icon2.png" class="header-remove-obj-img" />
+                                                        </a>
+                                                    }
+                                                }
+                                            </div>
+                                                    }
+
+                                                    <div style="width:100%; float:left; text-align:center; padding-top:5px; padding-bottom:10px; border-bottom:1px solid #e6e6e6;">
+                                                        <div style="float:left;">
+                                                            @{
+                                                                if (bakeryImg != "Not Selected")
+                                                                { <img alt="pastane resmi" src="@bakeryImg" style="width:50px; float:left; padding:2px; border:1px solid #cccccc; border-radius:3px;" /> }
+                                                                string totalPrice = uc.ArrangePrice(cartTotal);
+                                                                if (totalPrice == "0.00") { totalPrice = "Bakery must be selected."; }
+                                                            }
+                                                        </div>
+                                                        @{
+                                                            if (totalPrice != "Pastane Seçilmelidir.")
+                                                            {
+                                                                <label style="float:left; font-size:16px; font-weight:500; margin-left:10px; line-height:32px;">Total : </label>
+                                                                <label style="float:right; font-size:16px; font-weight:500; font-family:'Open Sans'; line-height:32px; padding-right:2px;">@totalPrice TL</label>
+                                                            }
+                                                        }
+                                                    </div>
+
+                                                    <div style="width:100%; float:left; text-align:center; padding:10px;">
+                                                        <a href="@Url.Action("Sepetim","Order")" class="black-gradient" style="padding:8px; width:100%; margin-top:10px; font-size:16px; font-weight:400; cursor:pointer; color:white; text-decoration:none; float:left; outline:none;">Go to cart</a>
+                                                    </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <div style="width:100%; float:left;">
+                                                                    <label style="width:100%; float:left; text-align:center; padding:5px; color:gray;">Your cart is empty</label>
+                                                                </div>
+                                                            }
+                                }
+                            </div>
+
+                        </div>
+
+                        @{
+                            string cityDisp = "display:none";
+                            if (Session["city"] != null) { cityDisp = "display:inline"; }
+                        }
+
+                        <div style="float:left; width:70%; border:1px solid #eaeaea; padding:12px 20px; border-radius:40px; @cityDisp;" class="hidden-sm hidden-xs">
+                            <input placeholder="Search Products" id="indexMainSearch" type="text" style="float:left; font-size:14px; width:80%;" />
+                            <img src="~/Images/Site/search_icon.png" style="float:right; width:20px;" />
+                        </div>
+
+                        <a href="@Url.Action("SiparisTakibi","Home")">
+                            <div class="header-utility-sub tooltip2" style="float:right; cursor:pointer;">
+                                <img id="siparis-takibi-img" alt="sipariş takibi" src="~/Images/Site/siparis_takibi_icon_header.png" style="width:25px; cursor:pointer; margin-top:13px;" />
+                                <span class="tooltiptext2">Order Tracking</span>
+                            </div>
+                        </a>
+
+                    </div>
+
+                    <div id="main-logo-wrapper" class="col-md-2 col-sm-3 col-xs-6" style="float:left; margin-top:20px; margin-bottom:10px; text-align:center; padding:0px;">
+                        <a href="/"><img alt="icaked ana logo" src="~/Images/Site/main_logo.png" id="main_logo" /></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

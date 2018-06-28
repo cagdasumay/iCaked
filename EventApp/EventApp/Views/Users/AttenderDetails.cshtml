@@ -1,0 +1,309 @@
+﻿@using EventApp.Models
+
+@{
+    ViewBag.Title = "Katılımcılar";
+    User attendee = (User)ViewData["Attenderdetails"];
+    List<Activity> Activities = (List<Activity>)ViewData["Activities"];
+    List<string> AttemptDay = (List<string>)ViewData["AttemptDay"];
+    List<string> AttemptTimes = (List<string>)ViewData["AttemptTimes"];
+    List<string> ActivityType = (List<string>)ViewData["ActivityType"];
+}
+
+<link href="../assets/pages/css/about.css" rel="stylesheet" type="text/css" />
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        @{
+            String photo = "../Images/Users/" + attendee.Id + ".jpg";
+        }
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("AttendersOrg", "Users")">Katılımcılar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>@attendee.Name @attendee.Surname</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title">
+            @attendee.Name @attendee.Surname
+        </h1>
+        <!-- END PAGE TITLE-->
+        <!-- END PAGE HEADER-->
+        <div class="row">
+            <div class="col-md-12 ">
+                <!-- BEGIN PROFILE SIDEBAR -->
+                <div class="profile-sidebar ">
+                    <!-- PORTLET MAIN -->
+                    <div class="portlet light profile-sidebar-portlet stories-cont ">
+                        <!-- SIDEBAR USERPIC -->
+
+                        <div class="profile-userpic photo mt-card-round">
+                            <img src="@photo" class="img-responsive" alt="">
+                        </div>
+                        <!-- END SIDEBAR USERPIC -->
+                        <!-- SIDEBAR USER TITLE -->
+                        <div class="profile-usertitle">
+                            <div class="profile-usertitle-name"> @attendee.Name @attendee.Surname </div>
+                            <div class="profile-usertitle-job"> @attendee.Company </div>
+                            <div class="profile-usertitle-job"> @attendee.PersonelTitle </div>
+                        </div>
+                        <!-- END SIDEBAR USER TITLE -->
+                        <!-- SIDEBAR BUTTONS -->
+                        <div class="profile-userbuttons">
+                            <div type="button" class="btn btn-circle red btn-sm" style="background-color: #ed6b75 !important; cursor: default;">
+                                Mesaj Gönder
+                                <i class="fa fa-envelope"></i>
+                            </div>
+                        </div>
+                        <!-- END SIDEBAR BUTTONS -->
+                        <!-- SIDEBAR MENU -->
+                        <div class="profile-usermenu socicons">
+                            <ul class="nav">
+                                <li>
+                                    @{
+                                        if (attendee.Facebook == null)
+                                        {
+                                            <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                                <i class="fa fa-facebook-square" style="margin-right: 9px;"></i> Facebook
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@attendee.Facebook" target="_blank">
+                                                <i class="fa fa-facebook-square"></i> Facebook
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (attendee.Twitter == null)
+                                        {
+                                            <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                                <i class="fa fa-twitter" style="margin-right: 9px;"></i> Twitter
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@attendee.Twitter" target="_blank">
+                                                <i class="icon-social-twitter"></i> Twitter
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (attendee.Instagram == null)
+                                        {
+                                            <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                                <i class="fa fa-instagram" style="margin-right: 9px;"></i> Instagram
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@attendee.Instagram" target="_blank">
+                                                <i class="fa fa-instagram"></i> Instagram
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (attendee.Linkedin == null)
+                                        {
+                                            <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                                <i class="fa fa-linkedin-square" style="margin-right: 9px;"></i> Linkedin
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@attendee.Linkedin" target="_blank">
+                                                <i class="fa fa-linkedin-square"></i> Linkedin
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    @{
+                                        if (attendee.Website == null)
+                                        {
+                                            <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                                <i class="fa fa-globe" style="margin-right: 9px;"></i> Website
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <a href="@attendee.Website" target="_blank">
+                                                <i class="fa fa-globe"></i> Website
+                                            </a>
+                                        }
+                                    }
+                                </li>
+                                <li>
+                                    <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                        <i class="fa fa-youtube" style="margin-right: 9px;"></i> Youtube
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                        <i class="fa fa-google-plus" style="margin-right: 9px;"></i> Google+
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                        <i class="fa fa-pinterest-p" style="margin-right: 9px;"></i> Pinterest
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="cursor: default; color: #93a3b5; font-size: 16px; font-weight: 400; padding: 10px 15px;">
+                                        <i class="fa fa-tumblr-square" style="margin-right: 9px;"></i> Tumblr
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- END MENU -->
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="portlet light " style="padding-bottom: 25px;">
+                                <div class="portlet-title">
+                                    <div class="caption">
+                                        <i class="icon-social-twitter font-dark hide"></i>
+                                        <span class="caption-subject font-blue-madison bold uppercase">@attendee.Name aşağıdaki oturumlara katılacak</span>
+                                    </div>
+                                </div>
+                                <div class="portlet-body">
+                                    <div class="tab-content">
+                                        <div>
+                                            <div class="mt-actions">
+
+                                                @{
+                                                    if (Activities.Count == 0)
+                                                    {
+                                                        <div class="mt-action">
+                                                            <div class="mt-action-body" style="padding-left: 0px;">
+                                                                <div class="mt-action-row">
+                                                                    <div class="mt-action-details ">
+                                                                        <span class="mt-action-author bold" style="">@attendee.Name şu ana kadar bir oturuma kayıt yapmadı.</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                    }
+                                                    else
+                                                    {
+                                                        for (int i = Activities.Count - 1; i >= 0; i--)
+                                                        {
+                                                            <div class="mt-action">
+                                                                <div class="mt-action-body" style="padding-left: 0px;">
+                                                                    <div class="mt-action-row">
+                                                                        <div class="mt-action-info ">
+                                                                            @{
+                                                                                if (ActivityType[i] == "Konferans")
+                                                                                {
+                                                                                    <div class="mt-action-icon ">
+                                                                                        <i class="fa fa-line-chart"></i>
+                                                                                    </div>
+                                                                                }
+                                                                                else if (ActivityType[i] == "Sunum")
+                                                                                {
+                                                                                    <div class="mt-action-icon ">
+                                                                                        <i class="fa fa-object-group"></i>
+                                                                                    </div>
+                                                                                }
+                                                                                else if (ActivityType[i] == "Kahve Molası-Yemek-Parti")
+                                                                                {
+                                                                                    <div class="mt-action-icon ">
+                                                                                        <i class="fa fa-glass"></i>
+                                                                                    </div>
+                                                                                }
+                                                                                else if (ActivityType[i] == "Panel")
+                                                                                {
+                                                                                    <div class="mt-action-icon ">
+                                                                                        <i class="fa fa-cubes"></i>
+                                                                                    </div>
+                                                                                }
+
+                                                                            }
+
+
+                                                                            <div class="mt-action-details ">
+                                                                                <span class="mt-action-author">@attendee.Name</span>
+                                                                                <p class="mt-action-desc">
+                                                                                    <a style="color: #ed6b75 !important;" href="@Url.Action("DetailsFromAgenda", "AgendaEventActivities", new { IDofActivity = @Activities[i].Id })">
+                                                                                        @Activities[i].Name
+                                                                                    </a>
+                                                                                    etkniliğine kayıt gerçekleştirdi.
+                                                                                </p>
+                                                                                <p style="padding-top: 3px; margin-bottom: 0px;">@Activities[i].Summary</p>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="mt-action-datetime " style="margin-left: 27px;">
+                                                                            <span class="mt-action-date">@AttemptDay[i]</span>
+                                                                            <span class="mt-action-dot bg-green"></span>
+                                                                            <span class="mt=action-time">@AttemptTimes[i]</span>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                                                    }
+                                                                                }
+                                                }
+
+                                            </div>
+                                            <!-- END: Actions -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="../assets/global/plugins/bootstrap-fileinput/bootstrap-fileinput.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.sparkline.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/profile.min.js" type="text/javascript"></script>
+@*<script src="../assets/pages/scripts/timeline.min.js" type="text/javascript"></script>*@
+@*Sidebar'ı bozan yukarıdaki plugin*@
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->
+

@@ -1,0 +1,747 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    OrderController oc = new OrderController();
+    DataRow bakery = (DataRow)Session["orderBakery"];
+
+    List<DataRow> cart = (List<DataRow>)Session["cart"];
+    bool partyExists = false; bool partyOnly = true;
+
+    for (int i = 0; i < cart.Count; i++)
+    {
+        if (cart[i]["Category"].ToString() == "Parti Malzemeleri") { partyExists = true; } else { partyOnly = false; }
+    }
+}
+
+<script>
+
+    var num = [
+"377500	0	PBZ	HR_AMEX		0	0",
+"377501	0	PBZ	HR_AMEX		0	0",
+"377502	0	PBZ	HR_AMEX		0	0",
+"377503	0	PBZ	HR_AMEX		0	0",
+"377504	0	PBZ	HR_AMEX		0	0",
+"377505	0	PBZ	HR_AMEX		0	0",
+"377506	0	PBZ	HR_AMEX		0	0",
+"377507	0	PBZ	HR_AMEX		0	0",
+"377508	0	PBZ	HR_AMEX		0	0",
+"377509	0	PBZ	HR_AMEX		0	0",
+"377554	0	PBZ	HR_AMEX		0	0",
+"377555	0	PBZ	HR_AMEX		0	0",
+"377557	0	PBZ	HR_AMEX		0	0",
+"377573	0	PBZ	HR_AMEX		0	0",
+"400684	99	INGBANK	VISA	CLASSIC	1	0	BONUSCARD",
+"401738	62	GARANTI			0	0	BONUSCARD",
+"402275	208	BANKASYA	VISA	CLASSIC	0	0	NULL",
+"402276	208	BANKASYA	VISA	GOLD	0	0	NULL",
+"402277	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS",
+"402278	111	FINANSBANK	VISA	GOLD	0	0	CARDFINANS",
+"402280	208	BANKASYA	VISA	CLASSIC	0	0	NULL",
+"402458	32	TEB	VISA	CLASSIC	0	0	BONUSCARD",
+"402459	32	TEB	VISA	CLASSIC	0	0	BONUSCARD",
+"402563	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS",
+"402589	205	KUVEYTTURK	VISA	CLASSIC	0	0	NULL",
+"402590	205	KUVEYTTURK	VISA	GOLD	0	0	NULL",
+"402592	205	KUVEYTTURK	VISA	BUSINESS	0	0	NULL",
+"402940	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD",
+"402957	125	EUROBANK	VISA		0	0",
+"403082	111	FINANSBANK	VISA	BUSINESS	0	0	CARDFINANS",
+"403134	134	DENIZBANK	VISA	BUSINESS	0	0	NULL",
+"403280	62	GARANTI	VISA	CLASSIC	1	0	BONUSCARD",
+"403360	205	KUVEYTTURK	VISA	PLATINUM	0	0	NULL",
+"403666	62	GARANTI	VISA	BUSINESS	0	0	BONUSCARD",
+"403810	205	KUVEYTTURK	VISA	BUSINESS	0	0	NULL",
+"403836	59	SEKERBANK	VISA	BUSINESS	0	0	NULL",
+"404308	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD",
+"404809	67	YAPIKREDIBANK	VISA	CLASSIC	0	0	WORLD",
+"404934	125	EUROBANK	VISA		0	0",
+"404952	206	TURKIYEFINANS	VISA	CLASSIC	0	0	NULL",
+"405784	125	EUROBANK	VISA		0	0",
+"405913	123	HSBC	VISA	GOLD	0	0	ADVANTAGE",
+"405917	123	HSBC	VISA	CLASSIC	0	0	ADVANTAGE",
+"405918	123	HSBC	VISA	GOLD	0	0	ADVANTAGE",
+"406015	32	TEB	VISA	GOLD	0	0	BONUSCARD",
+"406301	125	EUROBANK	VISA		0	0",
+"406386	111	FINANSBANK			0	1	CARDFINANS",
+"408579	99	INGBANK	VISA	CLASSIC	0	0	BONUSCARD",
+"408625	134	DENIZBANK	VISA	PLATINUM	0	0	NULL",
+"409070	134	DENIZBANK	VISA	CLASSIC	0	0	BONUSCARD",
+"409071	123	HSBC	VISA	CLASSIC	0	0	ADVANTAGE",
+"409084	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD",
+"409364	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"409622	59	SEKERBANK	VISA	Acquiring	0	0	NULL                 ",
+"410147	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"410555	205	KUVEYTTURK	VISA	CLASSIC	0	0	NULL                     ",
+"410556	205	KUVEYTTURK	VISA	CLASSIC	0	0	NULL                     ",
+"411156	59	SEKERBANK	VISA	CLASSIC	0	0	BONUSCARD                ",
+"411157	59	SEKERBANK	VISA	GOLD	0	0	BONUSCARD                ",
+"411158	59	SEKERBANK	VISA	PLATINUM	0	0	BONUSCARD            ",
+"411159	59	SEKERBANK	VISA	BUSINESS	0	0	BONUSCARD            ",
+"411160	59	SEKERBANK	VISA	Acquiring	0	0	NULL                 ",
+"411685	206	TURKIYEFINANS	VISA	BUSINESS	0	0	NULL             ",
+"411724	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"411924	134	DENIZBANK	VISA	BUSINESS	0	0	NULL                 ",
+"411942	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"411943	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"411944	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"411979	15	VAKIFBANK	VISA	PLATINUM	0	0	WORLD                ",
+"413226	10	ZIRAAT	VISA	PLATINUM	0	0	NULL                     ",
+"413252	46	AKBANK	VISA	PLATINUM	0	0	AXESS                    ",
+"413492	125	EUROBANK	VISA		0	0	                             ",
+"413583	111	FINANSBANK	VISA	GOLD	0	0	CARDFINANS               ",
+"413836	62	GARANTI	VISA	PLATINUM	0	0	NULL                     ",
+"414058	123	HSBC			0	0	ADVANTAGE                            ",
+"414059	123	HSBC			0	0	ADVANTAGE                            ",
+"414070	99	INGBANK	VISA	PLATINUM	0	0	NULL                     ",
+"414388	111	FINANSBANK	VISA	CLASSIC	1	0	CARDFINANS               ",
+"415514	12	HALKBANK	VISA	PLATINUM	0	0	ADVANTAGE            ",
+"415565	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"415792	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"415956	111	FINANSBANK			0	1	CARDFINANS                       ",
+"416757	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"416987	208	BANKASYA	VISA	BUSINESS	0	0	NULL                 ",
+"417715	203	ALBARAKATURK	VISA	BUSINESS	0	0	NULL             ",
+"418342	64	ISBANK	VISA	CLASSIC	0	0	MAXIMUM                      ",
+"418343	64	ISBANK	VISA	CLASSIC	0	0	MAXIMUM                      ",
+"418344	64	ISBANK	VISA	GOLD	0	0	MAXIMUM                      ",
+"418345	64	ISBANK	VISA	GOLD	0	0	MAXIMUM                      ",
+"418895	125	EUROBANK	VISA		0	0	                             ",
+"419389	96	TURKISHBANK	VISA	Acquiring	0	0	NULL                 ",
+"420092	111	FINANSBANK			0	1	CARDFINANS                       ",
+"420322	99	INGBANK	VISA	GOLD	0	0	BONUSCARD                    ",
+"420323	99	INGBANK	VISA	GOLD	0	0	BONUSCARD                    ",
+"420324	99	INGBANK	VISA	PLATINUM	0	0	BONUSCARD                ",
+"420556	62	GARANTI			0	0	BONUSCARD                            ",
+"420557	62	GARANTI			0	0	BONUSCARD                            ",
+"420578	12	HALKBANK			0	0	ADVANTAGE                        ",
+"422376	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"422629	123	HSBC	VISA	GOLD	0	0	ADVANTAGE                    ",
+"423277	111	FINANSBANK	VISA	CLASSIC	1	0	CARDFINANS               ",
+"423398	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"423667	134	DENIZBANK	VISA	CLASSIC	NULL	1	NULL                 ",
+"424360	134	DENIZBANK	VISA	CLASSIC	0	0	BONUSCARD                ",
+"424361	134	DENIZBANK	VISA	CLASSIC	0	0	BONUSCARD                ",
+"424407	125	EUROBANK	VISA	BUSINESS	0	0	NULL                 ",
+"424487	205	KUVEYTTURK	VISA	Acquiring	0	0	NULL                 ",
+"424909	123	HSBC	VISA	CLASSIC	1	0	ADVANTAGE                    ",
+"425669	46	AKBANK	VISA	BUSINESS	0	0	AXESSWINGS               ",
+"425846	135	ANADOLUBANK	VISA	GOLD	0	0	WORLD                    ",
+"425847	135	ANADOLUBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"425848	135	ANADOLUBANK	VISA	BUSINESS	0	0	WORLD                ",
+"426391	92	CITI	VISA	GOLD	0	0	NULL                         ",
+"426392	92	CITI	VISA	CLASSIC	0	0	NULL                         ",
+"426886	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"426887	62	GARANTI	VISA	GOLD	0	0	BONUSCARD                    ",
+"426888	62	GARANTI	VISA	PLATINUM	0	0	BONUSCARD                ",
+"426889	62	GARANTI			0	0	BONUSCARD                            ",
+"427308	71	FORTIS	VISA	 BUSINESS	0	0	WORLD                    ",
+"427311	111	FINANSBANK	VISA	BUSINESS	0	0	CARDFINANS           ",
+"427314	62	GARANTI	VISA	BUSINESS	0	0	BONUSCARD                ",
+"427315	62	GARANTI	VISA	BUSINESS	0	0	BONUSCARD                ",
+"427707	32	TEB	VISA	BUSINESS	0	0	NULL                         ",
+"428220	62	GARANTI	VISA	CLASSIC	0	0	NULL                         ",
+"428221	62	GARANTI	VISA	PLATINUM	0	0	NULL                     ",
+"428240	123	HSBC	VISA	PLATINUM	0	0	ADVANTAGE                ",
+"428462	206	TURKIYEFINANS	VISA	CLASSIC	0	0	BONUSCARD            ",
+"428945	15	VAKIFBANK	VISA	BUSINESS	0	0	NULL                 ",
+"428967	62	GARANTI			0	0	BONUSCARD                            ",
+"428968	62	GARANTI			0	0	BONUSCARD                            ",
+"430528	125	EUROBANK	VISA		0	0	                             ",
+"431024	205	KUVEYTTURK	VISA	BUSINESS	0	0	NULL                 ",
+"431379	111	FINANSBANK			0	1	CARDFINANS                       ",
+"432071	46	AKBANK	VISA	GOLD	0	0	AXESSWINGS                   ",
+"432072	46	AKBANK	VISA	PLATINUM	0	0	AXESSWINGS               ",
+"432154	62	GARANTI	VISA	CLASSIC	1	0	NULL                         ",
+"432284	203	ALBARAKATURK	VISA	CLASSIC	0	0	NULL                 ",
+"432285	203	ALBARAKATURK	VISA	GOLD	0	0	NULL                 ",
+"433383	59	SEKERBANK	VISA	CLASSIC	0	0	NULL                     ",
+"433384	59	SEKERBANK	VISA	GOLD	0	0	NULL                     ",
+"435508	46	AKBANK	VISA	CLASSIC	0	0	AXESS                        ",
+"435509	46	AKBANK	VISA	GOLD	0	0	AXESS                        ",
+"435627	206	TURKIYEFINANS	VISA	CLASSIC	0	0	NULL                 ",
+"435628	206	TURKIYEFINANS	VISA	GOLD	0	0	NULL                 ",
+"435653	111	FINANSBANK	VISA	PLATINUM	0	0	CARDFINANS           ",
+"438040	71	FORTIS	VISA	PLATINUM	0	0	WORLD                    ",
+"440247	32	TEB	VISA	CLASSIC	0	0	NULL                             ",
+"440273	32	TEB	VISA	GOLD	0	0	NULL                             ",
+"440293	32	TEB	VISA	CLASSIC	0	0	BONUSCARD                        ",
+"440294	32	TEB	VISA	GOLD	0	0	NULL                             ",
+"441007	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"441033	208	BANKASYA	VISA	CLASSIC	1	0	NULL                     ",
+"441139	134	DENIZBANK	VISA	CLASSIC	1	0	NULL                     ",
+"441341	135	ANADOLUBANK	VISA	PLATINUM	0	0	NULL                 ",
+"444029	111	FINANSBANK	VISA	GOLD	0	0	CARDFINANS               ",
+"444676	10	ZIRAAT	VISA	CLASSIC	0	0	NULL                         ",
+"444677	10	ZIRAAT	VISA	GOLD	0	0	NULL                         ",
+"444678	10	ZIRAAT	VISA	PLATINUM	0	0	NULL                     ",
+"446212	67	YAPIKREDIBANK	VISA	CLASSIC	1	0	NULL                 ",
+"448472	62	GARANTI	VISA	BUSINESS	0	0	BONUSCARD                ",
+"450050	92	CITI	VISA	CLASSIC	0	0	AXESS                        ",
+"450051	92	CITI	VISA	GOLD	0	0	AXESS                        ",
+"450052	92	CITI	VISA	PLATINIUM	0	0	AXESS                    ",
+"450151	92	CITI	VISA	PLATINIUM	0	0	AXESS                    ",
+"450634	67	YAPIKREDIBANK	VISA	CLASSIC	0	0	WORLD                ",
+"450803	64	ISBANK	VISA	BUSINESS	0	0	MAXIMUM                  ",
+"450918	71	FORTIS	VISA	 CLASSIC	0	0	WORLD                    ",
+"453955	10	ZIRAAT	VISA	 CLASSIC	0	0	NULL                     ",
+"453956	10	ZIRAAT	VISA	 GOLD	0	0	NULL                         ",
+"454314	64	ISBANK			0	1	NULL                                 ",
+"454318	64	ISBANK	VISA	CLASSIC	0	0	NULL                         ",
+"454358	64	ISBANK	VISA	GOLD	0	0	MAXIMUM                      ",
+"454359	64	ISBANK	VISA	GOLD	0	0	MAXIMUM                      ",
+"454360	64	ISBANK	VISA	CLASSIC	0	0	MAXIMUM                      ",
+"454671	10	ZIRAAT	VISA	 CLASSIC	0	0	NULL                     ",
+"454672	10	ZIRAAT	VISA	 CLASSIC	0	0	NULL                     ",
+"454673	10	ZIRAAT	VISA	 BUSINESS	0	0	NULL                     ",
+"454674	10	ZIRAAT	VISA	 GOLD	0	0	NULL                         ",
+"454894	10	ZIRAAT	VISA	 CLASSIC	0	0	NULL                     ",
+"455039	125	EUROBANK	VISA		0	0	                             ",
+"455054	125	EUROBANK	VISA		0	0	                             ",
+"455140	125	EUROBANK	VISA		0	0	                             ",
+"455192	125	EUROBANK	VISA		0	0	                             ",
+"455266	123	HSBC			0	0	ADVANTAGE                            ",
+"455359	67	YAPIKREDIBANK	VISA	BUSINESS	0	0	WORLD            ",
+"455571	99	INGBANK	VISA	GOLD	0	0	NULL                         ",
+"455645	71	FORTIS	VISA	 GOLD	0	0	WORLD                        ",
+"459026	32	TEB			0	0	BONUSCARD                                ",
+"460345	134	DENIZBANK	VISA	CLASSIC	0	0	NULL                     ",
+"460347	134	DENIZBANK	VISA	GOLD	0	0	NULL                     ",
+"461668	62	GARANTI	VISA	PLATINUM	0	0	BONUSCARD                ",
+"462274	62	GARANTI	VISA	BUSINESS	0	0	NULL                     ",
+"462276	134	DENIZBANK	VISA	CLASSIC	NULL	1	NULL                 ",
+"467293	62	GARANTI	VISA	GOLD	0	0	BONUSCARD                    ",
+"467294	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"467295	62	GARANTI	VISA	BUSINESS	0	0	BONUSCARD                ",
+"472914	134	DENIZBANK	VISA	BUSINESS	0	0	NULL                 ",
+"474151	62	GARANTI	VISA	CLASSIC	1	0	BONUSCARD                    ",
+"477959	67	YAPIKREDIBANK	VISA	Acquiring	0	0	NULL             ",
+"479227	32	TEB	VISA	BUSINESS	0	0	NULL                         ",
+"479273	125	EUROBANK	VISA		0	0	                             ",
+"479274	125	EUROBANK	VISA		0	0	                             ",
+"479275	125	EUROBANK	VISA		0	0	                             ",
+"479276	125	EUROBANK	VISA		0	0	                             ",
+"479323	62	GARANTI			0	0	BONUSCARD                            ",
+"479324	62	GARANTI			0	0	BONUSCARD                            ",
+"479794	67	YAPIKREDIBANK	VISA	CLASSIC	0	0	WORLD                ",
+"479795	67	YAPIKREDIBANK	VISA	GOLD	0	0	WORLD                ",
+"480296	99	INGBANK	VISA	BUSINESS	0	0	BONUSCARD                ",
+"482489	62	GARANTI	VISA	CLASSIC	0	0	NULL                         ",
+"482490	62	GARANTI	VISA	GOLD	0	0	NULL                         ",
+"482491	62	GARANTI	VISA	PLATINUM	0	0	NULL                     ",
+"483013	125	EUROBANK	VISA	Acquiring	0	0	NULL                 ",
+"486567	62	GARANTI	VISA	BUSINESS	0	0	NULL                     ",
+"487074	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"487075	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"489456	134	DENIZBANK	VISA	CLASSIC	0	0	NULL                     ",
+"489457	134	DENIZBANK			0	0	BONUSCARD                        ",
+"489458	134	DENIZBANK			0	0	BONUSCARD                        ",
+"489478	62	GARANTI	VISA	GOLD	0	0	NULL                         ",
+"489494	32	TEB	VISA	CLASSIC	1	0	BONUSCARD                        ",
+"489495	32	TEB	VISA	PLATINUM	0	0	BONUSCARD                    ",
+"489496	32	TEB	VISA	BUSINESS	0	0	BONUSCARD                    ",
+"490175	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"490805	99	INGBANK	VISA	CLASSIC	0	0	NULL                         ",
+"490806	99	INGBANK	VISA	GOLD	0	0	NULL                         ",
+"490807	99	INGBANK	VISA	BUSINESS	0	0	NULL                     ",
+"491205	67	YAPIKREDIBANK	VISA	CLASSIC	1	0	WORLD                ",
+"491206	67	YAPIKREDIBANK	VISA	PLATINUM	0	0	WORLD            ",
+"491373	125	EUROBANK	VISA	GOLD	0	0	NULL                     ",
+"491374	125	EUROBANK	VISA	CLASSIC	0	0	NULL                     ",
+"492094	12	HALKBANK	VISA	GOLD	0	0	ADVANTAGE                ",
+"492095	12	HALKBANK	VISA	CLASSIC	0	0	ADVANTAGE                ",
+"492128	67	YAPIKREDIBANK	VISA	CLASSIC	0	0	WORLD                ",
+"492130	67	YAPIKREDIBANK	VISA	GOLD	0	0	WORLD                ",
+"492131	67	YAPIKREDIBANK	VISA	GOLD	0	0	WORLD                ",
+"492186	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"492187	62	GARANTI	VISA	GOLD	0	0	BONUSCARD                    ",
+"492192	900	PROVUS	VISA	Acquiring	0	0	NULL                     ",
+"492193	62	GARANTI	VISA	CLASSIC	0	0	BONUSCARD                    ",
+"493832	123	HSBC			0	0	ADVANTAGE                            ",
+"493837	46	AKBANK	VISA	Acquiring	0	0	NULL                     ",
+"493840	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"493841	15	VAKIFBANK	VISA	CLASSIC	0	0	WORLD                    ",
+"493845	62	GARANTI	VISA	GOLD	0	0	BONUSCARD                    ",
+"493846	15	VAKIFBANK	VISA	GOLD	0	0	WORLD                    ",
+"494063	59	SEKERBANK	VISA	GOLD	0	0	NULL                     ",
+"494064	59	SEKERBANK	VISA	CLASSIC	0	0	NULL                     ",
+"494092	125	EUROBANK	VISA		0	0	                             ",
+"496019	123	HSBC	VISA	CLASSIC	1	0	ADVANTAGE                    ",
+"498516	125	EUROBANK	VISA	CLASSIC	0	0	BONUSCARD                ",
+"498517	125	EUROBANK	VISA	GOLD	0	0	BONUSCARD                ",
+"498518	125	EUROBANK	VISA	PLATINUM	0	0	BONUSCARD            ",
+"498519	125	EUROBANK	VISA	PLATINUM	0	0	BONUSCARD            ",
+"498520	125	EUROBANK	VISA	BUSINESS	0	0	BONUSCARD            ",
+"498521	125	EUROBANK	VISA	BUSINESS	0	0	BONUSCARD            ",
+"498815	125	EUROBANK	VISA		0	0	                             ",
+"498850	12	HALKBANK			0	0	ADVANTAGE                        ",
+"498851	12	HALKBANK			0	0	ADVANTAGE                        ",
+"498852	12	HALKBANK	VISA	BUSINESS	0	0	ADVANTAGE            ",
+"499850	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"499851	111	FINANSBANK	VISA	PLATINUM	0	0	CARDFINANS           ",
+"499852	111	FINANSBANK	VISA	CLASSIC	0	0	CARDFINANS               ",
+"499853	111	FINANSBANK			0	1	CARDFINANS                       ",
+"510005	123	HSBC	MASTERCARD	CLASSIC	1	0	ADVANTAGE                ",
+"510006	123	HSBC			0	0	ADVANTAGE                            ",
+"510012	123	HSBC			0	0	ADVANTAGE                            ",
+"510053	12	HALKBANK			0	0	ADVANTAGE                        ",
+"510054	67	YAPIKREDIBANK	MASTERCARD	CLASSIC	1	0	NULL             ",
+"510056	12	HALKBANK	MASTERCARD	CLASSIC	1	0	NULL                 ",
+"510063	134	DENIZBANK	MASTERCARD	GOLD	0	0	NULL                 ",
+"510118	134	DENIZBANK	MASTERCARD	BUSINESS	0	0	BONUSCARD        ",
+"510119	134	DENIZBANK	MASTERCARD	BUSINESS	0	0	NULL             ",
+"510138	32	TEB	MASTERCARD	CLASSIC	0	0	NULL                         ",
+"510139	32	TEB	MASTERCARD	GOLD	0	0	NULL                         ",
+"510151	99	INGBANK	MASTERCARD	CLASSIC	1	0	BONUSCARD                ",
+"510152	64	ISBANK	MASTERCARD	CLASSIC	0	0	MAXIMUM                  ",
+"510155	125	EUROBANK	MASTER		0	0	                             ",
+"510164	12	HALKBANK			0	0	ADVANTAGE                        ",
+"510221	32	TEB	MASTERCARD	CLASSIC	1	0	BONUSCARD                    ",
+"511660	205	KUVEYTTURK	MASTERCARD	BUSINESS	0	0	NULL             ",
+"512017	134	DENIZBANK	MASTERCARD	GOLD	0	0	BONUSCARD            ",
+"512117	134	DENIZBANK	MASTERCARD	PLATINUM	0	0	BONUSCARD        ",
+"512446	900	PROVUS	MASTERCARD	GOLD	0	0	NULL                     ",
+"512595	205	KUVEYTTURK	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"512651	123	HSBC	MASTERCARD	CLASSIC	0	0	ADVANTAGE                ",
+"512753	32	TEB	MASTERCARD	GOLD	0	0	BONUSCARD                    ",
+"512754	46	AKBANK	MASTERCARD	GOLD	0	0	AXESSWINGS               ",
+"512803	32	TEB	MASTERCARD	CLASSIC	0	0	BONUSCARD                    ",
+"514915	62	GARANTI	MASTERCARD	PLATINUM	0	0	NULL                 ",
+"514924	134	DENIZBANK	MASTERCARD	PLATINUM	0	0	NULL             ",
+"515849	208	BANKASYA	MASTERCARD	GOLD	0	0	NULL                 ",
+"515865	900	PROVUS	MASTERCARD	GOLD	0	0	NULL                     ",
+"518599	96	TURKISHBANK	MASTERCARD	GOLD	0	0	NULL                 ",
+"518679	103	MILLENIUM	MASTERCARD	PLATINUM	0	0	NULL             ",
+"518896	205	KUVEYTTURK	MASTERCARD	GOLD	0	0	NULL                 ",
+"519324	111	FINANSBANK	MASTERCARD	PLATINUM	0	0	CARDFINANS       ",
+"519399	123	HSBC	MASTERCARD	CLASSIC	1	0	ADVANTAGE                ",
+"520017	15	VAKIFBANK	MASTERCARD	CLASSIC	0	0	WORLD                ",
+"520019	134	DENIZBANK	MASTERCARD	CLASSIC	0	0	BONUSCARD            ",
+"520097	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"520180	205	KUVEYTTURK	MASTERCARD	PLATINUM	0	0	NULL             ",
+"520303	134	DENIZBANK	MASTERCARD	CLASSIC	1	0	BONUSCARD            ",
+"520909	900	PROVUS	MASTERCARD		0	0	NULL                         ",
+"520922	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"520932	46	AKBANK	MASTERCARD	CLASSIC	0	0	AXESS                    ",
+"520940	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"520988	62	GARANTI	MASTERCARD	GOLD	0	0	BONUSCARD                ",
+"521022	111	FINANSBANK	MASTERCARD	CLASSIC	0	0	CARDFINANS           ",
+"521045	123	HSBC	MASTERCARD	CLASSIC	0	0	ADVANTAGE                ",
+"521368	62	GARANTI	MASTERCARD	PLATINUM	0	0	NULL                 ",
+"521376	92	CITI	MASTERCARD	PLATINUM	0	0	AXESS                ",
+"521378	12	HALKBANK	MASTERCARD	PLATINUM	0	0	ADVANTAGE        ",
+"521394	59	SEKERBANK	MASTERCARD	PLATINUM	0	0	BONUSCARD        ",
+"521807	46	AKBANK	MASTERCARD	PLATINUM	0	0	AXESS                ",
+"521824	62	GARANTI	MASTERCARD	PLATINUM	0	0	NULL                 ",
+"521825	62	GARANTI	MASTERCARD	PLATINUM	0	0	NULL                 ",
+"521827	59	SEKERBANK	MASTERCARD	PLATINUM	0	0	NULL             ",
+"521832	62	GARANTI	MASTERCARD	PLATINUM	0	0	NULL                 ",
+"521836	111	FINANSBANK	MASTERCARD	PLATINUM	0	0	CARDFINANS       ",
+"521848	206	TURKIYEFINANS	MASTERCARD	PLATINUM	0	0	NULL         ",
+"522054	123	HSBC	MASTERCARD	CLASSIC	1	0	ADVANTAGE                ",
+"522204	62	GARANTI	MASTERCARD	GOLD	0	0	BONUSCARD                ",
+"522240	135	ANADOLUBANK	MASTERCARD	CLASSIC	0	0	WORLD                ",
+"522241	135	ANADOLUBANK	MASTERCARD	GOLD	0	0	WORLD                ",
+"524346	32	TEB	MASTERCARD	PLATINUM	0	0	BONUSCARD                ",
+"524347	46	AKBANK	MASTERCARD	PLATINUM	0	0	AXESSWINGS           ",
+"524384	208	BANKASYA	MASTERCARD	PLATINUM	0	0	NULL             ",
+"524839	32	TEB	MASTERCARD	CLASSIC	0	0	BONUSCARD                    ",
+"524840	32	TEB	MASTERCARD	CLASSIC	0	0	BONUSCARD                    ",
+"525312	205	KUVEYTTURK	MASTERCARD	MIXED PRODUCT	0	0	NULL         ",
+"525314	71	FORTIS	MASTERCARD	CLASSIC	0	0	NULL                     ",
+"525404	59	SEKERBANK	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"525413	123	HSBC	MASTERCARD	GOLD	0	0	ADVANTAGE                ",
+"525795	123	HSBC	MASTERCARD	GOLD	0	0	ADVANTAGE                ",
+"527585	208	BANKASYA	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"528920	32	TEB	MASTERCARD	PLATINUM	0	0	BONUSCARD                ",
+"528939	62	GARANTI	MASTERCARD	PLATINUM	0	0	BONUSCARD            ",
+"528956	62	GARANTI	MASTERCARD	PLATINUM	0	0	BONUSCARD            ",
+"529462	208	BANKASYA	MASTERCARD	CLASSIC	1	0	NULL                 ",
+"529572	111	FINANSBANK	MASTERCARD	PLATINUM	0	0	CARDFINANS       ",
+"529939	96	TURKISHBANK	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"530818	111	FINANSBANK	MASTERCARD		0	0	CARDFINANS               ",
+"530853	32	TEB	MASTERCARD	CLASSIC	0	0	BONUSCARD                    ",
+"530866	59	SEKERBANK	MASTERCARD	GOLD	0	0	BONUSCARD            ",
+"531157	111	FINANSBANK	MASTERCARD	CLASSIC	0	0	CARDFINANS           ",
+"531334	208	BANKASYA	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"532443	99	INGBANK	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"533169	62	GARANTI	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"533598	125	EUROBANK	MASTER		0	0	                             ",
+"534261	62	GARANTI	MASTERCARD	WORLD	0	0	BONUSCARD                ",
+"534264	203	ALBARAKATURK	MASTERCARD	CLASSIC	0	0	NULL             ",
+"534913	103	MILLENIUM	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"537719	206	TURKIYEFINANS	MASTERCARD	GOLD	0	0	NULL             ",
+"539703	59	SEKERBANK	MASTERCARD	GOLD	0	0	NULL                 ",
+"539731	125	EUROBANK	MASTER		0	0	                             ",
+"540024	99	INGBANK	MASTERCARD	CLASSIC	0	0	NULL                     ",
+"540025	99	INGBANK	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"540036	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"540037	62	GARANTI	MASTERCARD	BUSINESS	0	0	BONUSCARD            ",
+"540045	15	VAKIFBANK	MASTERCARD	GOLD	0	0	WORLD                ",
+"540046	15	VAKIFBANK	MASTERCARD	CLASSIC	0	0	WORLD                ",
+"540061	67	YAPIKREDIBANK	MASTERCARD	CLASSIC	0	0	WORLD            ",
+"540062	67	YAPIKREDIBANK	MASTERCARD	CLASSIC	1	0	WORLD            ",
+"540063	67	YAPIKREDIBANK	MASTERCARD	GOLD	0	0	WORLD            ",
+"540122	67	YAPIKREDIBANK	MASTERCARD	 CLASSIC	0	0	WORLD        ",
+"540129	67	YAPIKREDIBANK	MASTERCARD	 GOLD	0	0	WORLD            ",
+"540130	10	ZIRAAT	MASTERCARD	 CLASSIC	0	0	NULL                 ",
+"540134	10	ZIRAAT	MASTERCARD	 GOLD	0	0	NULL                     ",
+"540226	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"540227	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"540284	12	HALKBANK			0	0	ADVANTAGE                        ",
+"540435	12	HALKBANK	MASTERCARD	GOLD	0	0	ADVANTAGE            ",
+"540643	123	HSBC	MASTERCARD	CLASSIC	0	0	ADVANTAGE                ",
+"540667	64	ISBANK	MASTERCARD	CLASSIC	0	0	MAXIMUM                  ",
+"540668	64	ISBANK	MASTERCARD	GOLD	0	0	MAXIMUM                  ",
+"540669	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"540709	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"541001	10	ZIRAAT	MASTERCARD	 CLASSIC	0	0	NULL                 ",
+"541033	10	ZIRAAT	MASTERCARD	 GOLD	0	0	NULL                     ",
+"541858	62	GARANTI			0	0	BONUSCARD                            ",
+"541865	62	GARANTI	MASTERCARD	GOLD	0	0	NULL                     ",
+"542029	99	INGBANK	MASTERCARD	GOLD	0	0	NULL                     ",
+"542030	62	GARANTI	MASTERCARD	GOLD	0	0	BONUSCARD                ",
+"542110	46	AKBANK	MASTERCARD	Acquiring	0	0	NULL                 ",
+"542117	67	YAPIKREDIBANK	MASTERCARD	 CLASSIC	0	0	WORLD        ",
+"542119	15	VAKIFBANK	MASTERCARD	CLASSIC	0	0	WORLD                ",
+"542254	123	HSBC	MASTERCARD	CLASSIC	0	0	ADVANTAGE                ",
+"542259	71	FORTIS	MASTERCARD	TITANIUM	0	0	NULL                 ",
+"542374	10	ZIRAAT	MASTERCARD	 CLASSIC	0	0	NULL                 ",
+"542605	99	INGBANK	MASTERCARD	CLASSIC	0	0	NULL                     ",
+"542798	15	VAKIFBANK	MASTERCARD	CLASSIC	0	0	WORLD                ",
+"542804	15	VAKIFBANK	MASTERCARD	GOLD	0	0	WORLD                ",
+"542965	99	INGBANK	MASTERCARD	GOLD	0	0	BONUSCARD                ",
+"542967	99	INGBANK	MASTERCARD	GOLD	0	0	BONUSCARD                ",
+"543039	12	HALKBANK			0	0	ADVANTAGE                        ",
+"543081	12	HALKBANK	MASTERCARD	CLASSIC	0	0	ADVANTAGE            ",
+"543358	134	DENIZBANK	MASTERCARD	 CLASSIC	0	0	NULL             ",
+"543400	134	DENIZBANK	MASTERCARD	GOLD	0	0	NULL                 ",
+"543427	134	DENIZBANK	MASTERCARD	 CLASSIC	0	0	NULL             ",
+"543624	103	MILLENIUM	MASTERCARD	GOLD	0	0	NULL                 ",
+"543771	64	ISBANK	MASTERCARD	CLASSIC	0	0	MAXIMUM                  ",
+"543943	125	EUROBANK	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"543944	125	EUROBANK	MASTERCARD	GOLD	0	0	NULL                 ",
+"544078	62	GARANTI	MASTERCARD	CLASSIC	1	0	BONUSCARD                ",
+"544127	92	CITI	MASTERCARD	CLASSIC	0	0	AXESS                    ",
+"544294	62	GARANTI			0	0	BONUSCARD                            ",
+"544445	92	CITI	MASTERCARD	CLASSIC	0	0	NULL                     ",
+"544460	92	CITI	MASTERCARD	GOLD	0	0	NULL                     ",
+"545102	62	GARANTI	MASTERCARD	SIGNIA	0	0	BONUSCARD                ",
+"545103	67	YAPIKREDIBANK	MASTERCARD	 SIGNIA	0	0	WORLD            ",
+"545113	123	HSBC			0	0	ADVANTAGE                            ",
+"545120	111	FINANSBANK	MASTERCARD	SIGNIA	0	0	CARDFINANS           ",
+"545124	32	TEB	MASTERCARD	SIGNIA	0	0	BONUSCARD                    ",
+"545148	71	FORTIS	MASTERCARD	SIGNIA	0	0	NULL                     ",
+"545183	123	HSBC	MASTERCARD	SIGNIA	0	0	ADVANTAGE                ",
+"545616	111	FINANSBANK	MASTERCARD	CLASSIC	0	0	CARDFINANS           ",
+"545847	111	FINANSBANK	MASTERCARD	GOLD	0	0	CARDFINANS           ",
+"545863	125	EUROBANK	MASTERCARD	Acquiring	0	0	NULL             ",
+"545865	125	EUROBANK	MASTER		0	0	                             ",
+"546001	62	GARANTI	MASTERCARD	CLASSIC	NULL	1	NULL                 ",
+"546764	134	DENIZBANK	MASTERCARD	CLASSIC	0	0	NULL                 ",
+"547234	203	ALBARAKATURK	MASTERCARD	BUSINESS	0	0	NULL         ",
+"547244	15	VAKIFBANK	MASTERCARD	BUSINESS	0	0	NULL             ",
+"547287	10	ZIRAAT	MASTERCARD	 BUSINESS	0	0	NULL                 ",
+"547302	62	GARANTI	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"547311	59	SEKERBANK	MASTERCARD	BUSINESS	0	0	BONUSCARD        ",
+"547564	205	KUVEYTTURK	MASTERCARD	BUSINESS	0	0	NULL             ",
+"547567	111	FINANSBANK	MASTERCARD	BUSINESS	0	0	CARDFINANS       ",
+"547680	125	EUROBANK	MASTERCARD	BUSINESS	0	0	NULL             ",
+"547712	92	CITI	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"547765	99	INGBANK	MASTERCARD	BUSINESS	0	0	BONUSCARD            ",
+"547799	208	BANKASYA	MASTERCARD	BUSINESS	0	0	NULL             ",
+"547800	111	FINANSBANK	MASTERCARD	BUSINESS	0	0	CARDFINANS       ",
+"547985	71	FORTIS	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"548232	203	ALBARAKATURK	MASTERCARD	GOLD	0	0	NULL             ",
+"548375	108	TBANK	MASTERCARD	PLATINUM	0	0	NULL                 ",
+"548819	99	INGBANK	MASTERCARD	GOLD	0	0	NULL                     ",
+"549208	59	SEKERBANK	MASTERCARD	CLASSIC	0	0	BONUSCARD            ",
+"549220	92	CITI	MASTERCARD	GOLD	0	0	AXESS                    ",
+"549294	206	TURKIYEFINANS	MASTERCARD	CLASSIC	0	0	BONUSCARD        ",
+"549394	59	SEKERBANK	MASTERCARD	Acquiring	0	0	NULL             ",
+"549998	71	FORTIS	MASTERCARD	CLASSIC	0	0	WORLD                    ",
+"550427	123	HSBC			0	0	ADVANTAGE                            ",
+"550430	123	HSBC			0	0	ADVANTAGE                            ",
+"550449	71	FORTIS	MASTERCARD	GOLD	0	0	WORLD                    ",
+"550472	123	HSBC	MASTERCARD	CLASSIC	0	0	ADVANTAGE                ",
+"550473	123	HSBC	MASTERCARD	GOLD	0	0	ADVANTAGE                ",
+"552095	62	GARANTI	MASTERCARD	PLATINUM	0	0	BONUSCARD            ",
+"552096	64	ISBANK	MASTERCARD	PLATINUM	0	0	MAXIMUM              ",
+"552098	96	TURKISHBANK	MASTERCARD	PLATINUM	0	0	NULL             ",
+"552101	15	VAKIFBANK	MASTERCARD	PLATINUM	0	0	WORLD            ",
+"552143	123	HSBC	MASTERCARD	PLATINUM	0	0	ADVANTAGE            ",
+"552202	125	EUROBANK	MASTER		0	0	                             ",
+"552207	71	FORTIS	MASTERCARD	PLATINUM	0	0	WORLD                ",
+"552529	208	BANKASYA	MASTERCARD	BUSINESS	1	0	NULL             ",
+"552608	46	AKBANK	MASTERCARD	BUSINESS-BIZCARD	0	0	NULL         ",
+"552609	46	AKBANK	MASTERCARD	BUSINESS-BIZCARD	0	0	NULL         ",
+"552645	67	YAPIKREDIBANK	MASTERCARD	BUSINESS	0	0	WORLD        ",
+"552659	67	YAPIKREDIBANK	MASTERCARD	BUSINESS	0	0	WORLD        ",
+"552879	12	HALKBANK	MASTERCARD	BUSINESS	0	0	ADVANTAGE        ",
+"553056	46	AKBANK	MASTERCARD	BUSINESS	0	0	AXESSWINGS           ",
+"553058	64	ISBANK	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"553090	32	TEB	MASTERCARD	BUSINESS	0	0	BONUSCARD                ",
+"553130	62	GARANTI	MASTERCARD	BUSINESS	0	0	NULL                 ",
+"554209	125	EUROBANK	MASTER		0	0	                             ",
+"554297	99	INGBANK	MASTERCARD	CLASSIC	0	0	NULL                     ",
+"554301	135	ANADOLUBANK	MASTERCARD	PLATINUM	0	0	WORLD            ",
+"554422	67	YAPIKREDIBANK	MASTERCARD	Acquiring	0	0	NULL         ",
+"554483	134	DENIZBANK	MASTERCARD	GOLD	0	0	NULL                 ",
+"554570	99	INGBANK	MASTERCARD	PLATINUM	0	0	BONUSCARD            ",
+"554796	62	GARANTI	MASTERCARD	GOLD	0	0	BONUSCARD                ",
+"554960	62	GARANTI	MASTERCARD	CLASSIC	0	0	BONUSCARD                ",
+"556030	123	HSBC	MASTERCARD	BUSINESS	0	0	ADVANTAGE            ",
+"556031	123	HSBC	MASTERCARD	BUSINESS	0	0	ADVANTAGE            ",
+"556033	123	HSBC	MASTERCARD	BUSINESS	0	0	ADVANTAGE            ",
+"556034	123	HSBC	MASTERCARD	BUSINESS	0	0	ADVANTAGE            ",
+"556665	123	HSBC	MASTERCARD	BUSINESS	0	0	ADVANTAGE            ",
+"557023	62	GARANTI	MASTERCARD	CLASSIC	1	0	BONUSCARD                ",
+"557113	46	AKBANK	MASTERCARD	CLASSIC	0	0	AXESS                    ",
+"557829	46	AKBANK	MASTERCARD	GOLD	0	0	AXESS                    ",
+"557945	62	GARANTI	MASTERCARD	CLASSIC 	1	0	NULL                 ",
+"558514	134	DENIZBANK	MASTERCARD	BUSINESS	0	0	NULL             ",
+"558593	135	ANADOLUBANK	MASTERCARD	BUSINESS	0	0	WORLD            ",
+"558699	62	GARANTI	MASTERCARD	BUSINESS	0	0	BONUSCARD            ",
+"589283	64	ISBANK			0	1	NULL                                 ",
+"589318	62	GARANTI			0	0	BONUSCARD                            ",
+"601050	111	FINANSBANK			0	1	CARDFINANS                       ",
+"601976	125	EUROBANK			0	0	                                 ",
+"603092	123	HSBC			0	0	ADVANTAGE                            ",
+"627652	123	HSBC			0	0	ADVANTAGE                            ",
+"666600	123	HSBC			0	0	ADVANTAGE                            ",
+"677238	111	FINANSBANK			0	1	CARDFINANS                       ",
+"700013	123	HSBC			0	0	ADVANTAGE                            ",
+"700024	123	HSBC			0	0	ADVANTAGE                            "
+    ];
+</script>
+
+<div class="container" style="padding:0px;">
+
+    @{
+        if (Session["ilanExists"] == null)
+        {
+            <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; margin-bottom:20px;">
+                <a style="color:black; text-decoration:none; float:left;" href="@Url.Action("BackToInfo","Order")">
+                    <div class="gray-gradient" style="text-align:center; cursor:pointer; float:right; padding:5px 15px;">
+                        <img src="~/Images/Site/left_white.png" style="width:6px; margin-right:7px; padding-bottom:3px; cursor:pointer;" />
+                        <label style="cursor:pointer; font-size:14px;">Previous Step</label>
+                    </div>
+                </a>
+            </div>
+        }
+    }
+
+    @using (Html.BeginForm("Payment", "Purchase", FormMethod.Post, new { id = "paymentForm" }))
+    {
+
+        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; padding:0px; margin-bottom:50px;">
+            <label style="width:100%; float:left; padding:20px; padding-right:0px; border-bottom:1px solid #e6e6e6; font-weight:600;">Choose Payment Method</label>
+            <div style="width:100%; float:left; padding:20px;">
+                @*<div class="paymentRadioDiv">
+
+                    <input checked onclick="togglePos('open','1')" type="radio" id="pos_radio" name="paymentRadio" class="css-checkbox2" style="float:left; margin-top:7px; width:20px; height:20px; margin-right:10px; margin-left:10px;" />
+                    <label for="pos_radio" style="vertical-align:super; font-weight:600;" class="css-label2">Online payment by credit card</label>
+
+                </div>*@
+
+                @{
+                    if (Session["subeTeslim"] != null)
+                    {
+                        <div class="paymentRadioDiv" style="display:none;">
+                            <input onclick="togglePos('close','2')" type="radio" checked name="paymentRadio" />
+                            <label style="vertical-align:super; font-weight:600;">Pay by the Branch</label>
+                        </div>
+                    }
+                    else if (bakery["HomeDelivery"].ToString() == "yes" & partyExists == false & Session["ilanExists"] == null)
+                    {
+                        <div class="paymentRadioDiv">
+
+                            <input onclick="checkKapidaOdeme()" type="checkbox" id="kapida_radio" class="css-checkbox2" style="float:left; margin-top:7px; width:20px; height:20px; margin-right:10px; margin-left:10px;" />
+                            <label for="kapida_radio" style="vertical-align:super; font-weight:600;" class="css-label2">Payment options at the door</label>
+                        </div>
+                    }
+
+                    <div class="paymentRadioDiv" id="otherPaymentOptions" style="display:none; padding:0px; margin-right:0px; margin-top:5px;">
+                        <div class="paymentRadioDiv" style="margin-right:0px; width:100%; float:left;">
+                            <input onclick="togglePos('close','3')" type="radio" id="kapida1_radio" name="paymentRadio" class="css-checkbox2" />
+                            <label for="kapida1_radio" style="vertical-align:super;" class="css-label2">Cash Payment</label>
+                        </div>
+                        <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                            <input onclick="togglePos('close','4')" type="radio" id="kapida2_radio" class="css-checkbox2" name="paymentRadio" />
+                            <label for="kapida2_radio" style="vertical-align:super;" class="css-label2">Payment by Credit Card / Debit Card</label>
+                        </div>
+                        @{
+                            if (bakery["BakeryID"].ToString().ToUpper() == "CB5EDC14-85FD-40AD-A79A-82D6CA460CD9")
+                            {
+                                <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                                    <input onclick="togglePos('close','5')" type="radio" id="kapida3_radio" class="css-checkbox2" name="paymentRadio" />
+                                    <label for="kapida3_radio" style="vertical-align:super;" class="css-label2">Ticket Restaurant Payment by Meal Card</label>
+                                </div>
+                                <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                                    <input onclick="togglePos('close','6')" type="radio" id="kapida4_radio" class="css-checkbox2" name="paymentRadio" />
+                                    <label for="kapida4_radio" style="vertical-align:super;" class="css-label2">Ticket Restaurant Payment by Meal Check</label>
+                                </div>
+                                <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                                    <input onclick="togglePos('close','7')" type="radio" id="kapida5_radio" class="css-checkbox2" name="paymentRadio" />
+                                    <label for="kapida5_radio" style="vertical-align:super;" class="css-label2">Sodexo Restaurant Payment by Meal Card</label>
+                                </div>
+                                <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                                    <input onclick="togglePos('close','8')" type="radio" id="kapida6_radio" class="css-checkbox2" name="paymentRadio" />
+                                    <label for="kapida6_radio" style="vertical-align:super;" class="css-label2">Sodexo Restaurant Payment by Meal Check</label>
+                                </div>
+                                <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                                    <input onclick="togglePos('close','9')" type="radio" id="kapida7_radio" class="css-checkbox2" name="paymentRadio" />
+                                    <label for="kapida7_radio" style="vertical-align:super;" class="css-label2">Pay by Multinet</label>
+                                </div>
+                                <div class="paymentRadioDiv" style="margin-right:0px;  width:100%; float:left;">
+                                    <input onclick="togglePos('close','10')" type="radio" id="kapida8_radio" class="css-checkbox2" name="paymentRadio" />
+                                    <label for="kapida8_radio" style="vertical-align:super;" class="css-label2">Pay by Setcard</label>
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+                    <div class="col-md-12 col-sm-12 col-xs-12" id="posWrapper" style="padding:0px;">
+                        <div id="posMain" style="width:100%; float:left; margin-top:20px;  display:none;">
+                            <div style="width:100%; float:left;">
+
+                                <div style="float:left; padding-left:0px;" class="col-md-6 col-sm-6 col-xs-12">
+                                    <div style="width:100%; float:left; padding:10px 0px; margin-top:5px;">
+                                        <label style="float:left; font-weight:500;">Card Owner <span style="color:#aaa; font-weight:400; margin-left:5px;">(As you can see on the card)</span></label>
+                                    </div>
+
+                                    <div style="width:100%; float:left;">
+                                        <input autocomplete="off" onkeyup="paymentFocus(this)" style="margin-right:2%;" type="text" id="cardName" name="cardName" class="cardName" placeholder="Name" />
+                                        <input autocomplete="off" onkeyup="paymentFocus(this)" type="text" id="cardSurname" name="cardSurname" class="cardName" placeholder="Surname" />
+                                    </div>
+                                </div>
+
+                                <div style="float:left;  padding-left:0px;" class="col-md-6 col-sm-6 col-xs-12">
+                                    <div style="width:100%; float:left; padding:10px 0px; margin-top:5px;">
+                                        <label style="float:left; font-weight:500;">Card Number</label>
+                                    </div>
+                                    <div style="width:100%; float:left;">
+                                        <input autocomplete="off" onkeyup="paymentFocus(this,'cardNum1')" maxlength="4" type="text" id="cardNum1" name="cardNum1" class="cardNum" />
+                                        <input autocomplete="off" onkeyup="paymentFocus(this,'cardNum2')" maxlength="4" type="text" id="cardNum2" name="cardNum2" class="cardNum" />
+                                        <input autocomplete="off" onkeyup="paymentFocus(this,'cardNum3')" maxlength="4" type="text" id="cardNum3" name="cardNum3" class="cardNum" />
+                                        <input autocomplete="off" onkeyup="paymentFocus(this)" type="text" maxlength="4" id="cardNum4" name="cardNum4" class="cardNum" />
+                                    </div>
+                                </div>
+
+                                <div style="float:left; padding-left:0px;" class="col-md-6 col-sm-6 col-xs-12">
+
+                                    <div style="float:left; width:100%;">
+                                        <div style="width:100%; float:left; padding:10px 0px; margin-top:5px;">
+                                            <label style="float:left; font-weight:500;">Expiration date</label>
+                                        </div>
+                                        <div style="width:100%; float:left;">
+                                            <select class="cardExpire" id="cardMonth" name="cardMonth">
+                                                <option value="01">01</option>
+                                                <option value="02">02</option>
+                                                <option value="03">03</option>
+                                                <option value="04">04</option>
+                                                <option value="05">05</option>
+                                                <option value="06">06</option>
+                                                <option value="07">07</option>
+                                                <option value="08">08</option>
+                                                <option value="09">09</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                            </select>
+                                            <select onchange="paymentFocus(this,'cardYear')" class="cardExpire" id="cardYear" name="cardYear">
+                                                <option value="16">16</option>
+                                                <option value="17">17</option>
+                                                <option value="18">18</option>
+                                                <option value="19">19</option>
+                                                <option value="20">20</option>
+                                                <option value="21">21</option>
+                                                <option value="22">22</option>
+                                                <option value="23">23</option>
+                                                <option value="24">24</option>
+                                                <option value="25">25</option>
+                                                <option value="26">26</option>
+                                                <option value="27">27</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="float:left; padding-left:0px;" class="col-md-6 col-sm-6 col-xs-12">
+
+                                    <div style="float:left; width:100%;">
+                                        <div style="width:100%; float:left; padding:10px 0px; margin-top:5px;">
+                                            <label style="float:left; font-weight:500;">Security Code CCV <span style="color:#aaa; font-weight:400; margin-left:5px;">(3-digit code on the back of the card)</span></label>
+                                        </div>
+                                        <div style="width:100%; float:left;">
+                                            <input autocomplete="off" onkeyup="paymentFocus(this)" maxlength="3" id="cardCvc" name="cardCvc" type="text" class="cardCvc" style="float:left;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @{
+                            string total = oc.CalculateCartTotal((List<DataRow>)Session["cart"]);
+                        }
+
+                        <div style="width:100%; float:left;">
+
+                            <div style="float:left; width:100%;">
+
+                                <div style="width:100%; float:left; padding:15px 0px; padding-top:0px; font-family:'Open Sans'; ">
+
+                                    <div class="col-md-6 col-sm-6 col-xs-12" style="padding:0px; float:left; margin-top:5px; display:none;">
+                                        <div style="width:100%; float:left; padding:10px 0px;">
+                                            <label style="float:left; font-weight:500;">I have promotion code <span style="color:#aaa; font-weight:400; margin-left:5px;">(optional)</span></label>
+                                        </div>
+                                        <input id="promCodeInput" onkeyup="promotionCode(this)" type="text" placeholder="Promotion Code" style="float:left; width:217px; font-family:'Open Sans'; padding:10px 20px; background:white; border:1px solid #d6d6d6; border-radius:20px;" />
+                                        <label id="promotionUnsuccessful" style="width:100%; display:none; float:left; color:red; padding-top:10px; text-align:left;">This promotional code is invalid.</label>
+                                        <label id="promotionSuccessful" style="width:100%; display:none; float:left; color:green; padding-top:10px; text-align:left;">Promotion is valid. Your discount has been made.</label>
+                                    </div>
+
+                                    <div class="col-md-6 col-sm-12 col-xs-12" style="padding:0px; float:left; line-height:30px; margin-top:25px;">
+                                        <div style="width:100%; float:left;">
+                                            <label style="float:left; font-size:14px; width:130px;">Cart Total : </label>
+                                            <label id="sepetTutari" style="font-size:14px; float:left; font-weight:600;">@total TL </label>
+                                        </div>
+                                        <div id="indirimTutarı" style="width:100%; float:left; display:none;">
+                                            <label style="float:left; font-size:14px; width:130px;">Discount Total : </label>
+                                            <label id="indirimLabel" style="font-size:14px; float:left; font-weight:600;">@total TL </label>
+                                        </div>
+                                        <div style="width:100%; float:left;">
+                                            <label style="float:left; font-size:14px; width:130px;">To be Paid : </label>
+                                            <label id="odenecekTutar" style="font-size:14px; float:left; font-weight:600;">@total TL </label>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-md-9 col-sm-12 col-xs-12" style="padding:10px 0px;">
+                                    <input onclick="validateSozlesme()" id="sozlesmeCheck" name="sozlesmeCheck" type="checkbox" class="css-checkbox2" />
+                                    <label for="sozlesmeCheck" style="float:left; margin-bottom:0px !important;" class="css-label2"></label>
+                                    <label id="sozlesmeLabel" onclick="$('#sozlesmeDiv').slideToggle(300)">I have read and accepted the Preliminary Information Form and the Distance Sales Agreement</label>
+                                </div>
+
+                                <div class="col-md-3 col-sm-3 col-xs-12" style="text-align:center; padding:0px;">
+                                    <input id="checkOutBtn" onclick="validatePaymentPos()" type="submit" class="black-gradient" value="BUY NOW" style="padding:10px 30px; letter-spacing:1px; font-weight:500;" />
+                                </div>
+
+                                <div style="float:left; width:100%; padding:20px 0px; display:none; border-bottom:1px solid #e6e6e6; margin-bottom:15px;" id="sozlesmeDiv">
+                                    @Html.Partial("_SatisSozlesmesi")
+                                </div>
+
+                                <input type="hidden" name="bakerySecondHourCopy" id="bakerySecondHourCopy" />
+                                <input type="hidden" name="selectedHour" id="selectedHour" value="normal" />
+
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+                            }
+</div>

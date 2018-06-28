@@ -1,0 +1,1610 @@
+﻿
+var view = ""; var isLogin = false;
+
+$(document).on("click", function (event) {
+    if (event.target.className.indexOf("login-register") < 0 & event.target.className.indexOf("save") < 0 & event.target.className.indexOf("social-img") & event.target.className.indexOf("order") & event.target.id.indexOf("oturum-label")) { $("#account-floating-div,.overall-mask").fadeOut(200); }
+    if (event.target.className.indexOf("sepetim-header") < 0) { $("#sepetim-header-div").fadeOut(200); }
+});
+
+$(document).keypress(function (event) {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if (keycode == '13' & $("#login-floating-div").is(":visible")) { $("#login-button").trigger("click"); }
+    if (keycode == '13' & $("#register-floating-div").is(":visible")) { $("#register-button").trigger("click"); }
+});
+
+$(document).ready(function () {
+
+    $("#owl-example").owlCarousel({
+        items: 6,
+        itemsMobile: [479, 2],
+        pagination: false,
+        navigation: true
+    });
+
+    $("#userCakes").owlCarousel({
+        items: 4,
+        itemsMobile: [479, 2],
+        pagination: false,
+        navigation: true
+    });
+
+    $("#youDesign-carousel").owlCarousel({
+        items: 4,
+        itemsTablet: [600, 2],
+        itemsMobile: [479, 2]
+    });
+
+    $("#index-bakeries-carousel").owlCarousel({
+        margin: 10,
+        items: 6,
+        itemsTablet: [600, 4],
+        itemsMobile: [479, 2]
+    });
+
+    $("#login-register-div *").addClass("login-register");
+
+    $("#sepetim-header-div *,#sepetim-header *").addClass("sepetim-header");
+
+    $(".login-register-toggle").click(function () {
+        $("#account-floating-div").fadeToggle(200);
+    });
+
+    $(".account-button").click(function (event) {
+        if (event.target.className.indexOf('account-button-active') < 0) { $(".account-button").toggleClass("account-button-active"); }
+        if (event.target.id == "login-menu") { $("#register-floating-div").hide(); $("#login-floating-div").fadeIn(200); }
+        if (event.target.id == "register-menu") { $("#login-floating-div").hide(); $("#register-floating-div").fadeIn(200); }
+    });
+
+    $("#account-floating-div input").keyup(function (event) {
+        if ($(this).val().length > 0) { $(this).parent().css("border-color", "#cccccc"); } else { $(this).parent().css("border-color", "red"); }
+    });
+
+    $("#account-floating-div select").change(function (event) {
+        if ($(this).val() != null) { $(this).parent().css("border-color", "#cccccc"); } else { $(this).parent().css("border-color", "red"); }
+    });
+
+    $("#forgot-password-button").click(function () { $("#login-sub-div,#login-button").toggle(); $(".forgot").toggle(); });
+
+    $("#lower-carousel,#bakeryUploadCarousel,#fav-carousel").carousel({ interval: false });
+
+    $("#sehir_pastaneler").on("change", function () {
+        appendDistricts("#ilce_pastaneler", $("#sehir_pastaneler").val()); $("#semt_pastaneler").empty();
+    });
+
+    $("#ilce_pastaneler").on("change", function () {
+        appendNeighborhoods("#semt_pastaneler", $("#ilce_pastaneler").val());
+    });
+
+    $("#upper-declaration-edit-img").click(function () {
+        $("#upper-declaration-edit-img,#upper-declaration-label").hide();
+        $("#upper-declaration-edit-div").fadeIn(200);
+    });
+
+    $("#upper-declaration-cancel").click(function () {
+        $("#upper-declaration-edit-div").hide();
+        $("#upper-declaration-edit-img,#upper-declaration-label").fadeIn(200);
+    });
+
+    $("#lower-declaration-edit-img").click(function () {
+        $("#lower-declaration-edit-img,#lower-declaration-label").hide();
+        $("#lower-declaration-edit-div").fadeIn(200);
+    });
+
+    $("#lower-declaration-cancel").click(function () {
+        $("#lower-declaration-edit-div").hide();
+        $("#lower-declaration-edit-img,#lower-declaration-label").fadeIn(200);
+    });
+
+    $("#upper-declaration-submit").click(function () { changeDeclaration("upper"); });
+    $("#lower-declaration-submit").click(function () { changeDeclaration("lower"); });
+
+    $("#upload_userImg").change(function () {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $(".profile-thumbnail").attr("src", e.target.result);
+            $("#upload-ok").fadeIn(200);
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    $("#profile-info-birth").datepicker({
+        yearRange: "-100:+0",
+        changeMonth: true,
+        changeYear: true,
+        dateFormat: 'dd/mm/yy',
+        autoSize: true,
+        dayNames: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+        dayNamesMin: ["pa", "pzt", "sa", "çar", "per", "cum", "cmt"],
+        monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+        monthNamesShort: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+        nextText: "ileri",
+        prevText: "geri",
+    });
+
+    $(".info-change-input-div img,.info-change-input-div label").click(function (event) { openInfoDivs(this); });
+    $(".info-change-input-div .cancel-btn").click(function (event) { closeInfoDivs(this); });
+    $(".info-change-input-div .ok-btn").click(function (event) { saveChanges(event, this); });
+
+    $("#profile-info-province").change(function () {
+        div = "district-change-div";
+        $("#" + div + " img," + "#" + div + " label").hide();
+        $("#" + div + " .profile-info-edit-div").fadeIn(200);
+        appendDistricts('#profile-info-district', $(this).val())
+    });
+    $("#profile-info-district").change(function () {
+        div = "neighborhood-change-div";
+        $("#" + div + " img," + "#" + div + " label").hide();
+        $("#" + div + " .profile-info-edit-div").fadeIn(200);
+        appendNeighborhoods('#profile-info-neighborhood', $(this).val())
+    });
+
+    var bakeryLoginValidated = false;
+
+    $("#bakeryLogin-btn").click(function (event) {
+        event.preventDefault();
+        $("#bakery-login-validation-div label").hide(); $("#bakery-loading").show();
+
+        if ($("#bakery_username").val().length == 0) { $("#bakery_username").css("border-color", "red"); bakeryLoginValidated = false; }
+        if ($("#bakery_password").val().length == 0) { $("#bakery_password").css("border-color", "red"); bakeryLoginValidated = false; }
+        if ($("#bakery_password").val().length != 0 & $("#bakery_username").val().length != 0) { bakeryLoginValidated = true; }
+
+        if (bakeryLoginValidated == false) {
+            $("#bakery-login-validation-div label").text("Tüm alanlar doldurulmalıdır.").show();
+            $("#bakery-loading").hide(0);
+        }
+        else { $('#bakery_login_form').trigger("submit"); }
+    });
+
+    $("#bakery_username").keyup(function () { if ($("#bakery_username").val().length > 0) { $("#bakery_username").css("border-color", "#cccccc"); } else { bakeryLoginValidated = false; $("#bakery_username").css("border-color", "red"); } });
+    $("#bakery_password").keyup(function () { if ($("#bakery_password").val().length > 0) { $("#bakery_password").css("border-color", "#cccccc"); } else { bakeryLoginValidated = false; $("#bakery_password").css("border-color", "red"); } });
+
+    $("#bakeryProductImages").change(function () {
+        var files = event.target.files;
+
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            if (!file.type.match('image')) continue;
+
+            var picReader = new FileReader(); var counter = 1;
+            $("#bakery_product_thumbnail_div .bakery_product_thumbnail_img").attr("src", "/Images/Site/no_image.png");
+            picReader.addEventListener("load", function (event) {
+                if (counter < 4) {
+                    var picFile = event.target;
+                    $("#bakery_product_thumbnail_div .bakery_product_thumbnail_img:nth-child(" + counter + ")").attr("src", picFile.result);
+                }
+                counter++;
+            });
+            picReader.readAsDataURL(file);
+        }
+    });
+
+    $("#bakery_product_submit").click(function () {
+        var temp;
+        var elems = $(".bakery_product_thumbnail_img").attr("src");
+        for (i = 0; i < elems.length; i++) { temp = "  " + temp + elems[i]; }
+        $("#bakery_product_images").val(temp);
+    });
+
+    $("#bakery-product-explanation-button").click(function () { $("#bakery-product-explanation-div").slideToggle(300); });
+
+    $(".obj-img-thumbnail").mouseover(function () { $(this).parent().children(".img-popup").show(); });
+    $(".obj-img-thumbnail").mouseout(function () { $(this).parent().children(".img-popup").hide(); });
+
+    $(".obj-texture-thumbnail").mouseover(function () { $(this).parent().children(".texture-popup").show(); });
+    $(".obj-texture-thumbnail").mouseout(function () { $(this).parent().children(".texture-popup").hide(); });
+
+    $(".obj-color-thumbnail").mouseover(function () { $(this).parent().children(".color-popup").show(); });
+    $(".obj-color-thumbnail").mouseout(function () { $(this).parent().children(".color-popup").hide(); });
+
+    $("#objectImage").change(function () {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $("#object-image-display").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    $("#objectTexture").change(function () {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $("#object-texture-display").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    $(".plus-cart-product-a").click(function (event) {
+        var elem = $(this).parent().children(".CartProductCount");
+        var num = parseInt($(elem).val()) + 1;
+        if (num <= parseInt($(elem).attr("data-max"))) {
+            $(elem).val((num).toString() + " adet");           
+        }
+        else { event.preventDefault(); }
+    });
+
+    $(".minus-cart-product-a").click(function (event) {
+        var elem = $(this).parent().children(".CartProductCount");
+        var num = parseInt($(elem).val()) - 1;
+        if (num > 0) {
+            $(elem).val((num).toString() + " adet");
+        }
+        else { event.preventDefault(); }
+    });
+
+    $(".plus-cart").click(function () {
+        var num = parseInt($("#adet").val()) + 1;
+        if (num <= parseInt($("#adet").attr("data-max"))) { $("#adet").val((num).toString() + " adet"); }       
+        updateProduct();
+    });
+
+    $(".minus-cart").click(function () {
+        var num = parseInt($("#adet").val()) - 1;
+        if (num > 0) { $("#adet").val((num).toString() + " adet"); }
+        updateProduct();
+    });
+
+    $(".product-div").mouseover(function () {
+        $(this).find(".obj-mask").fadeIn(100);
+    });
+
+    $(".product-div").mouseleave(function () {
+        $(this).find(".obj-mask").fadeOut(100);
+    });
+
+    $("#add-to-cart-btn").click(function () { $(".loading").fadeIn(200); $("#loading-label").text(" Ürün Ekleniyor... "); });
+
+    $("input[name=Size],.plus-cart,.minus-cart").click(function () { $(".loading").fadeIn(200); $("#loading-label").text(" Lütfen Bekleyin... "); });
+
+    $("#sepetim-header").click(function () { $("#sepetim-header-div").fadeToggle(300); });
+
+    $("#add-comment-button").click(function () {
+        if (!$("#product-comment-div").is(":visible")) { $("#add-comment-button span").text("Kapat"); } else { $("#add-comment-button span").text("Yorum Yap"); }
+        $("#product-comment-div").slideToggle(200);
+    });
+
+    $("#add-comment").click(function () {
+        $('html, body').animate({
+            scrollTop: $("#product-comments-div").offset().top
+        }, 1000, "easeOutQuart");
+    });
+
+    $(".remove-filters").click(function () { resetProductFilters(); });
+
+    $('.pop-input:nth-child(4)').on('keydown', function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });
+
+    $("#addBlogImg").change(function () {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $("#addBlogImg_display").attr("src", e.target.result);
+        };
+        reader.readAsDataURL(this.files[0]);
+    });
+
+    $("#provinceAddress ,#districtAddress, #neighborhoodAddress, #openAddress, #addressDescription, #editProvinceAddress ,#editDistrictAddress, #editNeighborhoodAddress, #editOpenAddress, #editAddressDescription").on("change keyup", function () { if ($(this).val() != "" | $(this).val() != null) { $(this).css("border-color", "#cccccc"); } else { $(this).css("border-color", "red"); } });
+
+    $("#addAddressForm").submit(function (e) {
+        var addressValidated = true;
+        var elems = $("#provinceAddress ,#districtAddress, #neighborhoodAddress, #openAddress, #addressDescription");
+        for (i = 0; i < elems.length; i++) {
+            if ($(elems[i]).val() == null | $(elems[i]).val() == "") { $(elems[i]).css("border-color", "red"); addressValidated = false; } else { $(elems[i]).css("border-color", "#cccccc"); }
+        } 
+        if (addressValidated == false) { e.preventDefault(); }
+    });
+
+    $("#editAddressForm").submit(function (e) {
+        var addressValidated = true;
+        var elems = $("#editProvinceAddress ,#editDistrictAddress, #editNeighborhoodAddress, #editOpenAddress, #editAddressDescription");
+        for (i = 0; i < elems.length; i++) {
+            if ($(elems[i]).val() == null | $(elems[i]).val() == "") { $(elems[i]).css("border-color", "red"); addressValidated = false; } else { $(elems[i]).css("border-color", "#cccccc"); }
+        }
+        if (addressValidated == false) { e.preventDefault(); }
+    });
+
+    $("#cakePriceDialog,#cupcakePriceDialog,#cookiePriceDialog").find("input[name=size]").on("keyup change", function () {
+        if ($(this).val() != 0) { $(this).css("border-color", "#cccccc"); } else { $(this).css("border-color", "red"); }
+    });
+
+    $("#cakePriceDialog,#cupcakePriceDialog,#cookiePriceDialog").find("input[name=price]").on("keyup change", function () {
+        if ($(this).val().length != 0) { $(this).css("border-color", "#cccccc"); } else { $(this).css("border-color", "red"); }
+    });
+
+    $("#cakeContentDialog,#cupcakeContentDialog,#cookieContentDialog").find("input[name=content]").on("keyup", function () {
+        if ($(this).val().length != 0) { $(this).css("border-color", "#cccccc"); } else { $(this).css("border-color", "red"); }
+    });
+
+    $(".designMainImage").elevateZoom({
+        zoomWindowFadeIn: 500,
+        zoomWindowFadeOut: 500,
+        lensFadeIn: 500,
+        lensFadeOut: 500,
+        easing: true,
+        scrollZoom: true,
+        zoomWindowPosition: 1, zoomWindowOffetx: 20
+    });
+
+    $(".bakeryInfo input[type=text], .bakeryInfo textarea").on("keyup", function () {
+        if ($(this).val().length == 0) { $(this).css("border-color", "red"); } else { $(this).css("border-color", "#e6e6e6"); }
+    });
+
+    $(function () {
+        $('.cardNum, .cardCvc').on('keydown', function (e) { -1 !== $.inArray(e.keyCode, [46, 8, 9, 27, 13, 110, 190]) || /65|67|86|88/.test(e.keyCode) && (!0 === e.ctrlKey || !0 === e.metaKey) || 35 <= e.keyCode && 40 >= e.keyCode || (e.shiftKey || 48 > e.keyCode || 57 < e.keyCode) && (96 > e.keyCode || 105 < e.keyCode) && e.preventDefault() });
+    });
+
+    $('.cardName, .cardSurname').keypress(function(event){
+        var inputValue = event.which;
+        if (!(inputValue >= 65 && inputValue <= 90) && !(inputValue >= 97 && inputValue <= 122) && (inputValue != 32 && inputValue != 0) && (inputValue != 304) && (inputValue != 231) && (inputValue != 305) && (inputValue != 199) && (inputValue != 214) && (inputValue != 286) && (inputValue != 246) && (inputValue != 287) && (inputValue != 220) && (inputValue != 350) && (inputValue != 252) && (inputValue != 351)) {
+            event.preventDefault(); 
+        }
+    });
+
+    $("#contactTel").mask("(999) 999-99-99");
+
+    var paymentInputs = $("#paymentForm input[type=text]");
+    for (i = 0; i < paymentInputs.length; i++) {
+        $(paymentInputs[i]).tooltip();
+    }
+
+    $("#sozlesmeCheck").tooltip();
+});
+
+function FaveProductJson(elem) {
+    $.ajax({
+        url: "/Order/FaveProductJson?ProductID=" + $(elem).attr("data-productID") + "&BakeryID=" + $(elem).attr("data-bakeryID"),
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            location.reload();
+        }
+    });
+}
+
+function UnFaveProductJson(elem) {
+    $.ajax({
+        url: "/Order/UnfaveProductJson?ProductID=" + $(elem).attr("data-productID") + "&BakeryID=" + $(elem).attr("data-bakeryID"),
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            location.reload();
+        }
+    });
+}
+
+function changeDesignName(elem,id, newName) {
+    $(elem).parent().hide();
+    $(elem).parent().parent().children('.edit-cakename-btn,.cake-name').fadeIn(200);
+    $(elem).parent().parent().children('.cake-name').text($(elem).parent().children('.design-name-input').val());
+    $.ajax({
+        url: "/Object/ChangeDesignName?designID=" + id + "&newName=" + newName,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+        }
+    });
+}
+
+var chld = 1;
+
+function changeSellers(num) {
+    if (chld != num) {
+        $(".index-bakery-topsellers-wrapper").fadeOut(250);
+        setTimeout(function () { $(".index-bakery-topsellers-wrapper[data-idx=" + num + "]").fadeIn(250); }, 270);
+        chld = num;
+    }
+}
+
+function validateBakeryInfo() {
+    var validated = true;
+    $("#bakery_weekdays").val("");
+    var days = $(".bakery_weekdays");
+    for (i = 0; i < days.length; i++) { if ($(days[i]).hasClass("bw_active")) { $("#bakery_weekdays").val($("#bakery_weekdays").val() + "1"); } else { $("#bakery_weekdays").val($("#bakery_weekdays").val() + "0"); } }
+
+    var inputs = $(".bakeryInfo input[type=text], .bakeryInfo textarea");
+    for (i = 0; i < inputs.length; i++) { if ($(inputs[i]).val().length == 0) { $(inputs[i]).css("border-color", "red"); validated = false; } }
+    if ($("#bakery_phone").val() == "(___) ___-__-__") { validated = false; }
+
+    if ($("#bakeryTime1").val() == null) { $("#bakeryTime1").css("border-color", "red"); validated = false; }
+    if ($("#bakeryTime2").val() == null) { $("#bakeryTime2").css("border-color", "red"); validated = false; }
+
+    if (validated == false) { event.preventDefault(); }
+}
+
+function arrangeOtherCakeSize(size) {
+    $("#cakeSize-2").val("");
+    $("#cakeSize-2").removeClass("disabled-link");
+    var options = $("#cakeSize-2 option");
+    for (i = 0; i < options.length; i++) { if (parseInt($(options[i]).val()) <= parseInt(size)) { $(options[i]).attr("disabled", true); } else { $(options[i]).attr("disabled", false); } }
+}
+
+var sizeCounter = 1; var gramCounter = 1;
+
+function appendCakeSize() {
+    if (sizeCounter < 6) {
+        var div = "<div><input readonly name='cakeSize" + sizeCounter + "' type='text' style='font-size:14px; float:left; font-family:Open Sans !important; width:120px;' value='" + $("#cakeSize-1").val() + "-" + $("#cakeSize-2").val() + " " + $("#bakery_product_price").val() + "' /><img src='Images/Site/close_icon.png' onclick='$(this).parent().remove(); sizeCounter--;' style='width:10px; margin-top:8px; float:right; cursor:pointer;' /></div>";
+        $("#cakeSizeAppend").append(div);
+        sizeCounter++;
+    }
+}
+
+function appendGram() {
+    if (gramCounter < 6) {
+        var div = "<div><input readonly name='gram" + gramCounter + "' type='text' style='font-size:14px; float:left; font-family:Open Sans !important; width:120px;' value='" + $("#bakery_product_gram").val() + " " + $("#bakery_product_price").val() + "' /><img src='Images/Site/close_icon.png' onclick='$(this).parent().remove(); gramCounter--;' style='width:10px; margin-top:8px; float:right; cursor:pointer;' /></div>";
+        $("#gramAppend").append(div);
+        gramCounter++;
+    }
+}
+
+function arrangeProductCategories() {
+    var cat = $("#bakery_product_category").val();
+    $("#numberGramSelector input[type=radio]").attr("checked",false);
+    if (cat == "Pasta") {
+        $("#productGram_div,#productNumber_div,#numberGramSelector").slideUp(300);
+        $("#cake_size_div,#cakeSizeAppend").slideDown(300); $("#gramAppend").empty();
+        gramCounter = 1;
+    }
+    else if (cat == "Çikolata" | cat == "Tatlı") {
+        $("#cake_size_div,#cakeSizeAppend,#productNumber_div,#productGram_div").slideUp(300); $("#numberGramSelector").slideDown(300);
+        $("#cakeSizeAppend").empty(); sizeCounter = 1;
+    }
+    else if (cat == "Cupcake" | cat == "Kek/Kurabiye" | cat == "Parti Malzemeleri") {
+        $("#cake_size_div,#cakeSizeAppend,#productGram_div,#numberGramSelector").slideUp(300); $("#productNumber_div").slideDown(300);
+        $("#cakeSizeAppend,#gramAppend").empty(); sizeCounter = 1; gramCounter = 1;
+    }
+}
+
+function fillBakeryProduct(elem, name, description, price, category, stock, thumbnail, productID, size, gram, number, bakery, approved) {
+    if (bakery != null) { $("#bakery_name").val(bakery); }
+    gramCounter = 1; sizeCounter = 1;
+    $("#bakery_product_price").val("");
+    $("#cakeSizeAppend").empty();
+    $(".bpc-open").show(); $(".bpc-close").hide(); $(elem).hide(); $(elem).parent().children(".bpc-close").show();
+    $("#bakery_product_name").val(name);
+    $("#bakery_product_description").val(description);
+    $("#bakery_product_category").val(category);
+    $("#bakery_product_category").addClass("disabled-link");
+    $("#bakery_product_stockAvailable").val(stock);
+    if (approved != null) { if (approved == "yes") { $("#bakery_product_approved").attr("checked", true); } else { $("#bakery_product_approved").attr("checked", false); } }
+    var images = thumbnail.split("  ");
+    $("#bakery_product_thumbnail_div .bakery_product_thumbnail_img").attr("src", "/Images/Site/no_image.png");
+    var counter = 1;
+    for (i = 0; i < images.length - 1; i++) {
+        if (counter < 4) {
+            $("#bakery_product_thumbnail_div .bakery_product_thumbnail_img:nth-child(" + counter + ")").attr("src", "/Images/Products/" + productID + "/" + images[i]);
+        }
+        counter++;
+    }
+    $("#bakery_product_submit").val("Kaydet"); $("#product-id-hidden").val(productID); $("#bakery_product_delete").show().attr("data-productName", name).attr("href", "/Bakery/DeleteBakeryProduct?productID=" + productID);
+    $("#bakery-product-form").attr("action", "/Bakery/ChangeBakeryProduct");
+
+    if (size != "") {
+        $("#productNumber_div,#productGram_div,#numberGramSelector").hide(); $("#cake_size_div").slideDown(300);
+        var sizes = size.split(" "); var prices = price.split(" "); $("#gramAppend").empty();
+        for (i = 0; i < sizes.length; i++) {
+            var div = "<div><input readonly name='cakeSize" + sizeCounter + "' type='text' style='font-size:14px; float:left; font-family:Open Sans !important; width:120px;' value='" + sizes[i] + " " + prices[i] + "' /><img src='Images/Site/close_icon.png' onclick='$(this).parent().remove(); sizeCounter--;' style='width:10px; margin-top:8px; float:right; cursor:pointer;' /></div>";
+            $("#cakeSizeAppend").append(div);
+            sizeCounter++;
+        }
+    }
+    else if (gram != "") {
+        $("#productNumber_div,#cake_size_div").hide(); $("#productGram_div").slideDown(300);
+        $("#cakeSizeAppend").empty();
+        var grams = gram.split(" "); var prices = price.split(" "); $("#gramAppend").empty();
+        for (i = 0; i < grams.length; i++) {
+            var div = "<div><input readonly name='gram" + gramCounter + "' type='text' style='font-size:14px; float:left; font-family:Open Sans !important; width:120px;' value='" + grams[i] + " " + prices[i] + "' /><img src='Images/Site/close_icon.png' onclick='$(this).parent().remove(); gramCounter--;' style='width:10px; margin-top:8px; float:right; cursor:pointer;' /></div>";
+            $("#gramAppend").append(div);
+            gramCounter++;
+        }
+    }
+    else if (number != "") {
+        $("#productGram_div,#cake_size_div").hide(); $("#productNumber_div").slideDown(300);
+        $("#bakery_product_number").val(number); $("#cakeSizeAppend,#gramAppend").empty();
+        $("#bakery_product_price").val(price + " TL");
+    }
+}
+
+function toggleGramNumber(what) {
+    if (what == "gram") {
+        $("#productNumber_div").hide(); $("#productGram_div").slideDown(300);
+    }
+    else if (what == "number") {
+        $("#gramAppend").empty();
+        $("#productGram_div").hide(); $("#productNumber_div").slideDown(300);
+    }
+}
+
+function closeBakeryProduct(elem) {
+    $(elem).hide(); $(elem).parent().children(".bpc-open").show();
+    $("#bakery_product_name,#bakery_product_description,#bakery_product_price,#bakery_product_gram,#bakery_product_number,#bakery_product_stockAvailable").val("");
+    $("#bakery_product_approved").attr("checked", false);
+    $("#bakery_product_category").val("Pasta");
+    $("#bakery_product_thumbnail_div .bakery_product_thumbnail_img").attr("src", "/Images/Site/no_image.png");
+    $("#bakery_product_submit").val("Ekle");
+    $("#bakery-product-form").attr("action", "/Bakery/AddBakeryProduct");
+    $("#bakery_product_delete").hide().attr("href", "");
+    $("#cakeSizeAppend,#gramAppend").empty();
+    $("#bakery_product_category").removeClass("disabled-link");
+    $("#productNumber_div,#productGram_div,#numberGramSelector").slideUp(); $("#cake_size_div").slideDown();
+    gramCounter = 1; sizeCounter = 1;
+}
+
+function keyupAddBlog(elem) {
+    if ($(elem).val().length != 0) { $(elem).css("border-color", "#d6d6d6"); } else { $(elem).css("border-color", "red"); }
+}
+
+function validateAddBlog() {
+    event.preventDefault();
+    var validated = true;
+    if ($("#addBlogTitle").val().length == 0) { $("#addBlogTitle").css("border-color", "red"); validated = false; }
+    if ($("#addBlogComment").val().length == 0) { $("#addBlogComment").css("border-color", "red"); validated = false; }
+    if (validated == true) {
+        $("#write-blog-div").hide(300);
+        setTimeout(function () { $("#blog-thanks-div").show(300); }, 310);
+        setTimeout(function () { $("#addBlogForm").submit(); }, 1000);
+    }
+}
+
+function toggleAddBlog() {
+
+    if ($("#write-blog-div").is(":visible")) {
+        $("#write-blog-div").hide(300);
+        setTimeout(function () { $(".blog-description").show(300); }, 310);
+    }
+    else {
+        $(".blog-description,.blog-detail").hide(300);
+        setTimeout(function () { $("#write-blog-div").show(300); }, 310);
+    }
+}
+
+function openBlogDetail(elem) {
+    var detailDiv = $(elem).parent().parent().parent().children(".blog-detail");
+
+    if (!$(".blog-description").is(":visible")) {
+        detailDiv.hide(300);
+        setTimeout(function () { $(".blog-description").show(300); }, 310);
+    }
+    else {
+        $(".blog-description").hide(300);
+        setTimeout(function () { detailDiv.show(300); }, 310);
+    }
+}
+
+function likeBlog(elem, blogID) {
+    $(elem).attr("onclick","");
+    var like = $(elem).parent().children(".blog-like");
+    $.ajax({
+        url: "/Home/LikeBlog?BlogID=" + blogID,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            $(elem).attr("src", "Images/Site/heart_icon_filled.png");
+            $(elem).attr("onclick", "dislikeBlog(this,'" + blogID + "')");
+            $(like).text(parseInt($(like).text()) + 1);
+        }
+    });
+}
+
+function dislikeBlog(elem, blogID) {
+    $(elem).attr("onclick", "");
+    var like = $(elem).parent().children(".blog-like");
+    $.ajax({
+        url: "/Home/DislikeBlog?BlogID=" + blogID,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            $(elem).attr("src", "Images/Site/heart_icon.png");
+            $(elem).attr("onclick", "likeBlog(this,'" + blogID + "')");
+            $(like).text(parseInt($(like).text()) - 1);
+        }
+    });
+}
+
+function validateEditBlog(elem) {
+    var inputs = $(".pop-input"); var validated = true;
+    for (i = 0; i < inputs.length; i++) {
+        if ($($(inputs)[i]).val().length == 0) { $($(inputs)[i]).css("border-color", "red"); validated = false; }
+    }
+    if (validated == false) { event.preventDefault(); }
+}
+
+function editAdminBlog(elem, id) {
+    var row = $(elem).parent().parent();
+    $(row).find("td").height($(row).find("td").height());
+    if ($(row).find("input[type=text]").length != 0) {
+        $(row).find("input[type=text]").remove(); $(row).find("input[type=number]").remove(); $(row).find("input[type=checkbox]").remove(); $(row).find("input[type=image]").hide();
+        for (i = 1; i < $(row).children().length; i++) {
+            if (i == 1 | i == 2 | i == 4 | i == 5) {
+                $($(row).children()[i]).children("label").show();
+            }
+        }
+    }
+    else {
+        var names = ["id='blogTitle' name='blogTitle'", "id='blogComment' name='blogComment'","", "id='blogLike' name='blogLike'", "id='blogApprove' name='blogApprove'"];
+        $(row).find("input[type=image]").show();
+        $($(row).children()[0]).append("<input type='hidden' name='blogID' id='blogID' value='" + id + "' />");
+        for (i = 1; i < $(row).children().length; i++) {
+            if (i == 1 | i == 2 | i == 4 | i == 5) {
+                var type = "type='text'"; var width = $($(row).children()[i]).width();
+                if (i == 5) {
+                    var checked = "checked"; if ($($(row).children()[i]).children("label").text() == "Onaysız") { checked = ""; }
+                    $($(row).children()[i]).append("<input class='pop-input' " + names[i-1] + " type='checkbox' " + checked + " />");
+                }
+                else {
+                    if (i == 4) { type = "type='number'"; }
+                    $($(row).children()[i]).children("label").hide();
+                    $($(row).children()[i]).append("<input style='width:" + width + "px;' class='pop-input' onkeyup='validatePopInput(this)' autocomplete='off' " + names[i-1] + type + " value='" + $($(row).children()[i]).children("label").text() + "' />");
+                }
+            }
+        }
+    }
+}
+
+function validatePopInput(elem){
+    if($(elem).val().length == 0){ $(elem).css("border-color","red"); }
+    else { $(elem).css("border-color","#cccccc"); }
+}
+
+function validateEditComment(elem) {
+    var inputs = $(".pop-input"); var validated = true;
+    for (i = 1; i < inputs.length; i++) {
+        if ($($(inputs)[i]).val().length == 0) { $($(inputs)[i]).css("border-color", "red"); validated = false; }
+    }
+    if (validated == false) { event.preventDefault(); }
+}
+
+function approveBakeryComment(id) {
+    $.ajax({
+        url: "/Bakery/ApproveComment?CommentID=" + id,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            location.reload();
+        }
+    });
+}
+
+function editAdminComment(elem,id) {
+    var row = $(elem).parent().parent();
+    $(row).find("td").height($(row).find("td").height());
+    if ($(row).find("input[type=text]").length != 0) {
+        $(row).find("input[type=text]").remove(); $(row).find("input[type=hidden]").remove(); $(row).find("input[type=number]").remove(); $(row).find("input[type=checkbox]").remove(); $(row).find("input[type=image]").hide();
+        for (i = 0; i < $(row).children().length; i++) {
+            if (i > 1 & i < 7) {
+                $($(row).children()[i]).children("label").show();               
+            }
+        }
+    }
+    else {
+        var names = ["id='commentName' name='commentName'", "id='commentTitle' name='commentTitle'", "id='commentComment' name='commentComment'", "id='commentLike' name='commentLike'", "id='commentDislike' name='commentDislike'"];
+        $(row).find("input[type=image]").show();
+        $($(row).children()[0]).append("<input type='hidden' name='commentID' id='commentID' value='" + id + "' />"); var type = "";
+        for (i = 0; i < $(row).children().length; i++) {
+            var width = $($(row).children()[i]).width();
+            if (i > 1 & i < 7) {
+                if (i == 5 | i == 6) { type = "type='number'"; } else { type = "type='text'"; }
+                $($(row).children()[i]).children("label").hide();
+                $($(row).children()[i]).append("<input class='pop-input' style='width:" + width + "px;' onkeyup='validatePopInput(this)' autocomplete='off' " + names[i - 2] + type + " value='" + $($(row).children()[i]).children("label").text() + "' />")
+            }
+            if (i == 7) {
+                var checked = "checked"; if ($($(row).children()[i]).children("label").text() == "Onaysız") { checked = ""; }
+                $($(row).children()[i]).append("<input class='pop-input' name='admin-comment-approved' id='admin-comment-approved' style='margin-top:3px; margin-right:5px;' " + names[i - 1] + " type='checkbox' " + checked + " />");
+            }
+        }
+    }
+}
+
+function deleteAdminComment() {
+    if (confirm("Seçtiğiniz yorum silinecektir. Onaylıyor musunuz?") == false) { event.preventDefault(); }
+}
+
+function deleteAdminBlog() {
+    if (confirm("Seçtiğiniz blog silinecektir. Onaylıyor musunuz?") == false) { event.preventDefault(); }
+}
+
+function validateFormComment() {
+    var title_validated = false; var content_validated = false;
+    if ($("#product-comment-title").val().length == 0) { $("#product-comment-title").css("border-color", "red"); title_validated = false; } else { var title_validated = true; }
+    if ($("#product-comment-content").val().length == 0) { $("#product-comment-content").css("border-color", "red"); content_validated = false; } else { var content_validated = true; }
+    if (title_validated & content_validated) { $("#product-comment-validation-div").slideUp(200); }
+    else { $("#product-comment-validation-div").slideDown(200); event.preventDefault(); }
+}
+
+function checkCart(id) {
+    var res;
+    $.ajax({
+        url: "/Order/CheckCart?bakeryID=" + id,
+        async: false,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            res = result;
+        }
+    });
+    return res;
+}
+
+jQuery.fn.center = function () {
+    this.css("position", "fixed");
+    this.css("top", ($(window).height() / 2) - (this.outerHeight() / 2));
+    return this;
+}
+
+function cancelAdd() {
+    $('#cart-warning-dialog,#designsConflict,#productsConflict,#designProductConflict,#productDesignConflict,#deleteBakeryConflict,.loading').fadeOut(300); $(this).parent().children('.cart_gradient').removeAttr('onclick');
+}
+
+function AddProductChecker(productID, addAnyway) {
+    $(".loading-child").hide();
+    $(".loading").fadeIn(300);
+    $("#cart-warning-dialog").center();
+    $('#cart-warning-dialog,#designsConflict,#productsConflict,#designProductConflict,#productDesignConflict').hide();
+    if (addAnyway == null | addAnyway == undefined) { addAnyway = false; }
+    $.ajax({
+        url: "/Order/AddProductChecker?ProductID=" + productID + "&addAnyway=" + addAnyway,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (result == "ok") { addDeleteLoading(true); location.reload(); }
+            else if (result == "productsConflict") {
+                $("#cart-warning-dialog,#productsConflict").fadeIn(300); $("#productsConflict").children().children(".cart_gradient").attr("onclick","AddProductChecker('" + productID + "',true)");
+            }
+            else if (result == "productDesignConflict") {
+          //      $("#cart-warning-dialog").css("margin-top", parseInt($(window).scrollTop() + parseInt($(window).height()) / 2 - 85) + "px");
+                $("#cart-warning-dialog,#productDesignConflict").fadeIn(300); $("#productDesignConflict").children().children(".cart_gradient").attr("onclick", "AddProductChecker('" + productID + "',true)");
+            }
+        }
+    });
+}
+
+function AddDesignChecker(madeID, addAnyway) {
+    $(".loading-child").hide();
+    $(".loading").fadeIn(300);
+    $("#cart-warning-dialog").center();
+    $('#cart-warning-dialog,#designsConflict,#productsConflict,#designProductConflict,#productDesignConflict,#deleteBakeryConflict').hide();
+    if (addAnyway == null | addAnyway == undefined) { addAnyway = false; }
+    $.ajax({
+        url: "/Order/AddDesignChecker?MadeID=" + madeID + "&addAnyway=" + addAnyway,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (result == "ok") { addDeleteLoading(true); location.reload(); }
+            else if (result == "designsConflict") {
+                $("#cart-warning-dialog,#designsConflict").fadeIn(300); $("#designsConflict").children().children(".cart_gradient").attr("onclick", "AddDesignChecker('" + madeID + "',true)");
+            }
+            else if (result == "designProductConflict") {
+                $("#cart-warning-dialog,#designProductConflict").fadeIn(300); $("#designProductConflict").children().children(".cart_gradient").attr("onclick", "AddDesignChecker('" + madeID + "',true)");
+            }
+        }
+    });
+}
+
+function DeleteChecker(idx, deleteAnyway) {
+    $(".loading-child").hide();
+    $(".loading").fadeIn(300);
+    $("#cart-warning-dialog").center();
+    $('#cart-warning-dialog,#designsConflict,#productsConflict,#designProductConflict,#productDesignConflict,#deleteBakeryConflict').hide();
+    if (deleteAnyway == null | deleteAnyway == undefined) { deleteAnyway = false; }
+    $.ajax({
+        url: "/Order/DeleteProductCheck?idx=" + idx + "&deleteAnyway=" + deleteAnyway,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (result == "ok") { addDeleteLoading(false); location.reload(); }
+            else if (result == "deleteBakeryConflict") {
+                $("#cart-warning-dialog,#deleteBakeryConflict").fadeIn(300); $("#deleteBakeryConflict").children().children(".cart_gradient").attr("onclick", "DeleteChecker('" + idx + "',true)");
+            }
+        }
+    });
+}
+
+function addDeleteLoading(isAdd) {
+    var label = "";
+    if (isAdd) { label = "Ürün Sepete Eklendi."; } else { label = "Ürün Sepetten Silindi."; }
+    $("#loading-label").text(label);
+    $("#loading-img").attr("src","Images/Site/tick_icon.png");
+    $(".loading,.loading-child").fadeIn(300);
+    setTimeout(function () { $(".loading").fadeOut(300); }, 600);
+    setTimeout(function () { $("#loading-label").text(""); $("#loading-img").attr("src", "Images/Site/loadmore.gif"); }, 950);
+}
+
+function isMobile() {
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        return true;
+    }
+    else { return false; }
+}
+
+function updateProductMainImage(elem) {
+    if ($("#product-main-image").attr("src") != $(elem).attr("src")) {
+        $("#product-main-image").fadeOut(300, function () {
+            $("#product-main-image").attr('src', $(elem).attr("src"));
+            $("#product-main-image").fadeIn(300);
+        });
+    }
+}
+
+function adminObjClose(elem) {
+    $("#admin-object-name").text("");
+    $("#admin-object-category").val("object");
+    $("#admin-object-approve").attr("checked", false);
+    $("#admin-object-keywords,#admin-object-price").val("");
+    $("#admin-object-form").attr("action", "/Object/AdminAddObj");
+    $("#admin-object-edit-submit").hide(); $("#admin-object-submit").show();
+    $("#admin-object-close").fadeOut(200);
+    $("#admin-object-properties").val("");
+
+    $("#object-image-display").attr("src", "");
+    $("#object-texture-display").attr("src", "");
+
+    resetFormElement($("#objectFile")); resetFormElement($("#objectImage")); resetFormElement($("#objectTexture"));
+}
+
+function adminObjEdit(elem) {
+    $("#admin-object-name").text($(elem).attr("data-objname"));
+
+    $("#admin-object-category").val($(elem).attr("data-objtype"));
+    $("#admin-object-price").val($(elem).attr("data-objprice") + " TL");
+    $("#admin-object-keywords").val($(elem).attr("data-objkeywords"));
+    if ($(elem).attr("data-objapproved") == "yes") { $("#admin-object-approve").attr("checked", true); } else { $("#admin-object-approve").attr("checked", false); }
+
+    $("#admin-object-properties").val($(elem).attr("data-objprop"));
+
+    $("#admin-object-color").val($(elem).attr("data-objcolor")).css("background", "#" + $(elem).attr("data-objcolor"));
+    $("#admin-object-form").attr("action", "/Object/AdminEditObj?ObjectID=" + $(elem).attr("data-objid"));
+    $("#admin-object-submit").hide(); $("#admin-object-edit-submit").show();
+    $("#admin-object-close").fadeIn(200);
+    var parent = $(elem).parent().parent();
+
+    $("#object-image-display").attr("src", parent.children("td").children(".img-popup").attr("src"));
+    $("#object-texture-display").attr("src", parent.children("td").children(".texture-popup").attr("src"));
+
+    resetFormElement($("#objectFile")); resetFormElement($("#objectImage")); resetFormElement($("#objectTexture"));
+}
+
+function adminObjDelete(elem) {
+    var name = $(elem).attr("data-objname");
+    if (confirm(name + " isimli obje silinecektir. Onaylıyor musunuz?")) {
+        window.location = "/Object/AdminDeleteObj?ObjectID=" + $(elem).attr("data-objid");
+    }
+    else {
+        event.preventDefault();
+    }
+}
+
+function bakeryObjClose(elem) {
+    $("#bakery-object-name").text("");
+    $("#bakery-object-category").val("object");
+    $("#bakery-object-keywords,#bakery-object-price").val("");
+    $("#bakery-object-form").attr("action", "/Bakery/AddBakeryObject");
+    $("#bakery-object-edit-submit").hide(); $("#bakery-object-submit").show();
+    $("#bakery-object-close").fadeOut(200);
+
+    $("#object-image-display").attr("src", "");
+    $("#object-texture-display").attr("src", "");
+
+    resetFormElement($("#objectFile")); resetFormElement($("#objectImage")); resetFormElement($("#objectTexture"));
+}
+
+function bakeryObjEdit(elem) {
+    $("#bakery-object-name").text($(elem).attr("data-objname"));
+
+    $("#bakery-object-category").val($(elem).attr("data-objtype"));
+    $("#bakery-object-price").val($(elem).attr("data-objprice") + " TL");
+    $("#bakery-object-keywords").val($(elem).attr("data-objkeywords"));
+
+    $("#bakery-object-color").val($(elem).attr("data-objcolor")).css("background", "#" + $(elem).attr("data-objcolor"));
+    $("#bakery-object-form").attr("action", "/Bakery/EditBakeryObject?ObjectID=" + $(elem).attr("data-objid"));
+    $("#bakery-object-submit").hide(); $("#bakery-object-edit-submit").show();
+    $("#bakery-object-close").fadeIn(200);
+    var parent = $(elem).parent().parent();
+
+    $("#object-image-display").attr("src", parent.children("td").children(".img-popup").attr("src"));
+    $("#object-texture-display").attr("src", parent.children("td").children(".texture-popup").attr("src"));
+
+    resetFormElement($("#objectFile")); resetFormElement($("#objectImage")); resetFormElement($("#objectTexture"));
+}
+
+function bakeryObjDelete(elem) {
+    var name = $(elem).attr("data-objname");
+    if (confirm(name + " isimli obje silinecektir. Onaylıyor musunuz?")) {
+        window.location = "/Bakery/DeleteBakeryObject?ObjectID=" + $(elem).attr("data-objid");
+    }
+    else {
+        event.preventDefault();
+    }
+}
+
+
+function resetFormElement(e) {
+    e.wrap('<form>').parent('form').trigger('reset');
+    e.unwrap();
+}
+
+function objUploadChange() {
+    if ($("#objectFile").val().length == 0) {
+        $("#objectFile").css("border-color", "red");
+        $("#admin-object-validation-label").text("Lütfen dosya seçiniz").slideDown(200);
+    }
+    else {
+        $("#objectFile").css("border-color", "#cccccc");
+        $("#admin-object-validation-label").text("").slideUp(200);
+    }
+
+    if ($("#objectFile")[0].files.length > 1) {
+        $("#admin-obj-img-div,#admin-obj-texture-div").slideUp(200);
+    }
+    else {
+        $("#admin-obj-img-div,#admin-obj-texture-div").slideDown(200);
+    }
+}
+
+function validateObjUpload() {
+    if ($("#objectFile").val().length == 0) {
+        event.preventDefault();
+        $("#objectFile").css("border-color", "red");
+        $("#admin_object_validation_label").text("Lütfen dosya seçiniz").slideDown(200);
+    }
+}
+
+function validateDeleteProduct() {
+    var name = $("#bakery_product_delete").attr("data-productName");
+    if (confirm(name + " isimli ürün silinecektir. Onaylıyor musunuz?")) { }
+    else { event.preventDefault(); }
+}
+
+function toggleFullScreen(elem) {
+    // ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
+    if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
+        if (elem.requestFullScreen) {
+            elem.requestFullScreen();
+        } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+        } else if (elem.webkitRequestFullScreen) {
+            elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+        } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+    } else {
+        if (document.cancelFullScreen) {
+            document.cancelFullScreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
+
+function openInfoDivs(element) {
+    var div = $(element).parent().attr("id");
+    var type = $(element).parent().attr("change");
+    if ($("#" + div + " input").length > 0 & div.indexOf("password") < 0) { $("#" + div + " input").val($("#" + div + " label").text()); }
+    else if (div.indexOf("neighborhood") == 0) {
+        $("#province-change-div label,#district-change-div label").hide();
+        $("#province-change-div .profile-info-edit-div,#district-change-div .profile-info-edit-div").fadeIn();
+    }
+
+    $("#" + div + " img," + "#" + div + " label").hide(); $("#" + div + " .profile-info-edit-div").fadeIn(200);
+}
+
+function closeInfoDivs(element) {
+    if ($(element).attr("id") == "location-cancel") {
+        $("#neighborhood-change-div .profile-info-edit-div,#district-change-div .profile-info-edit-div,#province-change-div .profile-info-edit-div").hide();
+        $("#neighborhood-change-div img,#neighborhood-change-div label,#district-change-div img,#district-change-div label,#province-change-div img,#province-change-div label").fadeIn(200);
+    }
+    if ($(element).attr("id") == "password-cancel") {
+        $("#password-change-div .profile-info-edit-div").hide();
+        $("#password-change-div img,#password-change-div label").fadeIn(200);
+    }
+    else {
+        var div = $(element).parent().parent().attr("id");
+        $("#" + div + " .profile-info-edit-div").hide();
+        $("#" + div + " img," + "#" + div + " label").fadeIn(200);
+    }
+}
+
+function saveChanges(event, element) {
+    var div = $(element).parent().parent().attr("id");
+    if (div.indexOf("password") == 0) {
+        var passValidated = true;
+        if ($("#new-pass").val().length == 0) { $("#new-pass").css("border-color", "red"); event.preventDefault(); }
+        if ($("#old-pass").val().length == 0) { $("#old-pass").css("border-color", "red"); event.preventDefault(); }
+        if ($("#new-pass-confirm").val().length == 0) { $("#new-pass-confirm").css("border-color", "red"); event.preventDefault(); }
+        if ($("#new-pass-confirm").val() != $("#new-pass").val()) { $("#new-pass-confirm,#newpass").css("border-color", "red"); event.preventDefault(); }
+        if ($("#new-pass").val().length == 0 & $("#old-pass").val().length == 0 & $("#new-pass-confirm").val().length == 0 & $("#new-pass-confirm").val() != $("#new-pass").val()) { passValidated = false; } else { passValidated = true; }
+
+        if (passValidated == true) {
+            $.ajax({
+                url: "/Account/ChangePassword?oldPass=" + $("#old-pass").val() + "&newPass=" + $("#new-pass").val(),
+                type: 'GET',
+                cache: false,
+                success: function (result) {
+                    location.reload();
+                }
+            });
+        }
+    }
+    else {
+        var validated = false;
+
+        if ($("#" + div + " select") == undefined) {
+            if ($("#" + div + " input").val().length == 0) { $("#" + div + " input").css("border-color", "red"); event.preventDefault(); validated = false; }
+            else { validated = true; }
+        }
+
+        if ($("#" + div + " select") != undefined) {
+            if ($("#" + div + " select").val().length == 0) { $("#" + div + " select").css("border-color", "red"); event.preventDefault(); validated = false; }
+            else { validated = true; }
+        }
+
+        if (validated == false) { }
+        else {
+            if (div.indexOf("neighborhood") == 0) {
+                $.ajax({
+                    url: "/Account/SaveLocationChanges?province=" + $("#profile-info-province").val() + "&district=" + $("#profile-info-district").val() + "&neighborhood=" + $("#profile-info-neighborhood").val(),
+                    type: 'GET',
+                    cache: false,
+                    success: function (result) {
+                        location.reload();
+                    }
+                });
+            }
+            else if (div.indexOf("email") == 0) {
+                var password = prompt("Lütfen şifrenizi giriniz.", "");
+                if (password.length > 0) {
+                    $.ajax({
+                        url: "/Account/ChangeEmail?email=" + $("#" + div + " input").val() + "&password=" + password,
+                        type: 'GET',
+                        cache: false,
+                        success: function (result) {
+                            location.reload();
+                        }
+                    });
+                }
+                else { $("#" + div + " input").css("border-color", "red"); event.preventDefault(); }
+            }
+            else {
+                var div = $(element).parent().parent().attr("id");
+                var data;
+                if ($("#" + div + " input").length > 0) { data = $("#" + div + " input").val(); } else { data = $("#" + div + " select").val(); }
+
+                $.ajax({
+                    url: "/Account/SaveChanges?parent=" + div + "&data=" + data,
+                    type: 'GET',
+                    cache: false,
+                    success: function (result) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    }
+}
+
+function changeBakeryView(elem) {
+    if (elem == "list") { $(".pastaneler-grid").hide(); $(".pastaneler-list").fadeIn(300); }
+    if (elem == "grid") { $(".pastaneler-list").hide(); $(".pastaneler-grid").fadeIn(300); }
+}
+
+function toggleProfileDivs(source, elem) {
+
+    $("#design-wrapper,#blogs-wrapper,#favs-wrapper").hide();
+
+        if (elem == "profile") { $("#info-wrapper,#order-wrapper,#design-wrapper,#follow-wrapper,#address-wrapper").hide(); $("#profile-right-wrapper").fadeIn(200); }
+        else if (elem == "info") { $("#profile-right-wrapper,#order-wrapper,#design-wrapper,#follow-wrapper,#address-wrapper").hide(); $("#info-wrapper").fadeIn(200); }
+        else if (elem == "order") { $("#info-wrapper,#profile-right-wrapper,#design-wrapper,#follow-wrapper,#address-wrapper").hide(); $("#order-wrapper").fadeIn(200); }
+        else if (elem == "follow") { $("#info-wrapper,#profile-right-wrapper,#order-wrapper,#design_wrapper,#address-wrapper").hide(); $("#follow-wrapper").fadeIn(200); }
+        else if (elem == "address") { $("#info-wrapper,#profile-right-wrapper,#order-wrapper,#design_wrapper,#follow-wrapper").hide(); $("#address-wrapper").fadeIn(200); }
+
+    $(".profile-management-header label").removeClass("profile-management-header-active"); $("#" + source).addClass("profile-management-header-active");
+}
+
+function toggleBakeryDivs(source, elem, that) {
+    $(".bakery-menu-div").hide();
+    if (elem == "market") { $("#" + source).fadeIn(200); }
+    else if (elem == "order") { $("#" + source).fadeIn(200); $(window).resize(); }
+    else if (elem == "product") { $("#" + source).fadeIn(200); }
+    else if (elem == "object") { $("#" + source).fadeIn(200); }
+    else if (elem == "info") { $("#" + source).fadeIn(200); }
+    else if (elem == "message") { $("#" + source).fadeIn(200); }
+    else if (elem == "content") { $("#" + source).fadeIn(200); }
+}
+
+function toggleAdminDivs(source, elem, that) {
+    $(".admin-menu-div").hide();
+    if (elem == "objects") { $("#" + source).fadeIn(200); }
+    else if (elem == "products") { $("#" + source).fadeIn(200); }
+    else if (elem == "comments") { $("#" + source).fadeIn(200); }
+    else if (elem == "blogs") { $("#" + source).fadeIn(200); }
+    else if (elem == "multiple") { $("#" + source).fadeIn(200); }
+
+    $(".profile-management-header label").removeClass("profile-management-header-active");
+    $("#" + that).addClass("profile-management-header-active");
+}
+
+function changeDeclaration(whichOne) {
+    var declaration; var source;
+    if (whichOne == "upper") { declaration = "UpperDeclaration"; source = $("#upper-declaration-textarea").val(); } else { declaration = "LowerDeclaration"; source = $("#lower-declaration-textarea").val(); }
+    $.ajax({
+        url: "/Account/ChangeDeclaration?text=" + source + "&declaration=" + declaration,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (whichOne == "upper") { $("#upper-declaration-edit-div").hide(); $("#upper-declaration-label").text($("#upper-declaration-textarea").val()); $("#upper-declaration-edit-img,#upper-declaration-label").fadeIn(200); }
+            else { $("#lower-declaration-edit-div").hide(); $("#lower-declaration-label").text($("#lower-declaration-textarea").val()); $("#lower-declaration-edit-img,#lower-declaration-label").fadeIn(200); }
+        }
+    });
+}
+
+function sortBakeries(source) {
+    var divList;
+    if ($("#pastane-div-wrapper-list").is(":visible")) { divList = $("#pastane-div-wrapper-list .pastane-link"); }
+    else { divList = $("#pastane-div-wrapper-grid .pastane-link"); }
+    
+    divList.sort(function (a, b) {
+        if (source == "populerite") { return $(b).attr("data-populerite") - $(a).attr("data-populerite"); }
+        if (source == "lezzet") { return $(b).attr("data-lezzet") - $(a).attr("data-lezzet"); }
+        if (source == "uygulama") { return $(b).attr("data-uygulama") - $(a).attr("data-uygulama"); }
+    });
+    if ($("#pastane-div-wrapper-list").is(":visible")) { $("#pastane-div-wrapper-list").html(divList); }
+    else { $("#pastane-div-wrapper-grid").html(divList); }
+}
+
+function resetProductFilters() {
+    $(".product-div-wrapper").show();
+    $("#product_category_filter option:eq(0),#product_bakery_filter option:eq(0),#product-sort option:eq(0)").prop("selected", true);
+    $(".remove-filters").fadeOut(200);
+}
+
+function filterProducts(source) {  
+    var category = $("#product_category_filter").find(':selected').attr('data-sort');
+    var bakery = $("#product_bakery_filter").find(':selected').attr('data-sort'); 
+    $(".product-div-wrapper").hide();
+    if (bakery != "All" & category == "All") { $(".product-div-wrapper[data-bakery*='" + bakery + "']").show(); }
+    if (bakery == "All" & category != "All") { $(".product-div-wrapper[data-category*='" + category + "']").show(); }
+    if (category != "All" & bakery != "All") { $(".product-div-wrapper[data-category*='" + category + "'][data-bakery*='" + bakery + "']").show(); }
+    $(".remove-filters").fadeIn(200);
+}
+
+function sortProducts(source, appendTo) {
+    var divList = $(appendTo + " .product-div-wrapper");
+    divList.sort(function (a, b) {
+        if (source == "Rating desc") { return $(b).attr("data-rating") - $(a).attr("data-rating"); }
+        else if (source == "Price desc") { return parseFloat($(b).attr("data-price")) - parseFloat($(a).attr("data-price")); }
+        else if (source == "Price asc") { return parseFloat($(a).attr("data-price")) - parseFloat($(b).attr("data-price")); }
+        else if (source == "AddDate desc") { return $(a).attr("data-date") - $(b).attr("data-date"); }
+        else if (source == "AddDate asc") { return $(b).attr("data-date") - $(a).attr("data-date"); }
+    });
+    $(appendTo).append(divList);
+}
+
+function sortDesigns(elem) {
+    var divList = $(".profile-design-div");
+    source = $(elem).val();
+    divList.sort(function (a, b) {
+        if (source == "Date desc") { return $(b).attr("data-date") - $(a).attr("data-date"); }
+        else if (source == "Date asc") { return $(a).attr("data-date") - $(b).attr("data-date"); }
+    });
+    $("#design-wrapper-sub").append(divList);
+}
+
+function appendDistricts(element, source) {
+    $.ajax({
+        url: "/Order/GetDistricts?provinceId=" + source,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            $(element).blur().empty();
+            for (i = 0; i < result.length; i++) { $(element).append(result[i]); }
+        }
+    });
+}
+
+function appendNeighborhoods(element, source) {
+    $.ajax({
+        url: "/Order/GetNeighborhoods?districtId=" + source,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            $(element).blur().empty();
+            for (i = 0; i < result.length; i++) { $(element).append(result[i]); }
+        }
+    });
+}
+
+function validateLogin() {
+
+    var emailValidated = ($("#email_login").val().length > 0); var passwordValidated = ($("#password_login").val().length > 0);
+
+    if (emailValidated & passwordValidated) { $("#login-loading").fadeIn(100); $("#login-alert-label").slideUp(100); Login(); }
+    else {
+        $("#login-alert-label").slideDown(100); $("#login-alert-label").text("Tüm alanlar doldurulmalıdır.");
+        if (emailValidated == false) { $("#email-login-div").css("border-color", "red"); }
+        if (passwordValidated == false) { $("#password-login-div").css("border-color", "red"); }
+    }
+}
+
+function Login() {
+    $.ajax({
+        url: "/Account/Login?email_login=" + $("#email_login").val() + "&password_login=" + $("#password_login").val() + "&rememberMe=" + $("#rememberMe").is(":checked") + "",
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (result == true)
+            {
+                if (view == "editor") {
+                    $("#account-floating-div,#login-hidden,#login-register-div").fadeToggle(200); $(".overall-mask").fadeOut(200); isLogin = true;
+                }
+                else {
+                    window.location.href = '/Profile';
+                }
+            }
+            else { $("#login-loading").hide(); $("#login-alert-label").slideDown(100); $("#login-alert-label").text("Giriş başarısız. Bilgilerinizi kontrol edip tekrar deneyin."); }
+        }
+    });
+}
+
+function Logout() {
+    if (confirm("Çıkış yapılacaktır. Onaylıyor musunuz?")) {
+        isLogin = false;
+        window.location = "/Account/Logout";
+    }
+}
+
+var emailCheck;
+
+function validateRegister() {
+    $("#register-loading").fadeIn(100);
+    checkEmail();
+    var nullCheck = ($("#email_register").val().length > 0) & ($("#name_register").val().length > 0) & ($("#surname_register").val().length > 0) & ($("#password_register").val().length > 0) & ($("#password_confirm_register").val().length > 0);
+    var passwordCheck = ($("#password_register").val() == $("#password_confirm_register").val());
+    var emailSyntaxCheck = ($("#email_register").val().indexOf("@") > -1 & $("#email_register").val().indexOf(".") > -1);
+
+    setTimeout(function () {
+
+        if (nullCheck & passwordCheck & emailCheck & emailSyntaxCheck) { $("#register-alert-label").slideUp(100); Register(); }
+        else {
+            $("#register-loading").hide(); $("#register-alert-label").slideDown(100);
+
+            if (nullCheck == false) {
+                $("#register-floating-div input").filter(function () { if ($(this).val().length == 0) { $(this).parent().css("border-color", "red"); } })
+                $("#register-floating-div select").filter(function () { if ($(this).val() == null) { $(this).parent().css("border-color", "red"); } })
+                $("#register-alert-label").text("Tüm alanlar doldurumalıdır.");
+            }
+
+            if (passwordCheck == false) { $("#password-confirm-register-div,#password-register-div").css("border-color", "red"); $("#register-alert-label").text("Şifreler birbirini tutmalıdır."); }
+            if ($("#email_register").val().length > 0 & emailSyntaxCheck == false) { $("#email-register-div").css("border-color", "red"); $("#register-alert-label").text("Lütfen geçerli bir e-posta giriniz."); }
+            if (emailCheck == false) { $("#email-register-div").css("border-color", "red"); $("#register-alert-label").text("Bu e-posta sistemde kayıtlıdır."); }
+        }
+    }, 1000);
+
+}
+
+function checkEmail() {
+    $.ajax({
+        url: "/Account/CheckEmail?email=" + $("#email_register").val() + "",
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            emailCheck = result;
+        }
+    });
+}
+
+function Register() {
+    $.ajax({
+        url: "/Account/Register?email_register=" + $("#email_register").val() + "&name_register=" + $("#name_register").val() + "&surname_register=" + $("#surname_register").val() + "&password_register=" + $("#password_register").val() + "",
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (result == true) {
+                if (view == "editor") {
+                    $("#account-floating-div,#login-hidden,#login-register-div").fadeToggle(200); $(".overall-mask").fadeOut(200); isLogin = true;
+                }
+                else {
+                    window.location.href = '/Profile';
+                }
+            }
+        }
+    });
+}
+
+function validateForgot() {
+    $("#forgot-alert-label").css("color", "red");
+    if ($("#forgot-email").val().length > 0) {
+        if ($("#forgot-email").val().indexOf("@") > -1 & $("#forgot-email").val().indexOf(".") > -1) { $("#forgot-loading").fadeIn(100); $("#forgot-alert-label").slideUp(100); Forgot(); }
+        else { $("#forgot-alert-label").slideDown(100); $("#forgot-email-div").css("border-color", "red"); $("#forgot-alert-label").text("Lütfen geçerli bir e-posta giriniz."); }
+    }
+    else { $("#forgot-alert-label").slideDown(100); $("#forgot-alert-label").text("E-posta adresinizi giriniz."); }
+}
+
+function Forgot() {
+    $.ajax({
+        url: "/Account/Forgot?email=" + $("#forgot-email").val(),
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+            if (result == true) { $("#forgot-loading").hide(); $("#forgot-alert-label").slideDown(100); $("#forgot-alert-label").css("color", "green"); $("#forgot-alert-label").text("Yeni şifreniz e-posta adresinize gönderilmiştir."); }
+            else { $("#forgot-loading").hide(); $("#forgot-alert-label").slideDown(100); $("#forgot-alert-label").css("color", "red"); $("#forgot-alert-label").text("Bu e-posta ile kayıtlı bir kullanıcı bulunmamaktadır."); }
+        }
+    });
+}
+
+function confirmDeleteDesign() {
+    if (!confirm("Seçtiğiniz dizayn silinecektir. Onaylıyor musunuz?")) { event.preventDefault(); }
+}
+
+function setDesignVisibility(elem) {
+    var id = $(elem).attr("data-id");
+    $.ajax({
+        url: "/Account/SetDesignVisibility?id=" + id + "&isVisible=" + $(elem).is(":checked"),
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+        }
+    });
+}
+
+function openProfile(elem) {
+    $("#info-wrapper,#profile-right-wrapper,#order-wrapper,#follow-wrapper,#blogs-wrapper,#favs-wrapper,#design-wrapper").hide(); $("#profile-right-wrapper").fadeIn(200);
+    $(".profileSelect").css("background", "#f2f2f4"); $(elem).parent().css("background", "#dddddd");
+}
+
+function openDesigns(elem) {
+    $("#info-wrapper,#profile-right-wrapper,#order-wrapper,#follow-wrapper,#blogs-wrapper,#favs-wrapper,#profile-right-wrapper,#address-wrapper").hide(); $("#design-wrapper").fadeIn(200);
+    $(".profileSelect").css("background", "#f2f2f4"); $(elem).parent().css("background","#dddddd");
+}
+
+function openFavs(elem) {
+    $("#info-wrapper,#profile-right-wrapper,#order-wrapper,#follow-wrapper,#design-wrapper,#blogs-wrapper,#profile-right-wrapper,#address-wrapper").hide(); $("#favs-wrapper").fadeIn(200);
+    $(".profileSelect").css("background", "#f2f2f4"); $(elem).parent().css("background", "#dddddd");
+}
+
+function openBlogs(elem) {
+    $("#info-wrapper,#profile-right-wrapper,#order-wrapper,#follow-wrapper,#design-wrapper,#favs-wrapper,#profile-right-wrapper,#address-wrapper").hide(); $("#blogs-wrapper").fadeIn(200);
+    $(".profileSelect").css("background", "#f2f2f4"); $(elem).parent().css("background", "#dddddd");
+}
+
+function deleteAddress() {
+    if (!confirm("Seçtiğiniz adres silinecektir. Onaylıyor musunuz?")) { event.preventDefault(); }
+}
+
+function editAddress(elem) {
+    $("#edit-address-div").fadeToggle(300);
+    $("#editOpenAddress").text($(elem).attr("data-openAddress"));
+    $("#editAddressDescription").text($(elem).attr("data-description"));
+    $("#AddressId").val($(elem).attr("data-addressId"));
+}
+
+function confirmAction(label) {
+    if (confirm(label) == false) { event.preventDefault(); }
+}
+
+function validateAddPrice(elem) {    
+    var addPriceValidated = true;
+    if ($(elem).find("input[name=size]").val() == 0) { $(elem).find("input[name=size]").css("border-color", "red"); addPriceValidated = false; }
+    if ($(elem).find("input[name=price]").val().length == 0) { $(elem).find("input[name=price]").css("border-color", "red"); addPriceValidated = false; }
+    if (addPriceValidated == false) { event.preventDefault(); }
+}
+
+function clearBakeryPrice(type) {
+    if (type == "cake") {
+        $('#cakePriceDialog').fadeOut(300);
+        $('#addCakePriceForm').find('input[name=what]').val('add');
+        $("#addCakePriceForm").find("input[name=size]").val(0);
+        $("#addCakePriceForm").find("input[name=price]").val("");
+    }
+    else if (type == "cupcake") {
+        $('#cupcakePriceDialog').fadeOut(300);
+        $('#addCupcakePriceForm').find('input[name=what]').val('add');
+        $("#addCupcakePriceForm").find("input[name=size]").val(0);
+        $("#addCupcakePriceForm").find("input[name=price]").val("");
+    }
+    else if (type == "cookie") {
+        $('#cookiePriceDialog').fadeOut(300);
+        $('#addCookiePriceForm').find('input[name=what]').val('add');
+        $("#addCookiePriceForm").find("input[name=size]").val(0);
+        $("#addCookiePriceForm").find("input[name=price]").val("");
+    }
+}
+
+function editBakeryPrice(number, price, type, ID) {
+    $("#cakePriceDialog,#cupcakePriceDialog,#cookiePriceDialog").hide();
+
+    if (type == "cake") {
+        $("#cakePriceDialog").fadeIn(300);
+        $("#addCakePriceForm").find("input[name=size]").val(number);
+        $("#addCakePriceForm").find("input[name=price]").val(price);
+        $("#addCakePriceForm").find("input[name=what]").val("edit");
+        $("#addCakePriceForm").find("input[name=ID]").val(ID);
+    }
+    else if (type == "cupcake") {
+        $("#cupcakePriceDialog").fadeIn(300);
+        $("#addCupcakePriceForm").find("input[name=size]").val(number);
+        $("#addCupcakePriceForm").find("input[name=price]").val(price);
+        $("#addCupcakePriceForm").find("input[name=what]").val("edit");
+        $("#addCupcakePriceForm").find("input[name=ID]").val(ID);
+    }
+    else if (type == "cookie") {
+        $("#cookiePriceDialog").fadeIn(300);
+        $("#addCookiePriceForm").find("input[name=size]").val(number);
+        $("#addCookiePriceForm").find("input[name=price]").val(price);
+        $("#addCookiePriceForm").find("input[name=what]").val("edit");
+        $("#addCookiePriceForm").find("input[name=ID]").val(ID);
+    }
+}
+
+function validateAddContent(elem) {
+    var addContentValidated = true;
+    if ($(elem).find("input[name=content]").val().length == 0) { $(elem).find("input[name=content]").css("border-color", "red"); addContentValidated = false; }
+    if (addContentValidated == false) { event.preventDefault(); }
+}
+
+function clearBakeryContent(type) {
+    if (type == "cake") {
+        $('#cakeContentDialog').fadeOut(300);
+        $('#addCakeContentForm').find('input[name=what]').val('add');
+        $("#addCakeContentForm").find("input[name=content]").val("");
+    }
+    else if (type == "cupcake") {
+        $('#cupcakeContentDialog').fadeOut(300);
+        $('#addCupcakeContentForm').find('input[name=what]').val('add');
+        $("#addCupcakeContentForm").find("input[name=content]").val("");
+    }
+    else if (type == "cookie") {
+        $('#cookieContentDialog').fadeOut(300);
+        $('#addCookieContentForm').find('input[name=what]').val('add');
+        $("#addCookieContentForm").find("input[name=content]").val("");
+    }
+}
+
+function editBakeryContent(content, type, ID) {
+    $("#cakeContentDialog,#cupcakeContentDialog,#cookieContentDialog").hide();
+
+    if (type == "cake") {
+        $("#cakeContentDialog").fadeIn(300);
+        $("#addCakeContentForm").find("input[name=content]").val(content);
+        $("#addCakeContentForm").find("input[name=what]").val("edit");
+        $("#addCakeContentForm").find("input[name=ID]").val(ID);
+    }
+    else if (type == "cupcake") {
+        $("#cupcakeContentDialog").fadeIn(300);
+        $("#addCupcakeContentForm").find("input[name=content]").val(content);
+        $("#addCupcakeContentForm").find("input[name=what]").val("edit");
+        $("#addCupcakeContentForm").find("input[name=ID]").val(ID);
+    }
+    else if (type == "cookie") {
+        $("#cookieContentDialog").fadeIn(300);
+        $("#addCookieContentForm").find("input[name=content]").val(content);
+        $("#addCookieContentForm").find("input[name=what]").val("edit");
+        $("#addCookieContentForm").find("input[name=ID]").val(ID);
+    }
+}
+
+function validateAnonAddress() {
+    event.preventDefault();
+    var anonAddressValidated = true;
+
+    if ($("#anonDistrictAddress").val() == null) { $("#anonDistrictAddress").css("border-color", "red"); anonAddressValidated = false; }
+    if ($("#anonNeighborhoodAddress").val() == null) { $("#anonNeighborhoodAddress").css("border-color", "red"); anonAddressValidated = false; }
+    if ($("#anonOpenAddress").val().length == 0) { $("#anonOpenAddress").css("border-color", "red"); anonAddressValidated = false; }
+    if ($("#anonAddressDescription").val().length == 0) { $("#anonAddressDescription").css("border-color", "red"); anonAddressValidated = false; }
+
+    if (anonAddressValidated == true) {
+        $("#anonAddressForm").submit();
+    }
+}
+
+function validateKeyup(elem){
+    if ($(elem).val().length == 0) { $(elem).css("border-color", "red"); } else { $(elem).css("border-color","#cccccc"); }
+}
+
+function paymentFocus(what,name) {
+    var elem = "";
+    if (name != undefined) { elem = $("#" + name).val(); }
+        
+    if ($(what).val().length > 0) { $(what).css("border-color", "#d6d6d6"); }
+
+    if (name == 'cardNum1' & elem.length == 4) { $('#cardNum2').focus(); }
+    else if (name == "cardNum2" & elem.length == 4) { $("#cardNum3").focus(); }
+    else if (name == "cardNum3" & elem.length == 4) { $("#cardNum4").focus(); }
+    else if (name == "contactName") { $("#alici_isim_soyisim").text($("#contactName").val() + " " + $("#contactSurname").val()); }
+    else if (name == "contactSurname") { $("#alici_isim_soyisim").text($("#contactName").val() + " " + $("#contactSurname").val()); }
+    else if (name == "cardYear") { $("#cardCvc").focus(); }
+}
+
+function changeTooltip(elem, newMessage) {
+    $(elem).attr('data-original-title', newMessage);
+}
+
+function validatePaymentPos() {
+    event.preventDefault();
+    var paymentValidated = true;
+    var elems = $("#paymentForm input[type=text]");
+    var cardnums = $("#paymentForm .cardNum");
+
+    for (i = 0; i < elems.length; i++) {
+        if ($(elems[i]).val().length == 0) { changeTooltip(elems[i], "Bu alan boş bırakılamaz."); $(elems[i]).css("border-color", "red"); paymentValidated = false; }
+        else { changeTooltip(elems[i], ""); $(elems[i]).css("border-color", "#d6d6d6"); }
+    }
+
+    for (i = 0; i < cardnums.length; i++) {
+        if ($(cardnums[i]).val().length < 4) { changeTooltip(cardnums[i], "Min. 4 sayı girilmelidir."); $(cardnums[i]).css("border-color", "red"); paymentValidated = false; }
+        else { changeTooltip(cardnums[i], ""); $(cardnums[i]).css("border-color", "#d6d6d6"); }
+    }
+
+    if ($("#cardCvc").val().length < 3) { changeTooltip("#cardCvc", "Güvenlik kodu 3 haneli olmalıdır."); $("#cardCvc").css("border-color", "red"); paymentValidated = false; }
+    else { changeTooltip("#cardCvc", ""); $("#cardCvc").css("border-color", "#d6d6d6"); }
+
+    if (!$("#sozlesmeCheck").is(":checked")) { changeTooltip("#sozlesmeCheck", "Devam etmek için sözleşmeyi kabul etmeniz gerekmektedir."); $("#sozlesmeCheck").css("box-shadow", "0px 0px 6px 0px red"); paymentValidated = false; }
+    else { changeTooltip("#sozlesmeCheck", ""); $("#sozlesmeCheck").css("box-shadow", "none"); }
+
+    if ($("#contactTel").val() == "(___) ___-__-__" | $("#contactTel").val().length == 0) { $("#contactTel").css("border-color", "red"); paymentValidated = false; }
+    else { $("#contactTel").css("border-color", "#d6d6d6"); }
+
+    if (!paymentValidated) { event.preventDefault(); }
+    else { $("#paymentForm").submit(); }
+}
+
+function validatePaymentDirect() {
+    event.preventDefault();
+    var paymentValidated = true;
+    var elems = $("#contactDiv input[type=text]");
+
+    for (i = 0; i < elems.length; i++) {
+        if ($(elems[i]).val().length == 0) { changeTooltip(elems[i], "Bu alan boş bırakılamaz."); $(elems[i]).css("border-color", "red"); paymentValidated = false; }
+        else { changeTooltip(elems[i], ""); $(elems[i]).css("border-color", "#d6d6d6"); }
+    }
+
+    if (!$("#sozlesmeCheck").is(":checked")) { changeTooltip("#sozlesmeCheck", "Devam etmek için sözleşmeyi kabul etmeniz gerekmektedir."); $("#sozlesmeCheck").css("box-shadow", "0px 0px 6px 0px red"); paymentValidated = false; }
+    else { changeTooltip("#sozlesmeCheck", ""); $("#sozlesmeCheck").css("box-shadow", "none"); }
+
+    if ($("#contactTel").val() == "(___) ___-__-__" | $("#contactTel").val().length == 0) { $("#contactTel").css("border-color", "red"); paymentValidated = false; }
+    else { $("#contactTel").css("border-color", "#d6d6d6"); }
+
+    if (!paymentValidated) { event.preventDefault(); }
+    else { $("#paymentForm").submit(); }
+}
+
+function validateSozlesme() {
+    if (!$("#sozlesmeCheck").is(":checked")) { } else { $("#sozlesmeCheck").css("box-shadow", "none"); }
+}
+
+function togglePos(what, type) {
+    if (what == 'close') { $("#posMain").slideUp(300); }
+    else if (what == 'open') { $("#posMain").slideDown(300); }
+    SelectPayment(type);
+    if (type == '1') { $("#checkOutBtn").attr("onclick", "validatePaymentPos()"); } else { $("#checkOutBtn").attr("onclick", "validatePaymentDirect()"); }
+}
+
+function SelectPayment(type) {
+    $.ajax({
+        url: "/Order/SelectPayment?type=" + type,
+        type: 'GET',
+        cache: false,
+        success: function (result) {
+        }
+    });
+}
+
+function toggleSelectedBakery(elem) {
+
+    $(".bakeryInfoDiv").hide();
+    $(elem).parent().find(".bakeryInfoDiv").fadeToggle(500);
+
+}
+
+function validateFeedbackForm() {
+    var feedbackFormValidated = true;
+    var elements = ["#feedbackFormName", "#feedbackFormEmail", "#feedbackFormContent"];
+
+    for (i = 0; i < elements.length; i++) {
+        if ($(elements[i]).val().length == 0) { $(elements[i]).css("border-color", "red"); feedbackFormValidated = false; } else { $(elements[i]).css("border-color", "#cccccc"); }
+    }
+
+    if (feedbackFormValidated == false) { event.preventDefault(); }
+    else {
+        $("#feedbackFormSubmit").fadeOut(300);
+        setTimeout(function () { $("#feedbackFormLoading").fadeIn(300); },310);
+    }
+}
+

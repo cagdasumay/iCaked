@@ -1,0 +1,130 @@
+﻿<style>
+
+    .owl-theme .owl-controls .owl-buttons div {
+    color: #fff;
+    display: inline-block;
+    zoom: 1;
+    margin: 0px !important;
+    padding: 0px !important;
+    font-size: 12px;
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    background: none !important;
+    filter: Alpha(Opacity=50);
+    opacity: .8;
+    position:absolute !important;
+    bottom:6px;
+}
+
+    .owl-prev {
+        left:20%;
+    }
+
+    .owl-next {
+        right:20%;
+    }
+</style>
+
+<div id="tutorialstart" style="width:100%; float:left;">
+
+    <div id="tutorial-slider" class="owl-controls clickable">
+
+        <div>
+            <video class="tutorial_video_wrapper" controls loop>
+                <source class="tutorial_video_main" src="~/Tutorial/1.webm" type="video/webm" />
+            </video>
+            <label class="tutorial-steps">1.Adım</label>
+            <label class="tutorial-description">İlk olarak şehir seçimi yapmalısınız ve pastanın kaç kişilik olacağına karar vermelisiniz.</label>
+        </div>
+
+        <div>
+            <video class="tutorial_video_wrapper" controls loop>
+                <source class="tutorial_video_main" src="/Tutorial/2.webm" type="video/webm" />
+            </video>
+            <label class="tutorial-steps">2.Adım</label>
+            <label class="tutorial-description">Farenin sağ tuşuna basılı tutarak editörde görüş açınızı değiştirebilirsiniz.</label>
+        </div>
+
+        <div>
+            <video class="tutorial_video_wrapper" controls loop>
+                <source class="tutorial_video_main" src="/Tutorial/3.webm" type="video/webm" />
+            </video>
+            <label class="tutorial-steps">3.Adım</label>
+            <label class="tutorial-description">2. aşamada pastanın üstüne seçeceğiniz  2D ya da 3D objelerinizi yerleştirebilirsiniz.</label>
+        </div>
+
+        <div>
+            <video class="tutorial_video_wrapper" controls loop>
+                <source class="tutorial_video_main" src="/Tutorial/4.webm" type="video/webm" />
+            </video>
+            <label class="tutorial-steps">4.Adım</label>
+            <label class="tutorial-description">Objenin üzerine tıkladıktan sonra solda açılan panelden obejnin boyutunu, açısını veya rengini değiştirebilirsiniz.</label>
+        </div>
+        <div>
+            <video class="tutorial_video_wrapper" controls loop>
+                <source class="tutorial_video_main" src="/Tutorial/5.webm" type="video/webm" />
+            </video>
+            <label class="tutorial-steps">5.Adım</label>
+            <label class="tutorial-description">Pastanın üzerine bir not yazabilirsiniz ya da kendi resminizi tasarımınıza ekleyebilirsiniz.</label>
+        </div>
+        <div>
+            <video class="tutorial_video_wrapper" controls loop>
+                <source class="tutorial_video_main" src="/Tutorial/6.webm" type="video/webm" />
+            </video>
+            <label class="tutorial-steps">6.Adım</label>
+            <label class="tutorial-description">
+                Tasarımınıza isim verdikten sonra isterseniz pastaneye iletmek için notunuzu bırakabilirsiniz ve ardından pasta içeriğinizi seçtikten sonra ve siparişinizi tamamlayabilirsiniz.
+            </label>
+        </div>
+    </div>
+
+    @*<div style="width:100%; float:left;">
+        <button onclick="$('#editor-tutorial-wrapper').parent().fadeOut(300); $('.overall-mask').fadeOut(300);" style="float:right; font-size:14px; border:1px solid #e6e6e6; background:white; padding:5px 10px; border-radius:2px; box-shadow: 0px 2px 4px -2px grey;">Kapat</button>
+        <input onchange="dontShowTutorial(this)" type="checkbox" style="width:18px; height:18px; float:left; margin-top:15px;" />
+        <label style="font-size:14px; float:right; margin-left:10px; float:left; margin-top:15px;">Bir Daha Gösterme</label>
+    </div>*@
+</div>
+
+@*@{
+    string[] tutorialLabels = new string[] { "Yön Tuşları","Sol Menü","Pasta Tabanı Ekleme","3D / 2D Figürler","Figür Kontrolü","Yazı Ekleme","Kenar Süsü","Orta Süsler","Kopyalama / Silme","Taban Değişimi","Paylaş / Kaydet" };
+    string[] tutorialVideos = new string[] { "yon_tuslari", "sol_menu", "taban_ekle", "obje_ekle", "renk_aci", "yazi_ekle", "kenar_susu", "orta_susu", "obje_kopyala_sil", "pasta_altligi", "kaydet_paylas" };
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $(window).resize(function () {
+              $("#editor-tutorial-wrapper").css("height", (parseInt($("#tutorial_inner").css("height").replace("px","")) + 35).toString() + "px");
+        });
+    });
+</script>
+
+<div id="tutorial_inner" style="width:100%; float:left;">
+
+    <label style="width:100%; float:left; text-align:center; border-bottom:1px dashed #d6d6d6; padding-bottom:10px; font-size:14px; color:#3f2518;">Yardım almak istediğiniz konu ile ilgili video'yu izlemek için sol menüdeki butonlara tıklayabilirsiniz.</label>
+
+    <div style="border-right:1px dashed #d6d6d6; padding:10px; float:left;" class="col-md-2 col-sm-3 col-xs-3 tutorial-buttons">
+        @{
+            for (int i = 0; i < tutorialLabels.Length; i++)
+            {
+                string tutclass = ""; if (i == 0) { tutclass = "tutorial-active"; }
+                <div style="width:100%; float:left;">
+                    <label onclick="changeTutorialVideo('@(i+1)',this)" class="yukle_gradient tutorial_buttons @tutclass" style="">@tutorialLabels[i]</label>
+                </div>
+            }
+        }
+    </div>
+
+    <div style="float:left; padding:10px;" class="col-md-10 col-sm-9 col-xs-9">
+        @{
+                for (int i = 0; i < tutorialVideos.Length; i++)
+                {
+                    string videoUrl = "/Tutorial/" + tutorialVideos[i] + ".webm";
+                <video class="tutorial_video_wrapper" controls style="width:100%; float:left;" loop>
+                    <source class="tutorial_video_main" src="@videoUrl" type="video/webm" />
+                </video>
+            }
+        }
+    </div>
+</div>*@

@@ -1,0 +1,155 @@
+﻿@using EventApp.Models
+@model EventApp.Models.Otels
+@using System.Globalization;
+
+<style>
+    header {
+        display: none;
+    }
+</style>
+
+@{
+    ViewBag.Title = "Oteller";
+    Layout = null;
+    Otels Details = (Otels)ViewData["OtelDetails"];
+}
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#id").change(function () {
+            var type = $("#id").val();
+            $("#back-btn").attr("href", "/Otel/Delete?id=" + type);
+        });
+
+        $("#id").change(function () {
+            var type = $("#id").val();
+            $("#back-btn").attr("href", "/Otel/Delete?id=" + type);
+        });
+
+    });
+
+</script>
+
+<div class="portfolio-content">
+    <div class="cbp-l-project-title">@Details.Name</div>
+    <div class="cbp-slider">
+        <ul class="cbp-slider-wrap">
+            @{
+                for (int i = 0; i < Details.PhotoNumber; i++)
+                {
+                    int Order = i + 1;
+                    string photo = "../Images/Otels/" + Details.Id + Order + ".jpg";
+                    <li class="cbp-slider-item">
+                        <a href="@photo" class="cbp-lightbox">
+                            <img src="@photo" alt="">
+                        </a>
+                    </li>
+                }
+            }           
+            <li class="cbp-slider-item">
+                <div class="portlet light portlet-fit bordered">
+                    <style>
+                        #map {
+                            height: 650px;
+                            width: 100%;
+                        }
+                    </style>
+                    <div id="map"></div>
+                    <script>
+                        function initMap() {
+                            var uluru = { lat: @Details.Lattitude, lng: @Details.Longitude };
+                            var map = new google.maps.Map(document.getElementById('map'), {
+                                zoom: 15,
+                                center: uluru
+                            });
+                            var marker = new google.maps.Marker({
+                                position: uluru,
+                                map: map
+                            });
+                        }
+                    </script>
+                    <script async defer
+                            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_lu0ObgeyFWDC5CvNb7fzHQwKk6pwkzM&callback=initMap">
+                    </script>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="cbp-l-project-container">
+        <div class="cbp-l-project-desc">
+            <div class="cbp-l-project-desc-title">
+                <span>Otel Açıklaması</span>
+            </div>
+            <div class="cbp-l-project-desc-text">
+                @Details.OtelContent
+            </div>
+        </div>
+        <div class="cbp-l-project-details">
+            <div class="cbp-l-project-details-title">
+                <span>Konaklama Bilgileri</span>
+            </div>
+            <ul class="cbp-l-project-details-list">
+                <li>
+                    <strong>Web Sitesi</strong>
+                    <a href="@Details.Website" style="padding-left: 35px;" target="_blank">
+                        @Details.Name
+                    </a>
+                </li>
+                @{
+                    if (Details.Currency != null || Details.OnePersonPrice != 0)
+                    {
+                        <li>
+                            <strong style="padding-right: 35px;">1 Kişi Konaklama</strong>
+                            <label style="margin-bottom: 0;">@Details.OnePersonPrice @Details.Currency</label>
+                        </li>
+                        if (Details.TwoPersonPrice != 0)
+                        {
+                            <li>
+                                <strong style="padding-right: 35px;">2 Kişi Konaklama</strong>
+                                <label style="margin-bottom: 0;">@Details.TwoPersonPrice @Details.Currency</label>
+                            </li>
+                        }
+                        if (Details.ThreePersonPrice != 0)
+                        {
+                            <li>
+                                <strong style="padding-right: 35px;">3 Kişi Konaklama</strong>
+                                <label style="margin-bottom: 0;">@Details.ThreePersonPrice @Details.Currency</label>
+                            </li>
+                        }
+                    }
+                }
+            </ul>
+
+            @{
+                String deleteotel = "hidden-td1";
+            }
+
+            <div class="profile-userbuttons editDeleteButtons2">
+                <a href="@Url.Action("EditOtel", "Events", new { OtelID = Details.Id})" class="btn red" style="float: right;">Düzenle</a>
+                <a data-td="@deleteotel" onclick="$(this).parent().slideUp(200); $('.editDeleteConfirm2').slideDown(200); " class="btn btn-outline green button-next delete-type2" style="float: right; margin-right: 10px;">Sil</a>
+            </div>
+            
+            <div class="display-none editDeleteConfirm2 @deleteotel">
+                <div style="float: right; margin-top: 8px; margin-bottom:8px; width: 100%;">
+                    Silmek istediğinize emin misiniz?
+                </div>
+            </div>
+
+            <div class="display-none editDeleteConfirm2 profile-userbuttons @deleteotel">
+                <a href="@Url.Action("DeleteOtel", "Events", new { OtelID = Details.Id})" class="btn red" style="float: right;">Evet</a>
+                <div onclick="$(this).parent().hide(200); $('.editDeleteConfirm2').hide(200); $('.editDeleteButtons2').slideDown(200)" type="button" style="float: right; margin-right: 10px;" class="btn green">
+                    Hayır
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+</div>
+

@@ -1,0 +1,44 @@
+﻿@using System.Web.Optimization
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="keywords" content="@ViewBag.Keywords" />
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <meta name="yandex-verification" content="5216c6873e3ccb03" />
+    <meta property="fb:app_id" content="1029469140512655" />
+    <meta name="p:domain_verify" content="6347f4caa9bd32f2abda952dea634429" />
+
+    <title>@ViewBag.Title - iCaked</title>
+
+    @Styles.Render("~/Content/Prev")
+    @Scripts.Render("~/scripts/Prev")
+
+    <link rel="shortcut icon" href="~/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+
+    <div class="container-fluid body-content">
+        <header style="display:none;">
+            @Html.Partial("_Header")
+        </header>
+
+        <div class="container-fluid" id="main-wrapper">
+            @RenderBody()
+        </div>
+
+        <footer style="display:none;">
+            @Html.Partial("_Footer")
+        </footer>
+    </div>
+
+    <div class="overall-mask">
+    </div>
+
+    @Styles.Render("~/Content/Later")
+    @Scripts.Render("~/scripts/Later")
+</body>
+</html>

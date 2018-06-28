@@ -1,0 +1,109 @@
+﻿@using EventApp.Models
+
+@{
+    User UserInfo = (User)Session["LoggedIn"];
+    int countAgenda = (int)Session["AgendaCountU"];
+    Guid CheckIn = (Guid)Session["UserCheckIn"];
+    Guid EventID = (Guid)Session["EventID"];
+    string Logo = "../Images/Logo/" + EventID + "s.png";
+}
+
+
+
+<div class="page-header navbar navbar-fixed-top">
+    <!-- BEGIN HEADER INNER -->
+    <div class="page-header-inner ">
+        <!-- BEGIN LOGO -->
+        <div class="page-logo">
+            <a href="@Url.Action("Home","Home")">
+                <img src="@Logo" alt="logo" class="logo-default" />
+            </a>
+            <div class="menu-toggler sidebar-toggler">
+                <span></span>
+            </div>
+        </div>
+        <!-- END LOGO -->
+        <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+        <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
+            <span></span>
+        </a>
+
+        @{
+            String photo = "../Images/Users/" + UserInfo.Id + ".jpg";
+        }
+
+        <!-- END RESPONSIVE MENU TOGGLER -->
+        <!-- BEGIN TOP NAVIGATION MENU -->
+        <div class="top-menu">
+            <ul class="nav navbar-nav pull-right">
+
+                <li class="dropdown dropdown-user">
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+                        <img alt="" class="img-circle" src=@photo />
+                        <span class="username username-hide-on-mobile"> @UserInfo.Name @UserInfo.Surname </span>
+                        <i class="fa fa-angle-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-default">
+                        <li>
+                            <a href="@Url.Action("MyProfileU","Users",new { usrdet = UserInfo.Id })">
+                                <i class="icon-user"></i> Profilim
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("List","AgendaEventActivities",new { disp = "My Schedule" })">
+                                <i class="fa fa-calendar-check-o"></i> Ajandam
+                                <span class="badge badge-success"> @countAgenda </span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("Notifications", "Users")">
+                                <i class="fa fa-envelope"></i> Bildirimler
+                                <span class="badge badge-danger"> 7 </span>
+                            </a>
+                        </li>
+                        <li>
+                            @{
+                                if (CheckIn.ToString() != "00000000-0000-0000-0000-000000000000")
+                                {
+                                    <a href="@Url.Action("UserCheckInForm","Events",new { UserOtelID = CheckIn })">
+                                        <i class="fa fa-bed"></i> Otel Check-In
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Otels","Events")" style="cursor: default;">
+                                        <i class="fa fa-bed"></i> Otel Rezervasyon
+                                    </a>
+                                }
+                            }                          
+                        </li>
+                        <li>
+                            <a href="">
+                                <i class="fa fa-car"></i> Transfer
+                            </a>
+                        </li>
+                        <li class="divider"> </li>
+                        <li>
+                            <a href="@Url.Action("LogOut","Account")">
+                                <i class="icon-key"></i> Çıkış
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- END USER LOGIN DROPDOWN -->
+               
+                
+                <!-- BEGIN QUICK SIDEBAR TOGGLER -->
+                <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                @*<li class="dropdown dropdown-quick-sidebar-toggler">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <i class="icon-logout"></i>
+                    </a>
+                </li>*@
+                <!-- END QUICK SIDEBAR TOGGLER -->
+            </ul>
+        </div>
+        <!-- END TOP NAVIGATION MENU -->
+    </div>
+    <!-- END HEADER INNER -->
+</div>

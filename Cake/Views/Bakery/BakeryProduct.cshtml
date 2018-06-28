@@ -1,0 +1,197 @@
+﻿@using System.Data
+@using Cake.Controllers
+
+@{
+    DatabaseController dc = new DatabaseController();
+    AccountController ac = new AccountController();
+
+    DataRow bakery = (DataRow)ViewData["bakeryinfo"];
+    String whois = (String)ViewData["whatIsThePermission"];
+    DataTable bakeryProducts = (DataTable)ViewData["bakeryProducts"];
+
+    int numOfProductImages = 3;
+}
+
+<div class="row" style="padding:0px;">
+
+    <label style="float:left; font-size:30px; padding:15px 0px; padding-top:0px; width:100%; border-bottom:1px solid #e6e6e6; margin-bottom:30px !important; text-align:left; color:#3f2518; line-height:initial;">Ürünler</label>
+
+    <div class="col-md-4 col-sm-6 col-xs-12" style="padding:0px; padding-left:10px; border-right: 1px solid #cccccc; margin-bottom:20px; float:left;">
+
+        @using (Html.BeginForm("AddBakeryProduct", "Bakery", FormMethod.Post, new { enctype = "multipart/form-data", id = "bakery-product-form" }))
+        {
+            <div class="bakery-product-div">
+                <label style="margin-left:5px; color:#3f2518;">Ürün Kategorisi* : </label>
+                <select style="width:150px;" onchange="arrangeProductCategories()" id="bakery_product_category" name="bakery_product_category">
+                    <option>Pasta</option>
+                    <option>Cupcake</option>
+                    <option>Çikolata</option>
+                    <option>Kek/Kurabiye</option>
+                    <option>Tatlı</option>
+                    @*<option>Parti Malzemeleri</option>*@
+                </select>
+            </div>
+            <div class="bakery-product-div">
+                <label style="margin-left:43px; color:#3f2518;">Ürün İsmi* : </label>
+                <input onkeyup="validateKeyup(this)" id="bakery_product_name" name="bakery_product_name" autocomplete="off" type="text" placeholder="Örn. Meyveli Pasta" />
+            </div>
+            <div class="bakery-product-div" style="margin-bottom:10px;">
+                <label style="color:#3f2518;">Ürün Açıklaması* : </label>
+                <textarea onkeyup="validateKeyup(this)" id="bakery_product_description" name="bakery_product_description" autocomplete="off" style="resize:none; width:150px; margin-bottom:0px; height:100px;" maxlength="500" placeholder="Max. 500 karakter"></textarea>
+            </div>
+            <div id="cakeSizeAppend" style="margin-bottom:10px;">
+            </div>
+            <div id="gramAppend" style="margin-bottom:10px;">
+            </div>
+            <div class="bakery-product-div" id="cake_size_div">
+                <label style="margin-left:41px; color:#3f2518;">Kaç Kişilik* : </label>
+                <select id="cakeSize-1" onchange="arrangeOtherCakeSize($(this).val())" style="float:left;">
+                    <option value="0" selected disabled></option>
+                    @{
+                        for(int i = 1; i < 63; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+                <label style="float:left; text-align:center; margin:0px 5px;"> - </label>
+                <select id="cakeSize-2" style="float:left;" class="disabled-link">
+                    <option value="0" selected disabled></option>
+                    @{
+                        for (int i = 1; i < 63; i++)
+                        {
+                            <option value="@i">@i</option>
+                        }
+                    }
+                </select>
+                <img id="add-cake-size" onclick="appendCakeSize()" src="~/Images/Site/plus.png" style="width:20px; border:1px solid #cccccc; padding:2px; float:left; margin-left:15px; margin-top:5px; border-radius:20px; cursor:pointer;" />
+            </div>
+            <div id="numberGramSelector" class="bakery-product-div" style="margin-bottom:5px; width:150px; margin-left:135px; display:none;">
+                <div style="float:left;">
+                    <input type="radio" onchange="toggleGramNumber('gram')" name="numberGram" style="margin-right:5px; margin-top:8px; width:15px; height:15px; outline:none;" />
+                    <label style="float:left; color:#3f2518;">Boyut</label>
+                </div>
+                <div style="float:left;">
+                    <input type="radio" onclick="toggleGramNumber('number')" name="numberGram" style="margin-right:5px; margin-top:8px; width:15px; height:15px; outline:none;" />
+                    <label style="float:left; color:#3f2518;">Adet</label>
+                </div>
+            </div>
+            <div id="productNumber_div" class="bakery-product-div" style="display:none;">
+                <label style="margin-left:46px; color:#3f2518;">Kaç Adet* : </label>
+                <input id="bakery_product_number" name="bakery_product_number" autocomplete="off" type="text" placeholder="Örn. 5" />
+            </div>
+            <div id="productGram_div" class="bakery-product-div" style="display:none;">
+                <label style="margin-left:67px; color:#3f2518;">Boyut* : </label>
+                <select id="bakery_product_gram" name="bakery_product_gram" autocomplete="off" type="text" style="width:130px;">
+                    <option>Büyük</option>
+                    <option>Orta</option>
+                    <option>Küçük</option>
+                </select>
+                <img id="gramPlus" onclick="appendGram()" src="~/Images/Site/plus.png" style="width:20px; border:1px solid #cccccc; padding:2px; float:left; margin-left:15px; margin-top:5px; border-radius:20px; cursor:pointer;" />
+            </div>
+            <div class="bakery-product-div">
+                <label style="margin-left:35px; color:#3f2518;">Ürün Fiyatı* : </label>
+                <input id="bakery_product_price" onkeyup="validateKeyup(this)" name="bakery_product_price" autocomplete="off" type="text" placeholder="Örn. 00.00 TL" />
+            </div>
+            <div class="bakery-product-div" style="margin-bottom:8px;">
+                <label style="margin-left:30px; color:#3f2518;">Stok Miktarı* : </label>
+                <input style="width:88px; margin-bottom:0px;" onkeyup="validateKeyup(this)" id="bakery_product_stockAvailable" name="bakery_product_stockAvailable" type="text" placeholder="Örn. 50" />
+            </div>
+            <div class="bakery-product-div" style="margin-bottom:8px;">
+                <label style="margin-left:27px; color:#3f2518;">Özel Tasarım : </label>
+                <input type="checkbox" style="width:20px; height:20px;" id="bakery_product_designProduct" name="bakery_product_designProduct" />
+            </div>
+            <div class="bakery-product-div" id="bakery_product_thumbnail_div">
+                <div style="float:left; width:100%; margin-top:10px;">
+                    <img class="bakery_product_thumbnail_img" src="~/Images/Site/no_image.png" />
+                    <img class="bakery_product_thumbnail_img" src="~/Images/Site/no_image.png" />
+                    <img class="bakery_product_thumbnail_img" src="~/Images/Site/no_image.png" />
+                </div>
+
+                <input type="file" class="multiple" name="bakeryProductImages" id="bakeryProductImages" multiple style="display:none;" />
+                <div style="float:left; width:150px; margin-top:10px;">
+                    <label id="bakery_product_yukle" for="bakeryProductImages" style="float:left; line-height:20px; margin-bottom:10px; margin-right:0px;" class="yukle_gradient">Yükle</label>
+                    <label style="float:right; font-weight:400; font-size:12px; margin:0px;">Max. 3 Resim</label>
+                </div>
+                <label style="width:100%; float:left; font-size:12px; font-weight:400; margin-top:10px;">* ile işaretli alanların doldurulması zorunludur.</label>
+            </div>
+            <input type="hidden" id="product-id-hidden" name="product-id-hidden" />
+            <div class="bakery-product-div">
+                <input style="margin-top:10px; width:100px;" id="bakery_product_submit" class="yukle_gradient" onclick="validateBakeryProduct()" type="submit" value="Ekle" />
+                <a href="" onclick="validateDeleteProduct()" data-productName="" style="margin-top: 10px; width: 100px; float: right; text-align: center; display:none; line-height: 21px; font-weight: 400; margin-right:30px;" id="bakery_product_delete" class="yukle_gradient">Ürünü Sil</a>
+            </div>
+                        }
+    </div>
+
+    <div class="col-md-8 col-sm-6 col-xs-12" style="padding-right:0px;">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="float: left; padding:0px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #cccccc;">
+            <div class="dropdown" style="float:left;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="bakery-product-explanation-button">
+                    Kullanım
+                    <span class="caret"></span>
+                </button>
+            </div>
+            <div class="dropdown" style="float:right;">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" id="bakery-product-filter-button">
+                    Sıralama
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right">
+                    <li><a onclick="sortProducts('Rating desc', '#product-div-upper-wrapper')">En Çok Satanlar</a></li>
+                    <li><a onclick="sortProducts('AddDate asc', '#product-div-upper-wrapper')">En Yeniler</a></li>
+                    <li><a onclick="sortProducts('Price desc', '#product-div-upper-wrapper')">En Yüksek Fiyat</a></li>
+                    <li><a onclick="sortProducts('Price asc', '#product-div-upper-wrapper')">En Düşük Fiyat</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12" id="bakery-product-explanation-div" style="float: left; padding:0px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #cccccc; display:none;">
+            <label style="float:left; width:100%; font-size:16px; font-weight:400;">Ürün Ekleme, Düzenleme ve Silme Bölümü Kullanım Kuralları</label>
+            <label style="float:left; width:100%; font-size:12px; margin-top:15px; font-weight:400;">
+                Ürün eklemek için, sol bölümdeki menüyü kullanın. Her ürünün ismi,açıklaması,fiyatı,stok durumu ve kategorisi girilmesi zorunludur. Resim girilmesi zorunlu değildir.<br />
+                Ürün düzenlemek için, sağ taraftaki bölümden düzenlemek istediğiniz ürünün üstündeki kalem simgesine tıklayın. Sol tarafta bilgileri çıkacaktır. Bilgileri düzenledikten sonra 'Kaydet' butonuna basarak işleminizi tamamlayın.<br />
+                Ürün silmek için, sağ taraftaki bölümden silmek istediğiniz ürünü seçin. Sol menüde bilgileri çıkan ürünü en alttaki 'Ürünü Sil' butonu ile silebilirsiniz.
+                <br /><br />
+                Ürünler arasında düzenlemek için seçim yaparken kalem simgesine tıklayın. Kapatmak isterseniz kalem simgesinin yerine çıkan çarpı simgesine tıklayabilirsiniz.
+                Her ürün için en fazla 3 resim girilebilir. Ürün düzenlerken seçtiğiniz ürünün resimleri yerine yenilerini veya yenisini koymak isterseniz bütün eski resimler <b>silinecektir.</b>
+                Silinen ürünü geri getirmek mümkün değildir.
+            </label>
+        </div>
+
+        <div class="col-md-12 col-sm-12 col-xs-12" style="float: left; padding:0px;" id="product-div-upper-wrapper">
+            @{
+                for (int i = 0; i < bakeryProducts.Rows.Count; i++)
+                {
+                    DataRow urun = bakeryProducts.Rows[i]; String product_thumbnail = "/Images/Products/" + urun["ProductID"] + "/" + (urun["Thumbnail"].ToString().Split(' '))[0];
+
+                    TimeSpan ts = Convert.ToDateTime(urun["AddDate"]) - DateTime.Now;
+
+                    String size = ""; String gram = ""; String number = "";
+                    if (urun["SizeOptions"] != null) { size = urun["SizeOptions"].ToString(); }
+                    if (urun["Number"] != null) { number = urun["Number"].ToString(); }
+                    if (urun["Gram"] != null) { gram = urun["Gram"].ToString(); }
+
+                    <div class="col-md-3 col-sm-6 col-xs-6 product-div-wrapper" style="padding:0px 1%;" data-date="@((int)ts.TotalMinutes)" data-price="@urun["Price"]" data-rating="@urun["Rating"]">
+                        <div class="product-div">
+                            <div class="product-img-div">
+                                <img src="@product_thumbnail" class="product-thumbnail" />
+                            </div>
+                            <div class="product-description-div">
+                                <div class="row">
+                                    <div class="col-md-12" style="padding:0px;">
+                                        <label class="product-name" style="line-height:20px;">@urun["Name"]</label>
+                                    </div>
+                                    <div class="col-md-12" style="padding:0px;">
+                                        <label class="bakery-product-price">@urun["Price"].ToString().Split(' ')[0] @urun["Currency"]</label>
+                                        <img src="~/Images/Site/close_icon.png" class="bakery-product-change bpc-close" onclick="closeBakeryProduct(this)" style="border:none !important; box-shadow:none !important; display:none; margin-top:-50px; width:12px;" />
+                                        <img style="border:none !important;  box-shadow:none !important;" src="~/Images/Site/edit_icon.png" class="bakery-product-change bpc-open" onclick='fillBakeryProduct(this,"@urun["Name"]","@urun["Description"]","@urun["Price"]","@urun["Category"]","@bakeryProducts.Rows[i]["StockAvailable"]","@urun["Thumbnail"]","@urun["ProductID"]","@size","@gram","@number","@bakery["BakeryID"]","@urun["Approved"]","@urun["DesignProduct"]")' />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

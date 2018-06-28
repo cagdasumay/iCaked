@@ -1,0 +1,26 @@
+﻿@using System.Data
+
+@{
+    ViewBag.Title = "Sipariş Takibi – Butik Pasta Siparişlerinizin Takibi";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewBag.description = "iCaked üzerinden satın aldığınız pastane ürünü veya butik pasta siparişi takibinizi buradan yapabilirsiniz.";
+    ViewBag.Keywords = "Tasarım Pasta Siparişi, Sipariş Takibi, Sipariş Detayları, Kullanıcı Takibi, Online Pasta Siparişi";
+
+    DataRow order = (DataRow)ViewData["OrderNumber"];
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12" style="float:left; margin-top:30px; margin-bottom:250px;">
+            <h1 style="width:100%; float:left; font-size:30px; line-height:46px; padding-bottom:10px; margin-bottom:20px !important;">Sipariş Takibi</h1>
+            <div style="float:left; width:100%;">
+                @using (Html.BeginForm("FindOrder", "Home"))
+                {
+                    <h2 style="width:100%; float:left; font-size:14px;">Lütfen siparişinizin sonunda size verilen sipariş takip numaranızı girin.</h2>
+                    <input type="text" autocomplete="off" onkeyup="validateKeyup(this)" name="OrderNumber" id="OrderNumber" style="width:300px; margin-bottom:10px; border:1px solid #e6e6e6; border-radius:3px; background:white; padding:10px; font-size:16px; margin-top:20px;" placeholder="Sipariş Takip Numarası" />
+                    <input id="siparis-takip-button" type="submit" onclick="validateSiparisTakip()" class="black-gradient" style="padding:10px 20px; font-weight:500; font-size:16px; margin-left:10px; border-radius:3px;" value="Bul">
+                }
+            </div>
+        </div>
+    </div>
+</div>

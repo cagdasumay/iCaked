@@ -1,0 +1,174 @@
+﻿@using EventApp.Models
+@model EventApp.Models.InfoBooth
+@using System.Globalization;
+
+@{
+    ViewBag.Title = "Bilgi Standı";
+    string NameError = (string)ViewData["NameError"];
+    string ContentError = (string)ViewData["ContentError"];
+    string UsageError = (string)ViewData["UsageError"];
+}
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <!-- BEGIN PAGE HEADER-->
+        <!-- BEGIN PAGE BAR -->
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("InfoBoothOrg", "InfoBooths")">Bilgi Standı</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Yeni Bilgi</span>
+                </li>
+            </ul>
+        </div>
+        <!-- END PAGE BAR -->
+        <!-- BEGIN PAGE TITLE-->
+        <h1 class="page-title">
+            Bilgi Standı
+            <small>Oluştur</small>
+        </h1>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="portlet light portlet-fit bordered">
+                    <div class="portlet box">
+                        <div class="portlet-title" style="background-color: #36c6d3;">
+                            <div class="caption">
+                                <i class="icon-user-following font-white"></i>
+                                <span class="caption-subject font-white sbold">Yeni Bilgi Ekle</span>
+                            </div>
+                        </div>
+
+                        @*BURASI DEĞİŞECEK*@
+                        @using (Html.BeginForm("NewInfoBooth", "InfoBooths", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                            @Html.AntiForgeryToken()
+                            <div class="form-horizontal" style="padding-top: 20px;">
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">İsim (*)</label>
+                                    <div class="col-md-7">
+                                        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                                        @{
+                                            if (NameError == "NameError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen İsim Girin </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Açıklama (*)</label>
+                                    <div class="col-md-7">
+                                        @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @rows = "4" })
+                                        @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
+                                        @{
+                                            if (ContentError == "ContentError")
+                                            {
+                                                <span style="display: block; color: #e73d4a; border-width: 1px; border: 1px solid transparent; border-radius: 0!important; box-sizing: border-box; font-size: 14px;"> Lütfen Açıklama Girin </span>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                                @{
+                                    if (UsageError == "UsageError")
+                                    {
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3" style="color: red;">Bilgi İçeriği Seçmelisiniz!</label>
+                                            <div class="col-md-7">
+                                                <select name="Usage" id="Usage" class="form-control form-control-solid red">
+                                                    <option value="Boş">İçerik Seçiniz</option>)
+                                                    <option value="Turlar">Tur Tanıtım</option>
+                                                    <option value="Etkinlik Hakkında">Etkinlik Hakkında</option>
+                                                    <option value="Faydalı Bilgiler">Diğer Faydalı Bilgiler</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3">Bilgi İçeriği</label>
+                                            <div class="col-md-7">
+                                                <select name="Usage" id="Usage" class="form-control form-control-solid">
+                                                    <option value="Boş">İçerik Seçiniz</option>)
+                                                    <option value="Turlar">Tur Tanıtım</option>
+                                                    <option value="Etkinlik Hakkında">Etkinlik Hakkında</option>
+                                                    <option value="Faydalı Bilgiler">Diğer Faydalı Bilgiler</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                                
+                                
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Görsel</label>
+                                    <div class="col-md-7">
+                                        <label class="control-label visible-ie8 visible-ie9">Password</label>
+                                        <input class="form-control form-control-solid placeholder-no-fix" type="file" id="imageinput" name="imageinput" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="form-actions">
+                                <div class="row">
+                                    <div class="col-md-offset-8 col-md-4">
+                                        <a href="@Url.Action("InfoBoothOrg","InfoBooths")" id="continue-btn" class="btn btn-success">
+                                            Geri
+                                        </a>
+                                        <button type="submit" id="register-submit-btn" class="btn btn-outline green button-next">Oluştur</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+
+<script src="../assets/global/plugins/moment.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-timepicker/js/bootstrap-timepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-inputmask/jquery.inputmask.bundle.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/clockface/js/clockface.js" type="text/javascript"></script>
+
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-wizard/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/pages/scripts/form-wizard.min.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/form-input-mask.js" type="text/javascript"></script>
+<script src="../assets/pages/scripts/components-date-time-pickers.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

@@ -1,0 +1,31 @@
+﻿<div class="container" style="padding:0px;">
+    <div class="row" style="padding:0px;">
+
+        <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+
+            <div id="adminMultipleObjUpload" style="width:100%; float:left;">
+                <div style="width:100%; float:left; margin-bottom:20px; margin-top:20px;">
+                    <label style="width:100%; float:left; padding:10px 0px; font-size:16px;">Admin Çoklu Obje Yükleme Ekranı</label>
+                    <label style="padding:5px 0px; font-size:12px; width:100%; float:left;">İçinde obje,imaj ve texture dosyalarının bulunduğu klasörü açıp hepsini seçip upload edin. <br /> İçinden imaj ve texture dosyaları upload edilecek objeler veritabanına yazılacaktır. <br /> Aynı objeler önceden bulunuyorsa yeni eklenenler ile değiştirilmeyecek sadece güncellenecektir.</label>
+                    <label style="padding:5px 0px; font-size:12px; width:100%; float:left;">Her seferde tek bir obje türü yüklenebilir. Tek seferde yüklenecek tüm objeler Örn. cake türünden olmalıdır. Objelerin imaj ve texture dosyaları da birlikte seçilmelidir. Obj. dosyalarının ftp ile tekrar atılmasına gerek yoktur. Manuel güncellemeler için ftp yerine 'objeler' bölümü kullanılabilir.</label>
+                 </div>
+                @using (Html.BeginForm("AdminMultipleUpload", "Account", FormMethod.Post, new { enctype = "multipart/form-data", id = "bakery-product-form" }))
+                {
+                    <input type="file" class="multiple" name="adminMultipleObjs" id="adminMultipleObjs" multiple style="display:none;" />
+                    <select name="objectType" style="float:left; border:1px solid #cccccc; border-radius:3px; padding:5px;">
+                        <option value="cake">cake</option>
+                        <option value="object">object</option>
+                        <option value="side">side</option>
+                        <option value="random">random</option>
+                        <option value="object2D">object2D</option>
+                        <option value="mixed">mixed</option>
+                    </select>
+                    <div style="float:left; width:100%; margin-top:10px;">
+                        <label for="adminMultipleObjs" style="float:left; line-height:20px; margin-bottom:10px; margin-right:0px;" class="yukle_gradient">Seç</label>
+                        <input class="yukle_gradient" style="margin-left:10px; line-height:20px;" type="submit" value="Yükle" />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

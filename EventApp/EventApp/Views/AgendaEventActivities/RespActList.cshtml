@@ -1,0 +1,261 @@
+﻿
+@using EventApp.Models
+
+@{
+    ViewBag.Title = "Oturumlar";
+
+    List<Activity> AgendaList = (List<Activity>)ViewData["AgendaList"];
+    List<string> dates = (List<string>)ViewData["Dates"];
+    int DateNumber = (int)ViewData["DateNumber"];
+    List<int> SameDays = (List<int>)ViewData["SameDays"];
+    List<string> TimeInterval = (List<string>)ViewData["TimeInterval"];
+
+    int CountAllActivities = (int)ViewData["AllActivities"];
+    string isValid = (string)ViewData["isValid"];
+    string UserName = (string)ViewData["UserName"];
+
+}
+
+
+
+<div class="page-content-wrapper">
+    <!-- BEGIN CONTENT BODY -->
+    <div class="page-content">
+        <div class="page-bar">
+            <ul class="page-breadcrumb">
+                <li>
+                    <a href="@Url.Action("ActivityListEditable", "Activities")">Oturumlar</a>
+                    <i class="fa fa-circle"></i>
+                </li>
+                <li>
+                    <span>Liste</span>
+                </li>
+            </ul>
+        </div>
+        <h1 class="page-title" style="float: left;">
+            Oturumlarım
+            <small>@UserName</small>
+        </h1>
+        <a href="" id="continue-btn" class="btn btn-outline green button-next" style="float: right; margin-top: 20px;">
+            Takvim
+        </a>
+        <a href="" id="continue-btn" class="btn green" style="float: right; margin-top: 20px;">
+            Liste
+        </a>
+
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="todo-ui">
+                    <div class="todo-content">
+                        @{
+                            if (AgendaList.Count > 0)
+                            {
+                                <div class="portlet light ">
+                                    <div class="portlet-body">
+                                        <div class="row">
+                                            <div class="col-lg-12, col-md-12 col-sm-12 col-xs-12">
+                                                <div class="portlet light portlet-fit bordered">
+                                                    <div class="portlet-body">
+                                                        <div class="mt-element-list">
+                                                            <div class="mt-list-head list-todo red">
+                                                                <div class="list-head-title-container">
+                                                                    <h3 class="list-title">INFINIA 2017</h3>
+                                                                    <div class="list-head-count">
+                                                                        <div class="list-head-count-item">
+                                                                            <i class="fa fa-calendar-check-o"></i> @AgendaList.Count
+                                                                        </div>
+                                                                        <div class="list-head-count-item">
+                                                                            <i class="fa fa-calendar"></i> @CountAllActivities
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <a href="@Url.Action("ActivityListEditable", "Activities", new { disp = "My Schedule" })">
+                                                                    <div class="list-count pull-right red-mint">
+                                                                        Tüm Oturumları Göster
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-list-container list-todo">
+                                                                <div class="list-todo-line"></div>
+                                                                <ul>
+                                                                    @{
+                                                                        int i = 0;
+                                                                        int q = 0;
+                                                                        for (int k = 0; k < DateNumber; k++)
+                                                                        {
+                                                                    <li class="mt-list-item">
+                                                                        <div class="list-todo-icon bg-white">
+                                                                            <i class="fa fa-table"></i>
+                                                                        </div>
+                                                                        <div class="list-todo-item grey">
+                                                                            <a class="list-toggle-container font-white" data-toggle="collapse" href="#task-1-@(k + 1)" aria-expanded="false">
+                                                                                <div class="list-toggle done uppercase">
+                                                                                    <div class="list-toggle-title bold">@dates[q]</div>
+                                                                                    <div class="badge badge-default pull-right bold">@SameDays[k]</div>
+                                                                                </div>
+                                                                            </a>
+                                                                            @{
+                                                                                        for (int j = 0; j < SameDays[k]; j++)
+                                                                                        {
+                                                                                    <div class="task-list panel-collapse collapse" id="task-1-@(k + 1)">
+                                                                                        <ul>
+                                                                                            @{
+                                                                                                        for (int t = i; t < (i + SameDays[k]); t++)
+                                                                                                        {
+                                                                                                    <li class="task-list-item done">
+
+                                                                                                        @{
+                                                                                                            if (AgendaList[t].EndDate == "Sunum")
+                                                                                                            {
+                                                                                                                <div class="task-icon">
+                                                                                                                    <a href="javascript:;">
+                                                                                                                        <i class="fa fa-users"></i>
+                                                                                                                    </a>
+                                                                                                                </div>
+                                                                                                            }
+                                                                                                            else if (AgendaList[t].EndDate == "Konferans")
+                                                                                                            {
+                                                                                                                <div class="task-icon">
+                                                                                                                    <a href="javascript:;">
+                                                                                                                        <i class="fa fa-comments"></i>
+                                                                                                                    </a>
+                                                                                                                </div>
+                                                                                                            }
+                                                                                                            else if (AgendaList[t].EndDate == "Panel")
+                                                                                                            {
+                                                                                                                <div class="task-icon">
+                                                                                                                    <a href="javascript:;">
+                                                                                                                        <i class="fa fa-cubes"></i>
+                                                                                                                    </a>
+                                                                                                                </div>
+                                                                                                            }
+                                                                                                            else if (AgendaList[t].EndDate == "Kahve Molası-Yemek-Parti")
+                                                                                                            {
+                                                                                                                <div class="task-icon">
+                                                                                                                    <a href="javascript:;">
+                                                                                                                        <i class="fa fa-glass"></i>
+                                                                                                                    </a>
+                                                                                                                </div>
+                                                                                                            }
+                                                                                                        }
+
+                                                                                                        <div class="task-content">
+                                                                                                            <h4 class="uppercase bold">
+                                                                                                                @{
+                                                                                                                    if (AgendaList[t].EndDate == "Sunum")
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("PresentationDetailsOrg", "Activities", new { IDofActivity = @AgendaList[t].Id, from = "RespActList" })">
+                                                                                                                            @AgendaList[t].Name
+                                                                                                                        </a>
+                                                                                                                    }
+                                                                                                                    else if (AgendaList[t].EndDate == "Konferans")
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("ConferenceDetailsOrg", "Activities", new { IDofActivity = @AgendaList[t].Id, from = "RespActList" })">
+                                                                                                                            @AgendaList[t].Name
+                                                                                                                        </a>
+                                                                                                                    }
+                                                                                                                    else if (AgendaList[t].EndDate == "Panel")
+                                                                                                                    {
+                                                                                                                        <a href="@Url.Action("PanelDetailsOrg", "Activities", new { IDofActivity = @AgendaList[t].Id, from = "RespActList" })">
+                                                                                                                            @AgendaList[t].Name
+                                                                                                                        </a>
+                                                                                                                    }
+                                                                                                                    else if (AgendaList[t].EndDate == "Kahve Molası-Yemek-Parti")
+                                                                                                                    {
+                                                                                                                        <a href="javascript:;">
+                                                                                                                            @AgendaList[t].Name
+                                                                                                                        </a>
+                                                                                                                    }
+                                                                                                                }                                                                                                                
+                                                                                                            </h4>
+                                                                                                            <p style="margin-bottom: 5px;">
+                                                                                                                <i class="fa fa-clock-o"></i>
+                                                                                                                @TimeInterval[t]
+                                                                                                            </p>
+                                                                                                            <p> @AgendaList[t].Summary </p>
+                                                                                                        </div>
+                                                                                                    </li>
+                                                                                                                    }
+                                                                                            }
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                                                    }
+                                                                                                                    i = i + SameDays[k];
+                                                                                                                    q = q + SameDays[k];
+                                                                            }
+                                                                        </div>
+                                                                    </li>
+                                                                                                                    }
+                                                                    }
+
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                                                                                            }
+                                                                                                            else
+                                                                                                            {
+                                                                                                                <div class="portlet light ">
+                                                                                                                    <div class="portlet-body">
+                                                                                                                        <div class="row">
+                                                                                                                            <div class="col-lg-12, col-md-12 col-sm-12 col-xs-12">
+                                                                                                                                <div class="portlet light portlet-fit bordered">
+                                                                                                                                    <div class="portlet-body">
+                                                                                                                                        <div class="mt-element-list">
+                                                                                                                                            <div class="mt-list-head list-todo red">
+                                                                                                                                                <div class="list-head-title-container">
+                                                                                                                                                    <h3 class="list-title">INFINIA 2017</h3>
+                                                                                                                                                    <div class="list-head-count">
+                                                                                                                                                        Kayıtlı oturumunuz bulunmamaktadır.
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                    </div>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        </div>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            }
+                        }
+                    </div>
+                    <!-- END TODO CONTENT -->
+                </div>
+            </div>
+            <!-- END PAGE CONTENT-->
+        </div>
+    </div>
+    <!-- END CONTENT BODY -->
+</div>
+        </div>
+
+
+<!-- BEGIN CORE PLUGINS -->
+<script src="../assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+<!-- END CORE PLUGINS -->
+<!-- BEGIN PAGE LEVEL PLUGINS -->
+<script src="../assets/global/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js" type="text/javascript"></script>
+<script src="../assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL PLUGINS -->
+<!-- BEGIN THEME GLOBAL SCRIPTS -->
+<script src="../assets/global/scripts/app.min.js" type="text/javascript"></script>
+<!-- END THEME GLOBAL SCRIPTS -->
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="../assets/apps/scripts/todo-2.min.js" type="text/javascript"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
+<!-- BEGIN THEME LAYOUT SCRIPTS -->
+<script src="../assets/layouts/layout/scripts/layout.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/layout/scripts/demo.min.js" type="text/javascript"></script>
+<script src="../assets/layouts/global/scripts/quick-sidebar.min.js" type="text/javascript"></script>
+<!-- END THEME LAYOUT SCRIPTS -->

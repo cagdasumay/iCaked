@@ -1,0 +1,143 @@
+﻿<style>
+    #editor-page1,#editor-page2,#editor-page3,#editor-thanks-div {
+        width:450px; height:200px;
+        left:0px; right:0px;
+        top:0px; bottom:0px;
+        position:absolute;
+        border-radius:5px;
+        color:white;
+        margin:auto;
+        z-index:100001;
+    }
+
+    #editor-page1 label,#editor-page2 label,#editor-page3 label,#editor-thanks-div label {
+        font-size:16px;
+        text-shadow: 0px 1px 1px dimgray;
+    }
+
+    .page2-selection img {
+            box-shadow: inset 0px 0px 1px 1px white ,0px 0px 10px 0px white;
+        width:75px; cursor:pointer;
+        transition:ease-in-out 0.1s;
+        border-radius:100px;
+    }
+
+    .page2-selection img:hover {
+        -webkit-filter: drop-shadow(0px 1px 5px gray);
+    }
+
+    .page2-selection label {
+        width:100%; padding-top:10px; font-size:20px;
+        cursor:pointer;
+    }
+</style>
+
+<div id="editor-sub-main" style="position:absolute; z-index:100000; background:rgba(0,0,0,0.7); top:0px; bottom:0px; left:0px; right:0px;">
+    <div id="editor-page1" style="display:none;">
+        <div style="width:100%; float:left; text-align:center;">
+            <label style="width:100%; float:left; text-align:center; padding-bottom:10px; padding-top:20px;">Editöre hoşgeldiniz. <br /> Lütfen aşağıdaki seçeneklerden birini seçerek devam edin.</label>
+            <div style="width:50%; float:left; padding:10px;">
+                <div style="width:100%; float:left;">
+                    <label onclick="editorPage2('order')" class="cart_gradient">Sipariş Ver</label>
+                    <label style="padding-top:10px; font-size:13px;">Pastanız kişi sayısı, kullanılan üç boyutlu figürler ve seçilen pastaneye göre fiyatlandırılır.</label>
+                </div>
+            </div>
+            <div style="width:50%; float:left; padding:10px;">
+                <div style="width:100%; float:left;">
+                    <label onclick="editorPage2('free')" class="cart_gradient">Oyun Oyna</label>
+                    <label style="padding-top:10px; font-size:13px;">Hiçbir sınırınız yok.</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editor-page2" style="display:none;">
+        <div style="width:100%; float:left; text-align:center;">
+            <label style="width:100%; float:left; text-align:center; padding-bottom:10px; padding-top:10px;">Tasarlamak istediğiniz şeyi seçin.</label>
+            <div style="width:33.3%; float:left; padding:10px;">
+                <div onclick="editorDesignType('cake')" style="width:100%; float:left;" class="page2-selection">
+                    <img onclick="editorDesignType('cake')" src="~/Images/Site/cake_vector_icon.png" />
+                    <label onclick="editorDesignType('cake')" style="color:#d89d5b;">Pasta</label>
+                </div>
+            </div>
+            <div style="width:33.3%; float:left; padding:10px;" class="disabled-link">
+                <div style="width:100%; float:left;" class="page2-selection">
+                    <img   src="~/Images/Site/cookie_vector_icon.png" />
+                    <label style="color:#3f2518;">Kurabiye</label>
+                </div>
+            </div>
+            <div style="width:33.3%; float:left; padding:10px;" class="disabled-link">
+                <div style="width:100%; float:left;" class="page2-selection">
+                    <img src="~/Images/Site/cupcake_vector_icon.png" />
+                    <label style="color:#a95356;">Cupcake</label>
+                </div>
+            </div>
+            <img onclick="backToEditorPage(1)" style="width:25px; float:left; padding-left:10px; cursor:pointer;" src="~/Images/Site/left_white2.png" />
+        </div>
+    </div>
+    <div id="editor-page3">
+        <div style="width:100%; float:left; text-align:center;">
+            <label style="width:100%; float:left; text-align:center; padding-bottom:10px; padding-top:10px;">Pastanız kaç kişilik olsun</label>
+            <div style="width:100%; float:left; padding:10px; display:none; text-align:center;" id="page3-cake">
+                <select id="editor-cakeSize-1" style="border:1px solid #cccccc; border-radius:3px; padding:5px; width:85px;">
+                    <option selected value="2">2</option>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                    <option value="8">8</option>
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="14">14</option>
+                    <option value="16">16</option>
+                    <option value="18">18</option>
+                    <option value="20">20</option>
+                    <option value="22">22</option>
+                    <option value="24">24</option>
+                    <option value="26">26</option>
+                    <option value="28">28</option>
+                    <option value="30">30</option>
+                    <option value="32">32</option>
+                    <option value="34">34</option>
+                    <option value="36">36</option>
+                    <option value="38">38</option>
+                    <option value="40">40</option>
+                    <option value="42">42</option>
+                    <option value="44">44</option>
+                    <option value="46">46</option>
+                    <option value="48">48</option>
+                    <option value="50">50</option>
+                    <option value="52">52</option>
+                    <option value="54">54</option>
+                    <option value="56">56</option>
+                    <option value="58">58</option>
+                    <option value="60">60</option>
+                    <option value="62">62</option>
+                </select>
+                <div style="width:100%; float:left; text-align:center; margin-top:10px;">
+                    <button onclick="editorCakeSelect()" class="go_gradient" style="border:none; font-size:16px;">Tamam</button>
+                </div>
+            </div>
+            <div style="width:100%; float:left; padding:10px; display:none;" id="page3-cookie">
+                <label style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:10px;">Kaç Adet</label>
+                <input onchange="$(this).css('border-color','#cccccc')" id="editor-cookie-num" type="number" style="width:50px; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px;" min="1" value="1" />
+                <div style="width:100%; float:left; text-align:center; margin-top:10px;">
+                    <button onclick="editorCookieSelect()" class="cart_gradient">Tamam</button>
+                </div>
+            </div>
+            <div style="width:100%; float:left; padding:10px; display:none;" id="page3-cupcake">
+                <label style="width:100%; float:left; text-align:center; font-size:14px; padding-bottom:10px;">Kaç Adet</label>
+                <input onchange="$(this).css('border-color','#cccccc')" id="editor-cupcake-num" type="number" style="width:50px; border:1px solid #cccccc; background:white; border-radius:3px; padding:5px;" min="1" value="1" />
+                <div style="width:100%; float:left; text-align:center; margin-top:10px;">
+                    <button onclick="editorCupcakeSelect()" class="cart_gradient">Tamam</button>
+                </div>
+            </div>
+            @*<img onclick="backToEditorPage(2)" style="width:25px; float:left; padding-left:10px; padding-top:10px; cursor:pointer;" src="~/Images/Site/left_white2.png" />*@
+        </div>
+    </div>
+    <div id="editor-thanks-div" style="display:none;">
+        <div style="width:100%; float:left; text-align:center;">
+            <div style="width:100%; float:left; text-align:center; margin-top:40px;">
+                <img src="~/Images/Site/thanks_icon.png" style="width:75px;" />
+            </div>
+            <label style="width:100%; float:left; text-align:center; padding-bottom:10px; padding-top:20px;">Teşekkürler artık başlayabilirsiniz. !</label>
+        </div>
+    </div>
+</div>

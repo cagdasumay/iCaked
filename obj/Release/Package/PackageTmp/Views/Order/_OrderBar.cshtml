@@ -1,0 +1,142 @@
+﻿
+<style>
+    .orderStepActive {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        font-size: 16px;
+        border-radius: 50%;
+        background: #4493ff;
+        color: white;
+    }
+
+    .orderStep {
+        width: 38px;
+        height: 38px;
+        line-height: 38px;
+        font-family: 'Open Sans';
+        text-align: center;
+        font-size: 16px;
+        border-radius: 50%;
+        background: white;
+        color: #ccc;
+        border: 1px solid #e6e6e6;
+    }
+
+    .orderStepLabelActive {
+        width: 100%;
+        float: left;
+        font-weight: 500;
+        padding-top: 10px;
+        text-align: center;
+        color: black;
+    }
+
+    .orderStepLabel {
+        width: 100%;
+        float: left;
+        font-weight: 500;
+        padding-top: 10px;
+        text-align: center;
+        color: #ccc;
+    }
+
+    .orderStepDiv {
+        float: left;
+        margin-top: -20px;
+    }
+</style>
+
+@{
+    if (Session["orderStep"] != null)
+    {
+        String orderStep = (string)Session["orderStep"];
+
+        int stepsRequired = 4;
+        bool contentRequired = false; bool bakeryRequired = false; bool contentExists = false;
+        String contentIdx = "3";
+
+        if (Session["contentRequired"] != null) { contentRequired = (bool)Session["contentRequired"]; }
+        if (Session["bakeryRequired"] != null) { bakeryRequired = (bool)Session["bakeryRequired"]; }
+        if (Session["orderContent"] != null) { contentExists = true; }
+
+        if (contentRequired | contentExists) { stepsRequired++; };
+        if (bakeryRequired) { stepsRequired++; contentIdx = "4"; }
+
+        if(orderStep == "5" & contentExists == false) {
+            if(stepsRequired == 4) { orderStep = "3"; }
+        }
+
+        if(orderStep == "5" & contentExists == true) { if(stepsRequired == 5) { orderStep = "4"; } }
+
+        if(orderStep == "4" & contentExists == false) { if(stepsRequired == 5) { orderStep = "3"; } }
+
+        String width = (100 / stepsRequired).ToString() + "%"; String lineWidth = ""; String lineMargin = "";
+        if (stepsRequired == 4) { lineWidth = "75%"; lineMargin = "12.5%"; }
+        else if (stepsRequired == 5) { lineWidth = "80%"; lineMargin = "10%"; }
+        else if (stepsRequired == 6) { lineWidth = "80%"; lineMargin = "10%"; }
+
+        <div style="width:100%; float:left; margin-bottom:75px; margin-top:40px;">
+            <div style="width:@lineWidth; margin-left:@lineMargin; float:left; border-bottom:1px solid #e6e6e6;"></div>
+
+            <div class="orderStepDiv" style="width:@width;">
+                <div style="width:100%; float:left; text-align:center;">
+                    <label class="orderStep">1</label>
+                </div>
+                <label class="orderStepLabel">Sepet</label>
+            </div>
+            <div class="orderStepDiv" style="width:@width;">
+                <div style="width:100%; float:left; text-align:center;">
+                    <label class="orderStep">2</label>
+                </div>
+                <label class="orderStepLabel">Teslimat Adresi</label>
+            </div>
+            @{
+                if (bakeryRequired)
+                {
+                    <div class="orderStepDiv" style="width:@width;">
+                        <div style="width:100%; float:left; text-align:center;">
+                            <label class="orderStep">3</label>
+                        </div>
+                        <label class="orderStepLabel">Pastane Seçimi</label>
+                    </div>
+                }
+
+                if (contentRequired | contentExists)
+                {
+                    <div class="orderStepDiv" style="width:@width;">
+                        <div style="width:100%; float:left; text-align:center;">
+                            <label class="orderStep">@contentIdx</label>
+                        </div>
+                        <label class="orderStepLabel">İçerik Seçimi</label>
+                    </div>
+                }
+            }
+            <div class="orderStepDiv" style="width:@width;">
+                <div style="width:100%; float:left; text-align:center;">
+                    <label class="orderStep">@(stepsRequired-1)</label>
+                </div>
+                <label class="orderStepLabel">Teslimat Bilgileri</label>
+            </div>
+            <div class="orderStepDiv" style="width:@width;">
+                <div style="width:100%; float:left; text-align:center;">
+                    <label class="orderStep">@stepsRequired</label>
+                </div>
+                <label class="orderStepLabel">Ödeme</label>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+                var activeStep = "@orderStep"; var elem = $(".orderStep"); var elem2 = $(".orderStepLabel");
+                for (idx = 0; idx < parseFloat(activeStep) ; idx++) {
+                    $(elem[parseFloat(idx)]).removeClass("orderStep"); $(elem[parseFloat(idx)]).addClass("orderStepActive");
+                    $(elem2[parseFloat(idx)]).removeClass("orderStepLabel"); $(elem2[parseFloat(idx)]).addClass("orderStepLabelActive");
+                }
+            });
+
+        </script>
+                }
+}

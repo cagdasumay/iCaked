@@ -1,0 +1,257 @@
+﻿
+@using System.Data
+@using Cake.Controllers
+
+@{
+    OrderController oc = new OrderController();
+
+    bool contentRequired = false; bool bakeryRequired = false; bool contentExists = false;
+
+    if (Session["contentRequired"] != null) { contentRequired = (bool)Session["contentRequired"]; }
+    if (Session["bakeryRequired"] != null) { bakeryRequired = (bool)Session["bakeryRequired"]; }
+    if (Session["orderContent"] != null) { contentExists = true; }
+
+    bool partyExists = false; bool partyOnly = true; String backTo = "BackToContent"; bool tomorrow = false;
+
+    DataRow bakery = (DataRow)Session["orderBakery"];
+
+    List<DataRow> cart = (List<DataRow>)Session["cart"];
+    bool designExists = false;
+
+    for (int i = 0; i < cart.Count; i++)
+    {
+        if (String.IsNullOrEmpty(cart[i]["isMade"].ToString()) == false) { designExists = true; }
+        if (cart[i].Table.Columns.Contains("DesignProduct"))
+        {
+            if (cart[i]["DesignProduct"].ToString() == "yes") { designExists = true; }
+        }
+        if (cart[i]["Category"].ToString() == "Parti Malzemeleri") { partyExists = true; } else { partyOnly = false; }
+    }
+
+    List<string> bakeryWorkHours = new List<string>();
+    string firsthour = ""; string secondhour = "";
+
+    if (designExists)
+    {
+        firsthour = bakery["designWorkHours"].ToString().Split('-')[0].Trim().Replace(":00", "");
+        secondhour = bakery["designWorkHours"].ToString().Split('-')[1].Trim().Replace(":00", "");
+    }
+    else
+    {
+        firsthour = bakery["workHours"].ToString().Split('-')[0].Trim().Replace(":00", "");
+        secondhour = bakery["workHours"].ToString().Split('-')[1].Trim().Replace(":00", "");
+    }
+
+    for (int i = 0; i < 24; i++)
+    {
+        if (i >= Convert.ToInt32(firsthour) & i <= Convert.ToInt32(secondhour))
+        {
+
+            if (designExists)
+            {
+                if (i >= Convert.ToInt32(bakery["earliestDeliveryDesign"].ToString().Split(' ')[2].Trim().Replace(":00", ""))) { bakeryWorkHours.Add(i + ":00"); }
+            }
+            else
+            {
+                if (i > DateTime.Now.Hour)
+                {
+                    bakeryWorkHours.Add(i + ":00");
+                }
+                else if (i == DateTime.Now.Hour & DateTime.Now.Minute < 15) { bakeryWorkHours.Add(i + ":00"); }
+            }
+        }
+    }
+
+    DateTime date = DateTime.Now;
+
+    if (bakeryWorkHours.Count == 0)
+    {
+        tomorrow = true;
+        for (int i = 0; i < 24; i++)
+        {
+            if (i >= Convert.ToInt32(firsthour) & i <= Convert.ToInt32(secondhour)) { bakeryWorkHours.Add(i + ":00"); }
+        }
+
+        if (tomorrow == false)
+        {
+            for (int i = 0; i < bakeryWorkHours.Count; i++)
+            {
+                if (Convert.ToInt32(bakeryWorkHours[i].Replace(":00", "")) < date.Hour) { bakeryWorkHours.RemoveAt(i); }
+            }
+        }
+    }
+
+    string[] early = bakery["earliestDeliveryDesign"].ToString().Split(' ');
+
+    if (designExists)
+    {
+        if (date.Hour > Convert.ToInt32(early[0].Split(':')[0])) { date = date.AddHours(Convert.ToDouble(early[1]) + 1); } else { date = date.AddHours(Convert.ToDouble(early[1])); }
+    }
+
+    if (tomorrow) { date = date.AddDays(1); }
+    //if (partyExists & ) { date = date.AddDays(2); }
+
+    string onchangeTemp = "no";
+    if (designExists) { onchangeTemp = "yes"; }
+
+    string defaultDate = new DateTime(date.Year, date.Month, date.Day).ToString("dd'/'MM'/'yyyy");
+    string defaultHour = (Convert.ToInt32(bakeryWorkHours[1].Replace(":00", ""))).ToString() + ":00";
+    string defaultHour2 = (Convert.ToInt32(bakeryWorkHours[2].Replace(":00", ""))).ToString() + ":00";
+
+    if (bakeryRequired == false & contentRequired == false) { if (contentExists) { backTo = "BackToContent"; } else { backTo = "BackToAddress"; } }
+
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var allowedDays = "@bakery["workDays"]";
+
+        $('#deliveryDatePicker').datepicker({
+            firstDay: 1,
+            dateFormat: "dd/mm/yy",
+            dayNames: ["pazar", "pazartesi", "salı", "çarşamba", "perşembe", "cuma", "cumartesi"],
+            dayNamesMin: ["paz", "pzt", "sal", "çar", "per", "cum", "cmt"],
+            monthNames: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            monthNamesShort: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+            minDate: new Date(@date.Year, @date.Month - 1, @date.Day),
+            beforeShowDay: function (date) {
+                if (allowedDays[parseInt(date.getDay()-1)] == "0") { return [false,""]; } else { return [true,""]; }
+            }
+        });
+
+        $('#deliveryDatePicker').datepicker("setDate", new Date(@date.Year, @date.Month - 1, @date.Day));
+
+        //   loadPayment();
+
+        $("#deliveryTimePicker").trigger("change");
+
+    });
+</script>
+
+<div class="container" style="padding:0px;">
+
+    <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; margin-bottom:20px;">
+        <a style="color:black; text-decoration:none; float:left;" href="@Url.Action(backTo,"Order")">
+            <div class="gray-gradient" style="text-align:center; cursor:pointer; float:right; padding:5px 15px;">
+                <img src="~/Images/Site/left_white.png" style="width:6px; margin-right:7px; padding-bottom:3px; cursor:pointer;" />
+                <label style="cursor:pointer; font-size:14px;">Previous Step</label>
+            </div>
+        </a>
+    </div>
+
+
+    @using (Html.BeginForm("SetDeliveryInfo", "Order", FormMethod.Post, new { id = "deliveryInfoForm" }))
+    {
+        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; padding:0px; margin-bottom:30px;">
+            <div style="width:100%; float:left; padding:9px 20px; padding-right:10px; border-bottom:1px solid #e6e6e6; ">
+                <label style="float:left; font-weight:600; line-height:40px;">1 - Delivery Info</label>
+            </div>
+
+            <div class="col-md-12 col-sm-12 col-xs-12" style="padding:20px; float:left;">
+
+                @{
+                    if (partyOnly == false)
+                    {
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="padding:0px; float:left; font-size:14px; padding-bottom:15px; ">
+
+                            <label style="float:left; padding-bottom:15px; font-size:14px; font-weight:500;">Delivery date of your pastry</label>
+
+                            <label style="width:100%; float:left; padding-bottom:10px; font-size:12px;">Delivery date and time information provided by the patisserie</label>
+                            <div style="width:100%; float:left;">
+                                <input id="en-yakin-tarih" onclick="$('#futureDeliveryDiv').slideUp(300)" class="css-checkbox2" type="radio" checked name="deliveryRadio" style="float:left; margin-right:7px; width:17px; height:17px; margin-top:2px;" />
+                                <label for="en-yakin-tarih" style="float:left; font-family:'Open Sans';" class="css-label2">Closes Date - between @defaultDate @defaultHour - @defaultHour2</label>
+                            </div>
+                            <div style="width:100%; float:left; margin-top:10px;">
+                                <input id="ileri-tarih" onclick="$('#futureDeliveryDiv').slideDown(300)" class="css-checkbox2" type="radio" name="deliveryRadio" style="float:left; margin-right:7px; width:17px; height:17px; margin-top:2px;" />
+                                <label for="ileri-tarih" style="float:left; font-family:'Open Sans';" class="css-label2">Further Date</label>
+                            </div>
+
+                            <div id="futureDeliveryDiv" style="width:100%; float:left; margin-top:10px; display:none;">
+                                <input onchange="arrangeHourFromDate(this,'@onchangeTemp')" readonly type='text' placeholder="Teslimat Tarihi" id='deliveryDatePicker' name="deliveryDatePicker" style="border:1px solid #e6e6e6; float:left; cursor:pointer; border-radius:3px; padding:10px; margin-right:10px;" />
+                                <select onchange="selectSecondBakeryHour(this)" type='text' id="deliveryTimePicker" name="deliveryTimePicker" style="border:1px solid #e6e6e6; border-radius:3px; padding:10px; float:left;">
+                                    @{
+                                        if (designExists)
+                                        {
+                                            for (int i = 1; i < bakeryWorkHours.Count; i++)
+                                            {
+                                                string hour = (Convert.ToInt32(bakeryWorkHours[i].Replace(":00", ""))).ToString() + ":00";
+                                                <option value="@hour">@hour</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            for (int i = 1; i < bakeryWorkHours.Count; i++)
+                                            {
+                                                string hour = (Convert.ToInt32(bakeryWorkHours[i].Replace(":00", ""))).ToString() + ":00";
+                                                <option value="@hour">@hour</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+                                <select onchange="selectSecondBakeryHour(this)" type='text' id="deliveryTimePickerClean" name="deliveryTimePickerClean" style="display:none; border:1px solid #e6e6e6; border-radius:3px; padding:10px; float:left;">
+                                    @{
+                                        for (int i = 0; i < 24; i++)
+                                        {
+                                            if (i >= Convert.ToInt32(firsthour) & i <= Convert.ToInt32(secondhour))
+                                            {
+                                                <option value="@i:00">@i:00</option>
+                                            }
+                                        }
+                                    }
+                                </select>
+
+                                <label style="float:left; margin-left:10px; line-height:42px;" id="bakerySecondHour"> - @bakeryWorkHours[2] between</label>
+                            </div>
+
+                            <input type="hidden" name="bakerySecondHourCopy" id="bakerySecondHourCopy" />
+                            <input type="hidden" name="selectedHour" id="selectedHour" value="normal" />
+                        </div>
+                                        }
+                }
+
+                @{
+                    if (partyExists)
+                    {
+                        <div class="col-md-6 col-sm-6 col-xs-12" style="padding:0px; float:left; padding-bottom:15px;">
+                            <div style="width:100%; float:left;">
+                                <label style="float:left; padding-bottom:15px; font-size:14px; font-weight:500;">Delivery date of your party product</label>
+                            </div>
+                            <label style="width:100%; float:left; padding-bottom:10px; font-size:12px;">Party baskets are cargoed within 24 hours. Estimated transport time is 1 day after cargo is delivered.</label>
+                            <label style="float:left; width:100%; padding:5px 0px; font-size:14px; font-family:'Open Sans';">Will be cargoed until @DateTime.Now.AddDays(1).ToString("dd.MM.yyyy HH:mm").Replace(".", "/")</label>
+                        </div>
+                    }
+                }
+
+                <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+                    <div style="width:100%; float:left;" id="notesDiv">
+                        <textarea autocomplete="off" type="text" placeholder="If you have notes about your order, you can write it here." style="float:left; outline:none; resize:none; width:100%; height:100px; padding:20px; color:dimgray; border:1px solid #e6e6e6; border-radius:20px; " id="orderNotes" name="orderNotes" class="orderNotes"></textarea>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="border:1px solid #e6e6e6; padding:0px; margin-bottom:30px;">
+            <label style="width:100%; float:left; padding:20px; padding-right:0px; border-bottom:1px solid #e6e6e6; font-weight:600;">2 - Contact Info</label>
+            <div class="col-md-12 col-sm-12 col-xs-12" style="padding:0px;">
+                <div style="width:100%; float:left; padding:20px;" id="contactDiv">
+                    <div class="col-md-6 col-sm-12 col-xs-12" style="padding:0px;">
+                        <input autocomplete="off" onkeyup="paymentFocus(this,'contactName')" type="text" placeholder="Name" style="float:left; margin-right:2%;" id="contactName" name="contactName" class="contactName" />
+                        <input autocomplete="off" onkeyup="paymentFocus(this,'contactSurname')" type="text" placeholder="Surname" style="float:left;" id="contactSurname" name="contactSurname" class="contactSurname" />
+                    </div>
+                    <div class="col-md-6 col-sm-12 col-xs-12" style="padding:0px;">
+                        <input autocomplete="off" onkeyup="paymentFocus(this,'contactMail')" type="text" placeholder="E-Mail" style="float:left;  margin-right:2%;" id="contactMail" name="contactMail" class="contactMail" />
+                        <input autocomplete="off" onkeyup="paymentFocus(this,'contactTel')" type="text" placeholder="Tel" style="float:left;" id="contactTel" name="contactTel" class="contactTel" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-10 col-md-offset-1 col-sm-10 col-sm-offset-1 col-xs-12" style="padding:0px; margin-bottom:30px; text-align:center;">
+            <input type="submit" onclick="validateInfo()" class="black-gradient" style="font-size:14px; color:white;" value="CONTINUE">
+        </div>
+                    }
+
+</div>
